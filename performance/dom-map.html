@@ -93,15 +93,32 @@ Renderer = function () {
 };
 
 addEventListener('load', function () {
-    var renderer = new Renderer();
-    setTimeout(function () {
-        var start, end;
-        start = new Date();
-        renderer.render();
+    var renderer, results, i;
+    renderer = new Renderer();
+    results = [];
+    for (i = 20; i--;) {
         setTimeout(function () {
-            end = new Date();
-            alert('Rendering time: ' + (end.getTime() - start.getTime()) + 'ms');
-        }, 0);
+            var start, end;
+            start = new Date();
+            renderer.render();
+            setTimeout(function () {
+                end = new Date();
+                results.push(end.getTime() - start.getTime());
+            }, 0);
+        }, 1000 * (i + 1));
+    }
+    i = setInterval(function () {
+        var sum;
+        if (results.length < 20) {
+            return;
+        }
+        clearInterval(i);
+        sum = 0;
+        for (i = 20; i--;) {
+            sum += results[i];
+        }
+        alert('Average rendering time: ' + (sum / 20) + 'ms\nDetails: ' +
+                results);
     }, 1000);
 }, false);
         </script>
