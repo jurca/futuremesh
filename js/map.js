@@ -1,38 +1,36 @@
 var Map;
 
 Map = function () {
-    (function (that) {
-        var map;
+    var map;
 
+    map = [];
+
+    this.setMap = function (newMap) {
+        map = newMap;
+    };
+
+    this.getView = function (x, y, width, height) {
+        var view, i;
+        view = map.slice(y, y + height);
+        width += x;
+        for (i = height; i--;) {
+            view[i] = view[i].slice(x, width);
+        }
+        return view;
+    };
+
+    this.randomMap = function (width, height) {
+        var i, j, row;
         map = [];
-
-        that.setMap = function (newMap) {
-            map = newMap;
-        };
-
-        that.getView = function (x, y, width, height) {
-            var view, i;
-            view = map.slice(y, y + height);
-            width += x;
-            for (i = height; i--;) {
-                view[i] = view[i].slice(x, width);
+        for (i = height; i--;) {
+            row = [];
+            for (j = width; j--;) {
+                row.push({
+                    type: Math.round(Math.random() * 2),
+                    accessible: Math.round(Math.random() * 2) > 1
+                });
             }
-            return view;
-        };
-
-        that.randomMap = function (width, height) {
-            var i, j, row;
-            map = [];
-            for (i = height; i--;) {
-                row = [];
-                for (j = width; j--;) {
-                    row.push({
-                        type: Math.round(Math.random() * 2),
-                        accessible: Math.round(Math.random() * 2) > 0
-                    });
-                }
-                map.push(row);
-            }
-        };
-    }(this));
+            map.push(row);
+        }
+    };
 };
