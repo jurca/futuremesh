@@ -12,20 +12,21 @@ body {
     <script type="text/javascript">
 var Renderer = function () {
     var canvas, c2d, width, height, tiles, i, createPNGImage, tileSize,
-            tileWidth, tileHeight, heightScale;
+            tileWidth, tileHeight, heightScale, quality;
 
     tileSize = 20;
     heightScale = 0.82;
-    tileWidth = tileSize * Math.cos(Math.PI / 4) * 2;
-    tileHeight = tileSize * Math.sin(Math.PI / 4) * 2 * heightScale;
+    quality = 0.8;
+    tileWidth = tileSize * Math.cos(Math.PI / 4) * 2 * quality;
+    tileHeight = tileSize * quality * Math.sin(Math.PI / 4) * 2 * heightScale;
 
     canvas = document.getElementsByTagName('canvas')[0];
     width = window.innerWidth;
     height = window.innerHeight - 5;
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
-    width = Math.round(width / 1);
-    height = Math.round(height / 1);
+    width *= quality;
+    height *= quality;
     canvas.width = width;
     canvas.height = height;
 
@@ -51,8 +52,10 @@ var Renderer = function () {
         (function () {
             var index = i;
             tiles[i].onload = function () {
-                c2d.drawImage(this, 30, 0);
-                tiles[index] = c2d.getImageData(7, 22 * heightScale, tileWidth, tileHeight);
+                c2d.drawImage(this, 30 * quality, 0, tileSize * quality,
+                        tileSize * quality);
+                tiles[index] = c2d.getImageData(7, 22 * quality * heightScale,
+                        tileWidth, tileHeight);
                 tiles[index] = createPNGImage(tiles[index]);
                 if ((tiles[0].alt === 'done') && (tiles[1].alt === 'done')) {
                     c2d.restore();
@@ -69,9 +72,9 @@ var Renderer = function () {
         rowsCount = Math.ceil(height / (tileHeight - 2) + 1) * 2;
         colsCount = Math.ceil(width / tileWidth + 1) * 2;
 
-        yOffset = -23;
+        yOffset = -tileHeight;
         for (i = rowsCount; i--;) {
-            xOffset = i % 2 * -14;
+            xOffset = i % 2 * (-tileWidth / 2);
             for (j = colsCount; j--;) {
                 ctx.drawImage(tls[j % 2], xOffset + j * (tileWidth - 1),
                         yOffset);
