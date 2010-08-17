@@ -11,7 +11,13 @@ body {
     </style>
     <script type="text/javascript">
 var Renderer = function () {
-    var canvas, c2d, width, height, tiles, i, createPNGImage;
+    var canvas, c2d, width, height, tiles, i, createPNGImage, tileSize,
+            tileWidth, tileHeight, heightScale;
+
+    tileSize = 20;
+    heightScale = 0.82;
+    tileWidth = tileSize * Math.cos(Math.PI / 4) * 2;
+    tileHeight = tileSize * Math.sin(Math.PI / 4) * 2 * heightScale;
 
     canvas = document.getElementsByTagName('canvas')[0];
     width = window.innerWidth;
@@ -25,7 +31,7 @@ var Renderer = function () {
 
     c2d = canvas.getContext("2d");
     c2d.save();
-    c2d.scale(1, 0.82);
+    c2d.scale(1, heightScale);
     c2d.rotate(45 * Math.PI / 180);
 
     createPNGImage = function (imgData) {
@@ -46,7 +52,7 @@ var Renderer = function () {
             var index = i;
             tiles[i].onload = function () {
                 c2d.drawImage(this, 30, 0);
-                tiles[index] = c2d.getImageData(7, 17, 28, 23);
+                tiles[index] = c2d.getImageData(7, 22 * heightScale, tileWidth, tileHeight);
                 tiles[index] = createPNGImage(tiles[index]);
                 if ((tiles[0].alt === 'done') && (tiles[1].alt === 'done')) {
                     c2d.restore();
@@ -60,16 +66,17 @@ var Renderer = function () {
         var tls, ctx, i, j, rowsCount, colsCount, xOffset, yOffset;
         tls = tiles;
         ctx = c2d;
-        rowsCount = Math.ceil(height / 23 + 1) * 2;
-        colsCount = Math.ceil(width / 28 + 1) * 2;
+        rowsCount = Math.ceil(height / (tileHeight - 2) + 1) * 2;
+        colsCount = Math.ceil(width / tileWidth + 1) * 2;
 
         yOffset = -23;
         for (i = rowsCount; i--;) {
             xOffset = i % 2 * -14;
             for (j = colsCount; j--;) {
-                ctx.drawImage(tls[j % 2], xOffset + j * 27, yOffset);
+                ctx.drawImage(tls[j % 2], xOffset + j * (tileWidth - 1),
+                        yOffset);
             }
-            yOffset += 11;
+            yOffset += (tileHeight - 2) / 2;
         }
     };
 };
