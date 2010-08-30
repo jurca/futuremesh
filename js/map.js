@@ -27,7 +27,10 @@ Map = function () {
             for (j = width; j--;) {
                 row.push({
                     type: Math.round(Math.random() * 2),
-                    accessible: Math.round(Math.random() * 2) > 1
+                    accessible: Math.round(Math.random() * 2) > 1,
+                    minimap: 'rgb(' + Math.round(Math.random() * 255) + ',' +
+                            Math.round(Math.random() * 255) + ',' +
+                            Math.round(Math.random() * 255) + ')'
                 });
             }
             map.push(row);
