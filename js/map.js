@@ -9,6 +9,10 @@ Map = function () {
         map = newMap;
     };
 
+    this.getMap = function () {
+        return map;
+    }
+
     this.getView = function (x, y, width, height) {
         var view, i;
         view = map.slice(y, y + height);
