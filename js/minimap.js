@@ -4,13 +4,21 @@ MiniMap = function () {
     var map, container, buildingsLayer, unitsLayer, buildingsList,
             buildingsAsoc, unitsList, unitsAsoc, width, height, mapWidth,
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
-            tileWidth, tileHeight;
+            tileWidth, tileHeight, changedTerain, changedBuildings,
+            changedUnits;
 
     map = [];
     buildingsLayer = document.createElement('canvas');
     buildingsLayerCtx = buildingsLayer.getContext('2d');
+    buildingsList = [];
+    buildingsAsoc = [];
     unitsLayer = document.createElement('canvas');
     unitsLayerCtx = unitsLayer.getContext('2d');
+    unitsList = [];
+    unitsAsoc = [];
+    changedTerain = false;
+    changedBuildings = false;
+    changedUnits = false;
 
     this.setMap = function (newMap) {
         if (!(newMap instanceof Array) || !newMap[0] ||
@@ -18,9 +26,12 @@ MiniMap = function () {
             throw new Error("invalid format of map");
         }
         map = newMap;
-        mapWidth = map.length;
-        mapHeight = map[0].length;
+        mapHeight = map.length;
+        mapWidth = map[0].length;
+        buildingsAsoc = this.createAsocIndex();
+        unitsAsoc = this.createAsocIndex();
         if (container) {
+            this.initRenderer();
             this.renderMap();
         }
     };
@@ -38,16 +49,32 @@ MiniMap = function () {
         container.appendChild(buildingsLayer);
         container.appendChild(unitsLayer);
         if (mapWidth) {
+            this.initRenderer();
             this.renderMap();
         }
     };
 
-    this.renderMap = function () {
+    this.createAsocIndex = function () {
+        var i, index;
+        index = new Array(mapHeight);
+        for (i = mapHeight; i--;) {
+            index[i] = new Array(mapWidth);
+        }
+        return index;
+    };
+
+    this.initRenderer = function () {
         xRatio = width / mapWidth;
         yRatio = height / mapHeight;
         tileWidth = Math.ceil(xRatio);
         tileHeight = Math.ceil(yRatio);
-        this.renderTerainLayer();
+        changedTerain = true;
+        changedBuildings = true;
+        changedUnits = true;
+    };
+
+    this.renderMap = function () {
+        changedTerain && this.renderTerainLayer();
     };
 
     this.renderUnitsLayer = function () {
@@ -71,5 +98,6 @@ MiniMap = function () {
         container.style.backgroundImage = 'url(' + buildingsLayer.toDataURL() +
                 ')';
         buildingsLayerCtx.clearRect(0, 0, width, height);
+        changedTerain = false;
     };
 };
