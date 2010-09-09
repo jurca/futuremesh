@@ -24,17 +24,17 @@ Map = function () {
     };
 
     this.randomMap = function (width, height) {
-        var i, j, row;
+        var i, j, row, random;
         map = [];
         for (i = height; i--;) {
             row = [];
             for (j = width; j--;) {
+                random = Math.round(Math.random() * 155) + 50;
                 row.push({
                     type: Math.round(Math.random() * 2),
                     accessible: Math.round(Math.random() * 2) > 1,
-                    minimap: 'rgb(' + Math.round(Math.random() * 255) + ',' +
-                            Math.round(Math.random() * 255) + ',' +
-                            Math.round(Math.random() * 255) + ')'
+                    minimap: 'rgb(' + random + ',' + random + ',' +
+                            random + ')'
                 });
             }
             map.push(row);
