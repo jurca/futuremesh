@@ -1,8 +1,7 @@
 var MiniMap;
 
 MiniMap = function () {
-    var map, container, buildingsLayer, unitsLayer, buildingsList,
-            buildingsAsoc, unitsList, unitsAsoc, width, height, mapWidth,
+    var map, container, buildingsLayer, unitsLayer, width, height, mapWidth,
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
             tileWidth, tileHeight, changedTerain, changedBuildings,
             changedUnits;
@@ -10,12 +9,8 @@ MiniMap = function () {
     map = [];
     buildingsLayer = document.createElement('canvas');
     buildingsLayerCtx = buildingsLayer.getContext('2d');
-    buildingsList = [];
-    buildingsAsoc = [];
     unitsLayer = document.createElement('canvas');
     unitsLayerCtx = unitsLayer.getContext('2d');
-    unitsList = [];
-    unitsAsoc = [];
     changedTerain = false;
     changedBuildings = false;
     changedUnits = false;
@@ -28,11 +23,8 @@ MiniMap = function () {
         map = newMap;
         mapHeight = map.length;
         mapWidth = map[0].length;
-        buildingsAsoc = this.createAsocIndex();
-        unitsAsoc = this.createAsocIndex();
         if (container) {
             this.initRenderer();
-            this.renderMap();
         }
     };
 
@@ -50,17 +42,7 @@ MiniMap = function () {
         container.appendChild(unitsLayer);
         if (mapWidth) {
             this.initRenderer();
-            this.renderMap();
         }
-    };
-
-    this.createAsocIndex = function () {
-        var i, index;
-        index = new Array(mapHeight);
-        for (i = mapHeight; i--;) {
-            index[i] = new Array(mapWidth);
-        }
-        return index;
     };
 
     this.initRenderer = function () {
@@ -69,20 +51,47 @@ MiniMap = function () {
         tileWidth = Math.ceil(xRatio);
         tileHeight = Math.ceil(yRatio);
         changedTerain = true;
-        changedBuildings = true;
-        changedUnits = true;
+        changedBuildings = [];
+        changedUnits = [];
     };
 
-    this.renderMap = function () {
+    this.onBuildingAdded = function (building) {
+        changedBuildings.push(building);
+    };
+
+    this.onBuildingRemoved = function (building) {
+        changedBuildings.push(building);
+    };
+
+    this.render = function () {
         changedTerain && this.renderTerainLayer();
+        changedBuildings.length && this.renderBuildingsLayer();
+        changedUnits.length && this.renderUnitsLayer();
     };
 
     this.renderUnitsLayer = function () {
         // TODO
+        changedUnits = false;
     };
 
     this.renderBuildingsLayer = function () {
-        // TODO
+        var i, building, x, y, start;
+        for (i = changedBuildings.length; i--;) {
+            building = changedBuildings[i];
+            buildingsLayerCtx.fillStyle = building.color;
+            for (y = building.height + Math.floor(building.width / 2); y--;) {
+                start = x;
+            }
+            for (x = building.width; x--;) {
+                for (y = building.height; y--;) {
+                    buildingsLayerCtx.fillRect(xRatio * (building.x + x -
+                            Math.floor(y / 2)),
+                            yRatio * (building.y + Math.floor(x / 2) + y),
+                            tileWidth, tileHeight);
+                }
+            }
+        }
+        changedBuildings = [];
     };
 
     this.renderTerainLayer = function () {
