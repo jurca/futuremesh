@@ -75,20 +75,38 @@ MiniMap = function () {
     };
 
     this.renderBuildingsLayer = function () {
-        var i, building, x, y, start;
+        var i, building, x, y, width, offset, top, middle, totalHeight;
         for (i = changedBuildings.length; i--;) {
             building = changedBuildings[i];
             buildingsLayerCtx.fillStyle = building.color;
-            for (y = building.height + Math.floor(building.width / 2); y--;) {
-                start = x;
+            if (building.height < (building.width / 2)) {
+                top = building.height;
+                middle = Math.floor(building.width / 2);
+            } else {
+                top = Math.floor(building.width / 2);
+                middle = building.height;
             }
-            for (x = building.width; x--;) {
-                for (y = building.height; y--;) {
-                    buildingsLayerCtx.fillRect(xRatio * (building.x + x -
-                            Math.floor(y / 2)),
-                            yRatio * (building.y + Math.floor(x / 2) + y),
-                            tileWidth, tileHeight);
+            totalHeight = Math.floor(building.height + building.width / 2);
+            for (y = totalHeight; y--;) {
+                if (y >= middle) {
+                    buildingsLayerCtx.fillStyle = '#f00';
+                    width = Math.floor((totalHeight - y) / (totalHeight - middle) * building.width);
+                } else if (y >= top) {
+                    buildingsLayerCtx.fillStyle = '#0f0';
+                    width = building.width;
+                } else {
+                    buildingsLayerCtx.fillStyle = '#00f';
+                    width = Math.floor(y / top * building.width);
                 }
+                if (y >= building.height) {
+                    offset = building.x - Math.floor(building.height / 2) +
+                            Math.floor(building.width * (y - building.height) /
+                            (totalHeight - building.height - 1));
+                } else {
+                    offset = building.x - Math.floor(y / 2);
+                }
+                buildingsLayerCtx.fillRect(xRatio * offset, yRatio *
+                        (building.y + y), tileWidth * width, tileHeight);
             }
         }
         changedBuildings = [];
