@@ -4,7 +4,8 @@ MiniMap = function () {
     var map, container, buildingsLayer, unitsLayer, width, height, mapWidth,
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
             tileWidth, tileHeight, changedTerain, changedBuildings,
-            changedUnits, drawTileLine, fill;
+            changedUnits, drawTileLine, fill, buildingsLayerIndex, createIndex,
+            xRatioC, yRatioC, initRenderer;
 
     map = [];
     buildingsLayer = document.createElement('canvas');
@@ -24,7 +25,7 @@ MiniMap = function () {
         mapHeight = map.length;
         mapWidth = map[0].length;
         if (container) {
-            this.initRenderer();
+            initRenderer();
         }
     };
 
@@ -41,18 +42,8 @@ MiniMap = function () {
         container.appendChild(buildingsLayer);
         container.appendChild(unitsLayer);
         if (mapWidth) {
-            this.initRenderer();
+            initRenderer();
         }
-    };
-
-    this.initRenderer = function () {
-        xRatio = width / mapWidth;
-        yRatio = height / mapHeight;
-        tileWidth = Math.ceil(xRatio);
-        tileHeight = Math.ceil(yRatio);
-        changedTerain = true;
-        changedBuildings = [];
-        changedUnits = [];
     };
 
     this.onBuildingAdded = function (building) {
@@ -115,21 +106,30 @@ MiniMap = function () {
         changedTerain = false;
     };
 
+    createIndex = function () {
+        var index, i, j;
+        index = new Array(mapWidth);
+        for (i = mapWidth; i--;) {
+            index[i] = new Array(mapHeight);
+            for (j = mapHeight; j--;) {
+                index[i][j] = false;
+            }
+        }
+        return index;
+    };
+
     fill = function (x, y, ctx, fillColor) {
-        var thisColor, random;
+        var thisColor;
         if ((x >= mapWidth) || (x < 0) || (y >= mapHeight) || (y < 0)) {
             return;
         }
-        thisColor = ctx.getImageData(x * xRatio + xRatio / 2,
-                y * yRatio + yRatio / 2, 1, 1).data;
-        thisColor = thisColor[0] + ',' + thisColor[1] + ',' + thisColor[2] +
-                ',' + thisColor[3];
+        thisColor = buildingsLayerIndex[x][y];
         if (fillColor === undefined) {
             fillColor = thisColor;
         }
         if (thisColor == fillColor) {
-            random = Math.round(Math.random() * 155) + 50;
-            ctx.fillRect(x * xRatio, y * yRatio, xRatio, yRatio);
+            ctx.fillRect(x * xRatio, y * yRatio, xRatioC, yRatioC);
+            buildingsLayerIndex[x][y] = !buildingsLayerIndex[x][y];
             fill(x - 1, y, ctx, fillColor);
             fill(x + 1, y, ctx, fillColor);
             fill(x, y - 1, ctx, fillColor);
@@ -138,19 +138,34 @@ MiniMap = function () {
     };
 
     drawTileLine = function (x1, y1, x2, y2, ctx) {
-        var len, vx, vy;
+        var len, vx, vy, rx, ry;
         vx = x2 - x1;
         vy = y2 - y1;
         len = Math.sqrt(vx * vx + vy * vy);
         vx /= len;
         vy /= len;
-        ctx.fillRect(xRatio * Math.floor(x1), yRatio * Math.floor(y1),
-                xRatio, yRatio);
+        ctx.fillRect(xRatio * Math.round(x1), yRatio * Math.round(y1),
+                xRatioC, yRatioC);
         do {
             x1 += vx;
             y1 += vy;
-            ctx.fillRect(xRatio * Math.round(x1), yRatio * Math.round(y1),
-                    xRatio, yRatio);
+            rx = Math.round(x1);
+            ry = Math.round(y1);
+            buildingsLayerIndex[rx][ry] = true;
+            ctx.fillRect(xRatio * rx, yRatio * ry, xRatioC, yRatioC);
         } while ((Math.round(x1) != x2) && (Math.round(y1) != y2))
+    };
+
+    initRenderer = function () {
+        xRatio = width / mapWidth;
+        yRatio = height / mapHeight;
+        xRatioC = Math.ceil(xRatio);
+        yRatioC = Math.ceil(yRatio);
+        tileWidth = Math.ceil(xRatio);
+        tileHeight = Math.ceil(yRatio);
+        changedTerain = true;
+        changedBuildings = [];
+        changedUnits = [];
+        buildingsLayerIndex = createIndex();
     };
 };

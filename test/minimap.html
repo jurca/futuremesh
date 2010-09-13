@@ -10,21 +10,27 @@
 var init = function () {
     var map, minimap, building;
     map = new Map();
-    map.randomMap(100, 100);
+    map.randomMap(150, 150);
     minimap = new MiniMap();
     minimap.setMap(map.getMap());
     minimap.setContainer(document.getElementsByTagName('div')[0]);
 
-    building = new Building(10, 10, 30, 20, 1, 0, 'rgb(0,0,200)');
+    building = new Building(17, 2, 30, 30, 1, 0, 'rgb(0,0,200)');
     minimap.onBuildingAdded(building);
 
     minimap.render();
+
+    setTimeout(function () {
+        building.type = false;
+        minimap.onBuildingRemoved(building);
+        minimap.render();
+    }, 1000);
 };
 
 addEventListener('DOMContentLoaded', init, false);
     </script>
   </head>
   <body>
-      <div style="width: 500px; height: 500px;"></div>
+      <div style="width: 150px; height: 150px;"></div>
   </body>
 </html>
