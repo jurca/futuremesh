@@ -16,13 +16,13 @@ var init = function () {
     minimap.setContainer(document.getElementsByTagName('div')[0]);
 
     building = new Building(17, 2, 30, 30, 1, 0, 'rgb(0,0,200)');
-    minimap.onBuildingAdded(building);
+    minimap.onBuildingChange(building);
 
     minimap.render();
 
     setTimeout(function () {
         building.type = false;
-        minimap.onBuildingRemoved(building);
+        minimap.onBuildingChange(building);
         minimap.render();
     }, 1000);
 };

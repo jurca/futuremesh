@@ -46,11 +46,7 @@ MiniMap = function () {
         }
     };
 
-    this.onBuildingAdded = function (building) {
-        changedBuildings.push(building);
-    };
-
-    this.onBuildingRemoved = function (building) {
+    this.onBuildingChange = function (building) {
         changedBuildings.push(building);
     };
 
