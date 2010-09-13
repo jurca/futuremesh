@@ -96,12 +96,21 @@ MiniMap = function () {
                     width = building.width;
                 } else {
                     buildingsLayerCtx.fillStyle = '#00f';
-                    width = Math.floor(y / top * building.width);
+                    width = Math.floor(y / (top - 1) * building.width);
                 }
                 if (y >= building.height) {
-                    offset = building.x - Math.floor(building.height / 2) +
-                            Math.floor(building.width * (y - building.height) /
-                            (totalHeight - building.height - 1));
+                    if (building.height < (building.width / 2)) {
+                        offset = building.x - Math.floor(building.height / 2) +
+                                Math.floor(building.width * (y -
+                                building.height) / (totalHeight -
+                                building.height - 1));
+                    } else {
+                        offset = building.x + Math.floor(building.width *
+                                (y - totalHeight) / (totalHeight -
+                                Math.floor(building.width / 2))) +
+                                Math.floor((y - totalHeight) / 2) +
+                                Math.floor(building.width / 4) + 1;
+                    }
                 } else {
                     offset = building.x - Math.floor(y / 2);
                 }
