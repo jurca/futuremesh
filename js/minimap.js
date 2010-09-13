@@ -76,9 +76,10 @@ MiniMap = function () {
 
     this.renderBuildingsLayer = function () {
         var i, building, x1, y1, x2, y2, x3, y3, x4, y4;
-        //buildingsLayerCtx.globalCompositeOperation = 'destination-out';
         for (i = changedBuildings.length; i--;) {
             building = changedBuildings[i];
+            buildingsLayerCtx.globalCompositeOperation = building.type ===
+                    false ? 'destination-out' : 'source-over';
             x1 = building.x;
             y1 = building.y;
             x2 = x1 + building.width;
