@@ -4,7 +4,7 @@ MiniMap = function () {
     var map, container, buildingsLayer, unitsLayer, width, height, mapWidth,
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
             tileWidth, tileHeight, changedTerain, changedBuildings,
-            changedUnits;
+            changedUnits, drawTileLine, fill;
 
     map = [];
     buildingsLayer = document.createElement('canvas');
@@ -75,48 +75,25 @@ MiniMap = function () {
     };
 
     this.renderBuildingsLayer = function () {
-        var i, building, x, y, width, offset, top, middle, totalHeight;
+        var i, building, x1, y1, x2, y2, x3, y3, x4, y4;
+        //buildingsLayerCtx.globalCompositeOperation = 'destination-out';
         for (i = changedBuildings.length; i--;) {
             building = changedBuildings[i];
+            x1 = building.x;
+            y1 = building.y;
+            x2 = x1 + building.width;
+            y2 = y1 + Math.floor(building.width / 2);
+            x3 = x1 - Math.floor(building.height / 2);
+            y3 = y1 + building.height;
+            x4 = x3 + building.width;
+            y4 = y3 + Math.floor(building.width / 2);
             buildingsLayerCtx.fillStyle = building.color;
-            if (building.height < (building.width / 2)) {
-                top = building.height;
-                middle = Math.floor(building.width / 2);
-            } else {
-                top = Math.floor(building.width / 2);
-                middle = building.height;
-            }
-            totalHeight = Math.floor(building.height + building.width / 2);
-            for (y = totalHeight; y--;) {
-                if (y >= middle) {
-                    buildingsLayerCtx.fillStyle = '#f00';
-                    width = Math.floor((totalHeight - y) / (totalHeight - middle) * building.width);
-                } else if (y >= top) {
-                    buildingsLayerCtx.fillStyle = '#0f0';
-                    width = building.width;
-                } else {
-                    buildingsLayerCtx.fillStyle = '#00f';
-                    width = Math.floor(y / (top - 1) * building.width);
-                }
-                if (y >= building.height) {
-                    if (building.height < (building.width / 2)) {
-                        offset = building.x - Math.floor(building.height / 2) +
-                                Math.floor(building.width * (y -
-                                building.height) / (totalHeight -
-                                building.height - 1));
-                    } else {
-                        offset = building.x + Math.floor(building.width *
-                                (y - totalHeight) / (totalHeight -
-                                Math.floor(building.width / 2))) +
-                                Math.floor((y - totalHeight) / 2) +
-                                Math.floor(building.width / 4) + 1;
-                    }
-                } else {
-                    offset = building.x - Math.floor(y / 2);
-                }
-                buildingsLayerCtx.fillRect(xRatio * offset, yRatio *
-                        (building.y + y), tileWidth * width, tileHeight);
-            }
+            drawTileLine(x1, y1, x2, y2, buildingsLayerCtx);
+            drawTileLine(x1, y1, x3, y3, buildingsLayerCtx);
+            drawTileLine(x2, y2, x4, y4, buildingsLayerCtx);
+            drawTileLine(x3, y3, x4, y4, buildingsLayerCtx);
+            fill(Math.round((x1 + x4) / 2), Math.round((y1 + y4) / 2),
+                    buildingsLayerCtx);
         }
         changedBuildings = [];
     };
@@ -135,5 +112,44 @@ MiniMap = function () {
                 ')';
         buildingsLayerCtx.clearRect(0, 0, width, height);
         changedTerain = false;
+    };
+
+    fill = function (x, y, ctx, fillColor) {
+        var thisColor, random;
+        if ((x >= mapWidth) || (x < 0) || (y >= mapHeight) || (y < 0)) {
+            return;
+        }
+        thisColor = ctx.getImageData(x * xRatio + xRatio / 2,
+                y * yRatio + yRatio / 2, 1, 1).data;
+        thisColor = thisColor[0] + ',' + thisColor[1] + ',' + thisColor[2] +
+                ',' + thisColor[3];
+        if (fillColor === undefined) {
+            fillColor = thisColor;
+        }
+        if (thisColor == fillColor) {
+            random = Math.round(Math.random() * 155) + 50;
+            ctx.fillRect(x * xRatio, y * yRatio, xRatio, yRatio);
+            fill(x - 1, y, ctx, fillColor);
+            fill(x + 1, y, ctx, fillColor);
+            fill(x, y - 1, ctx, fillColor);
+            fill(x, y + 1, ctx, fillColor);
+        }
+    };
+
+    drawTileLine = function (x1, y1, x2, y2, ctx) {
+        var len, vx, vy;
+        vx = x2 - x1;
+        vy = y2 - y1;
+        len = Math.sqrt(vx * vx + vy * vy);
+        vx /= len;
+        vy /= len;
+        ctx.fillRect(xRatio * Math.floor(x1), yRatio * Math.floor(y1),
+                xRatio, yRatio);
+        do {
+            x1 += vx;
+            y1 += vy;
+            ctx.fillRect(xRatio * Math.round(x1), yRatio * Math.round(y1),
+                    xRatio, yRatio);
+        } while ((Math.round(x1) != x2) && (Math.round(y1) != y2))
     };
 };
