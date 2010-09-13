@@ -51,6 +51,10 @@ MiniMap = function () {
         changedBuildings.push(building);
     };
 
+    this.onUnitChange = function (unit) {
+        changedUnits.push(unit);
+    };
+
     this.render = function () {
         changedTerain && renderTerainLayer();
         changedBuildings.length && renderBuildingsLayer();
@@ -58,8 +62,28 @@ MiniMap = function () {
     };
 
     renderUnitsLayer = function () {
-        // TODO
-        changedUnits = false;
+        var i, unit;
+        for (i = changedUnits.length; i--;) {
+            unit = changedUnits[i];
+            unitsLayerCtx.fillStyle = unit.color;
+            switch (unit.action) {
+                case 2:
+                    unitsLayerCtx.globalCompositeOperation = 'destination-out';
+                    unitsLayerCtx.fillRect(unit.lastX * xRatio,
+                            unit.lastY * yRatio, xRatioC, yRatioC);
+                case 0:
+                    unitsLayerCtx.globalCompositeOperation = 'source-over';
+                    unitsLayerCtx.fillRect(unit.x * xRatio, unit.y * yRatio,
+                            xRatioC, yRatioC);
+                    break;
+                case 1:
+                    unitsLayerCtx.globalCompositeOperation = 'destination-out';
+                    unitsLayerCtx.fillRect(unit.x * xRatio, unit.y * yRatio,
+                            xRatioC, yRatioC);
+                    break;
+            }
+        }
+        changedUnits = [];
     };
 
     renderBuildingsLayer = function () {

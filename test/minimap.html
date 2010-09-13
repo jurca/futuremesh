@@ -7,10 +7,11 @@
     <script type="text/javascript" src="../js/building.js"></script>
     <script type="text/javascript" src="../js/tile.js"></script>
     <script type="text/javascript" src="../js/minimap.js"></script>
+    <script type="text/javascript" src="../js/unit.js"></script>
     <script type="text/javascript" src="../data/tilesdefinition.js"></script>
     <script type="text/javascript">
 var init = function () {
-    var map, minimap, building;
+    var map, minimap, building, unit, timer, interval;
     map = new Map();
     map.randomMap(150, 150);
     minimap = new MiniMap();
@@ -20,19 +21,36 @@ var init = function () {
     building = new Building(17, 2, 30, 30, 1, 0, 'rgb(0,0,200)');
     minimap.onBuildingChange(building);
 
+    unit = new Unit(75, 75, 0, 0, 'rgb(200,0,0)');
+    minimap.onUnitChange(unit);
+
     minimap.render();
+
+    timer = 150;
+    interval = setInterval(function () {
+        if (!timer--) {
+            clearInterval(interval);
+            return;
+        }
+        unit.move(1);
+        unit.direction = Math.floor(Math.random() * 8);
+        minimap.onUnitChange(unit);
+        minimap.render();
+    }, 10);
 
     setTimeout(function () {
         building.type = false;
         minimap.onBuildingChange(building);
+        unit.action = 1;
+        minimap.onUnitChange(unit);
         minimap.render();
-    }, 1000);
+    }, 2000);
 };
 
 addEventListener('DOMContentLoaded', init, false);
     </script>
   </head>
   <body>
-      <div style="width: 150px; height: 150px;"></div>
+      <div style="width: 700px; height: 700px;"></div>
   </body>
 </html>
