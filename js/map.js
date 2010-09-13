@@ -30,12 +30,7 @@ Map = function () {
             row = [];
             for (j = width; j--;) {
                 random = Math.round(Math.random() * 155) + 50;
-                row.push({
-                    type: Math.round(Math.random() * 2),
-                    accessible: Math.round(Math.random() * 2) > 1,
-                    minimap: 'rgb(' + random + ',' + random + ',' +
-                            random + ')'
-                });
+                row.push(new Tile(Math.floor(Math.random() * 3)));
             }
             map.push(row);
         }
