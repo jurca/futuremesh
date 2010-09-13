@@ -5,7 +5,8 @@ MiniMap = function () {
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
             tileWidth, tileHeight, changedTerain, changedBuildings,
             changedUnits, drawTileLine, fill, buildingsLayerIndex, createIndex,
-            xRatioC, yRatioC, initRenderer;
+            xRatioC, yRatioC, initRenderer, renderUnitsLayer,
+            renderBuildingsLayer, renderTerainLayer;
 
     map = [];
     buildingsLayer = document.createElement('canvas');
@@ -56,12 +57,12 @@ MiniMap = function () {
         changedUnits.length && this.renderUnitsLayer();
     };
 
-    this.renderUnitsLayer = function () {
+    renderUnitsLayer = function () {
         // TODO
         changedUnits = false;
     };
 
-    this.renderBuildingsLayer = function () {
+    renderBuildingsLayer = function () {
         var i, building, x1, y1, x2, y2, x3, y3, x4, y4;
         for (i = changedBuildings.length; i--;) {
             building = changedBuildings[i];
@@ -86,7 +87,7 @@ MiniMap = function () {
         changedBuildings = [];
     };
 
-    this.renderTerainLayer = function () {
+    renderTerainLayer = function () {
         var i, j, row;
         for (i = map.length; i--;) {
             row = map[i];
