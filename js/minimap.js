@@ -52,9 +52,9 @@ MiniMap = function () {
     };
 
     this.render = function () {
-        changedTerain && this.renderTerainLayer();
-        changedBuildings.length && this.renderBuildingsLayer();
-        changedUnits.length && this.renderUnitsLayer();
+        changedTerain && renderTerainLayer();
+        changedBuildings.length && renderBuildingsLayer();
+        changedUnits.length && renderUnitsLayer();
     };
 
     renderUnitsLayer = function () {
