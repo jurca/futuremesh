@@ -6,12 +6,17 @@ Building = (function () {
     id = 0;
     buldings = [];
 
-    Building = function (x, y, width, height, type, player, color) {
+    Building = function (x, y, type, player, color) {
+        var definition;
+        definition = BuildingsDefinition.getType(type);
         this.id = id++;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.image = definition.image;
+        this.imageWidth = definition.imageWidth;
+        this.imageHeigth = definition.imageHeigth;
+        this.width = definition.width;
+        this.height = definition.height;
         this.type = type;
         this.player = player;
         this.color = color === undefined ?
