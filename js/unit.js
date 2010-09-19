@@ -6,13 +6,19 @@ Unit = (function () {
     id = 0;
     units = [];
 
-    Unit = function (x, y, direction, player, color) {
+    Unit = function (x, y, direction, type, player, color) {
+        var definition;
+        definition = UnitsDefinition.getType(type);
         this.id = id++;
         this.x = x;
         this.y = y;
         this.lastX = x;
         this.lastY = y;
         this.direction = direction;
+        this.type = type;
+        this.image = definition.image;
+        this.speed = definition.speed;
+        this.turnSpeed = definition.turnSpeed;
         this.action = 0;
         this.player = player;
         this.color = color === undefined ?
