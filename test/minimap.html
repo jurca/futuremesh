@@ -9,6 +9,8 @@
     <script type="text/javascript" src="../js/minimap.js"></script>
     <script type="text/javascript" src="../js/unit.js"></script>
     <script type="text/javascript" src="../data/tilesdefinition.js"></script>
+    <script type="text/javascript" src="../data/buildingsdefinition.js"></script>
+    <script type="text/javascript" src="../data/unitsdefinition.js"></script>
     <script type="text/javascript">
 var init = function () {
     var map, minimap, building, unit, timer, interval;
@@ -18,10 +20,10 @@ var init = function () {
     minimap.setMap(map.getMap());
     minimap.setContainer(document.getElementsByTagName('div')[0]);
 
-    building = new Building(17, 2, 30, 30, 1, 0, 'rgb(0,0,200)');
+    building = new Building(17, 2, 0, 0, 'rgb(0,0,200)');
     minimap.onBuildingChange(building);
 
-    unit = new Unit(75, 75, 0, 0, 'rgb(200,0,0)');
+    unit = new Unit(75, 75, 0, 0, 0, 'rgb(200,0,0)');
     minimap.onUnitChange(unit);
 
     minimap.render();
