@@ -1,6 +1,6 @@
 var UnitsDefinition;
 
-UnitsDefinition = function () {
+UnitsDefinition = (function () {
     var types;
 
     types = [
@@ -17,4 +17,4 @@ UnitsDefinition = function () {
             return types[type];
         }
     };
-};
+}());
