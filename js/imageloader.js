@@ -2,7 +2,8 @@ var ImageLoader;
 
 ImageLoader = function () {
     var loadBuildingImages, notifyObservers, buildingsIndex, observers,
-            unitsIndex, loadUnitImages, tilesIndex, loadTilesImages;
+            unitsIndex, loadUnitImages, tilesIndex, loadTilesImages,
+            transformTileImage;
 
     observers = [];
 
@@ -30,7 +31,7 @@ ImageLoader = function () {
                 image = new Image();
                 image.onload = function () {
                     tilesIndex[type] = true;
-                    tileDefinition.imageData = image;
+                    tileDefinition.imageData = transformTileImage(image);
                     notifyObservers();
                 };
                 image.src = tile.image;
@@ -126,5 +127,26 @@ ImageLoader = function () {
         for (i = observers.length; i--;) {
             observers[i](done);
         }
+    };
+
+    transformTileImage = function (source) {
+        var canvas, context, data;
+        canvas = document.createElement('canvas');
+        canvas.width = 7 + Math.ceil(Settings.tileWidth * 2);
+        canvas.height = 22 + Math.ceil(Settings.tileHeight * 2);
+        context = canvas.getContext('2d');
+        context.scale(1, Settings.heightScale);
+        context.rotate(45 * Math.PI / 180);
+        context.drawImage(source, 30, 0);
+        data = context.getImageData(7, 22, Settings.tileWidth,
+                Settings.tileHeight);
+        canvas = document.createElement('canvas');
+        canvas.width = data.width;
+        canvas.height = data.height;
+        context = canvas.getContext('2d');
+        context.putImageData(data, 0, 0);
+        data = new Image();
+        data.src = canvas.toDataURL();
+        return data;
     };
 };
