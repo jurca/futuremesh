@@ -117,7 +117,12 @@ ImageLoader = function () {
                 done++;
             }
         }
-        done /= buildingsIndex.length + unitsIndex.length;
+        for (i = tilesIndex.length; i--;) {
+            if (tilesIndex[i]) {
+                done++;
+            }
+        }
+        done /= buildingsIndex.length + unitsIndex.length + tilesIndex.length;
         for (i = observers.length; i--;) {
             observers[i](done);
         }
