@@ -47,7 +47,8 @@ ImageLoader = function () {
         while (unit) {
             unitsIndex.push(false);
             (function () {
-                var images, image, type, i, loadedImages;
+                var images, image, type, i, loadedImages, unitDefinition;
+                unitDefinition = unit;
                 type = currentType;
                 images = [];
                 loadedImages = [];
@@ -66,7 +67,7 @@ ImageLoader = function () {
                                 }
                             }
                             unitsIndex[type] = true;
-                            unit.imageData = images;
+                            unitDefinition.imageData = images;
                             notifyObservers();
                         };
                     }());
