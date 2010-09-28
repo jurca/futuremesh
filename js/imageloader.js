@@ -42,6 +42,7 @@ ImageLoader = function () {
                                 }
                             }
                             unitsIndex[type] = true;
+                            unit.imageData = images;
                             notifyObservers();
                         };
                     }());
