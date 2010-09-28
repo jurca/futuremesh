@@ -88,12 +88,13 @@ ImageLoader = function () {
         while (building) {
             buildingsIndex.push(false);
             (function () {
-                var image, type;
+                var image, type, buildingDefinition;
+                buildingDefinition = building;
                 type = currentType;
                 image = new Image();
                 image.onload = function () {
                     buildingsIndex[type] = true;
-                    building.imageData = image;
+                    buildingDefinition.imageData = image;
                     notifyObservers();
                 };
                 image.src = building.image;
