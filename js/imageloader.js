@@ -2,17 +2,41 @@ var ImageLoader;
 
 ImageLoader = function () {
     var loadBuildingImages, notifyObservers, buildingsIndex, observers,
-            unitsIndex, loadUnitImages;
+            unitsIndex, loadUnitImages, tilesIndex, loadTilesImages;
 
     observers = [];
 
     this.load = function (buildings, units, tiles) {
         loadBuildingImages(buildings);
         loadUnitImages(units);
+        loadTilesImages(tiles);
     };
 
     this.addObserver = function (observer) {
         observers.push(observer);
+    };
+
+    loadTilesImages = function (tiles) {
+        var tile, currentType;
+        tilesIndex = [];
+        currentType = 0;
+        tile = tiles.getType(currentType);
+        while (tile) {
+            tiles.push(false);
+            (function () {
+                var image, type, tileDefinition;
+                tileDefinition = tile;
+                type = currentType;
+                image = new Image();
+                image.onload = function () {
+                    tilesIndex[type] = true;
+                    tileDefinition.imageData = image;
+                    notifyObservers();
+                };
+                image.src = tile.image;
+            }());
+            tile = tiles.getType(++currentType);
+        }
     };
 
     loadUnitImages = function (units) {
