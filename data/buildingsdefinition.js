@@ -6,7 +6,7 @@ BuildingsDefinition = (function () {
     types = [
         {
             type: 0,
-            image: 'data/images/buildings/construction-yard.jpg',
+            image: 'data/images/buildings/construction-yard.png',
             imageWidth: undefined,
             imageHeight: undefined,
             width: 3,
