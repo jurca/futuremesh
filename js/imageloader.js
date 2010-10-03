@@ -23,7 +23,7 @@ ImageLoader = function () {
         currentType = 0;
         tile = tiles.getType(currentType);
         while (tile) {
-            tiles.push(false);
+            tilesIndex.push(false);
             (function () {
                 var image, type, tileDefinition;
                 tileDefinition = tile;
@@ -138,7 +138,7 @@ ImageLoader = function () {
         context.scale(1, Settings.heightScale);
         context.rotate(45 * Math.PI / 180);
         context.drawImage(source, 30, 0);
-        data = context.getImageData(7, 22, Settings.tileWidth,
+        data = context.getImageData(7, 17, Settings.tileWidth,
                 Settings.tileHeight);
         canvas = document.createElement('canvas');
         canvas.width = data.width;
