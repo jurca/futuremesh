@@ -3,9 +3,10 @@ var ImageLoader;
 ImageLoader = function () {
     var loadBuildingImages, notifyObservers, buildingsIndex, observers,
             unitsIndex, loadUnitImages, tilesIndex, loadTilesImages,
-            transformTileImage;
+            transformTileImage, pathPrefix;
 
     observers = [];
+    pathPrefix = '';
 
     this.load = function (buildings, units, tiles) {
         loadBuildingImages(buildings);
@@ -15,6 +16,10 @@ ImageLoader = function () {
 
     this.addObserver = function (observer) {
         observers.push(observer);
+    };
+
+    this.setPathPrefix = function (prefix) {
+        pathPrefix = prefix;
     };
 
     loadTilesImages = function (tiles) {
@@ -34,7 +39,7 @@ ImageLoader = function () {
                     tileDefinition.imageData = transformTileImage(image);
                     notifyObservers();
                 };
-                image.src = tile.image;
+                image.src = pathPrefix + tile.image;
             }());
             tile = tiles.getType(++currentType);
         }
@@ -75,7 +80,7 @@ ImageLoader = function () {
                     images[i] = image;
                 }
                 for (i = 8; i--;) {
-                    images[i].src = unit.image.replace('?', i);
+                    images[i].src = pathPrefix + unit.image.replace('?', i);
                 }
             }());
             unit = units.getType(++currentType);
@@ -99,7 +104,7 @@ ImageLoader = function () {
                     buildingDefinition.imageData = image;
                     notifyObservers();
                 };
-                image.src = building.image;
+                image.src = pathPrefix + building.image;
             }());
             building = buildings.getType(++currentType);
         }
