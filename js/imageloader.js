@@ -1,4 +1,5 @@
 var ImageLoader;
+require('settings', '../data/settings');
 
 ImageLoader = function () {
     var loadBuildingImages, notifyObservers, buildingsIndex, observers,
