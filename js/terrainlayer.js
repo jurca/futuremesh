@@ -1,4 +1,5 @@
 var TerrainLayer;
+require('../data/tilesdefinition');
 
 TerrainLayer = function () {
     var buffer, canvas, canvasWidth, canvasHeight, canvasContext, map,

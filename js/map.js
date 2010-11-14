@@ -1,4 +1,5 @@
 var Map;
+require('tile');
 
 Map = function () {
     var map;

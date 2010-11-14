@@ -1,4 +1,5 @@
 var Unit;
+require('../data/unitsdefinition', 'player');
 
 Unit = (function () {
     var id, Unit, units;

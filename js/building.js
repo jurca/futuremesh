@@ -1,4 +1,5 @@
 var Building;
+require('../data/buildingsdefinition', 'player');
 
 Building = (function () {
     var id, Building, buldings;

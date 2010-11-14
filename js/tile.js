@@ -1,4 +1,5 @@
 var Tile;
+require('../data/tilesdefinition');
 
 Tile = function (type) {
     var definition;

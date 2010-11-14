@@ -1,4 +1,5 @@
 var BuildingsLayer;
+require('../data/tilesdefinition', '../data/buildingsdefinition');
 
 BuildingsLayer = function () {
     var buffer, canvas, canvasWidth, canvasHeight, canvasContext, bufferWidth,
