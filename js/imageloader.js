@@ -143,8 +143,8 @@ ImageLoader = function () {
         context.scale(1, Settings.heightScale);
         context.rotate(45 * Math.PI / 180);
         context.drawImage(source, 30, 0);
-        data = context.getImageData(7, 17, Settings.tileWidth,
-                Settings.tileHeight);
+        data = context.getImageData(7, 20 * Settings.heightScale,
+                Settings.tileWidth, Settings.tileHeight);
         canvas = document.createElement('canvas');
         canvas.width = data.width;
         canvas.height = data.height;
