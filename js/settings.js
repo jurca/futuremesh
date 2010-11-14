@@ -5,6 +5,7 @@ Settings = {
     heightScale: undefined,
     tileWidth: undefined,
     tileHeight: undefined,
+    gridIndexGranularity: undefined,
 
     load: function (settings) {
         this.tileSize = settings.tileSize;
@@ -12,5 +13,6 @@ Settings = {
         this.tileWidth = this.tileSize * Math.cos(Math.PI / 4) * 2;
         this.tileHeight = this.tileSize * Math.sin(Math.PI / 4) * 2 *
                 this.heightScale;
+        this.gridIndexGranularity = settings.gridIndexGranularity;
     }
 };
