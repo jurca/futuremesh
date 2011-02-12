@@ -22,6 +22,9 @@ Unit = (function () {
         this.turnSpeed = definition.turnSpeed;
         this.action = 0;
         this.player = player;
+        this.moveOffset = 0;
+        this.moveOffsetX = 0;
+        this.moveOffsetY = 0;
         this.color = color === undefined ?
                 Player.getPlayer(player).color : color;
 
@@ -41,6 +44,26 @@ Unit = (function () {
                 this.y += distance;
             }
             this.action = 2;
+        };
+
+        this.setMoveOffset = function (offset) {
+            this.moveOffset = offset;
+            if ((this.direction >= 1) && (this.direction <= 3)) {
+                this.moveOffsetX = Settings.tileWidth * offset *
+                        (this.direction == 2 ? 1 : 0.5);
+            }
+            if (this.direction >= 5) {
+                this.moveOffsetX = -Settings.tileWidth * offset *
+                        (this.direction == 6 ? 1 : 0.5);
+            }
+            if ((this.direction == 7) || (this.direction <= 1)) {
+                this.moveOffsetY = -Settings.tileHeight * offset *
+                        (this.direction == 0 ? 1 : 0.5);
+            }
+            if ((this.direction >= 3) && (this.direction <= 5)) {
+                this.moveOffsetY = Settings.tileHeight * offset *
+                        (this.direction == 4 ? 1 : 0.5);
+            }
         };
 
         units.push(this);

@@ -68,8 +68,9 @@ UnitsLayer = function () {
                 if (grid[gridY + i] && (unit = grid[gridY + i][gridX + j])) {
                     canvasContext.drawImage(UnitsDefinition.getType(unit.type).
                             imageData[unit.direction],
-                            ((i + gridY) % 2) * tileWidth / 2 + (j + gridX) * tileWidth - x,
-                            (i + gridY) * tileHeight - y);
+                            ((i + gridY) % 2) * tileWidth / 2 + (j + gridX) *
+                            tileWidth - x + unit.moveOffsetX,
+                            (i + gridY) * tileHeight - y + unit.moveOffsetY);
                 }
             }
         }

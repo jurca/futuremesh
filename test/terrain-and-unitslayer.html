@@ -36,7 +36,7 @@ drawUnits = function () {
                 'rgb(0,0,0)');
         layer.onUnitChange(unit);
     }
-    layer.display(100, 100);
+    layer.display(0, 0);
     terrain = new TerrainLayer();
     terrain.setCanvas(document.getElementById('terrain'));
     terrain.setMap(map.getMap());
@@ -45,6 +45,14 @@ drawUnits = function () {
     context = canvas.getContext('2d');
     x = y = tx = ty = 0;
     dimensions = layer.getLayerDimensions();
+    /*i = 0;
+    setInterval(function () {
+        if (i >= 1) {
+            return;
+        }
+        unit.setMoveOffset(i += 0.01);
+        layer.display(0, 0);
+    }, 10);*/
     setInterval(function () {
         var date = new Date().getTime();
         layer.display(x, y);
