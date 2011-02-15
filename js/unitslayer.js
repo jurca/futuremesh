@@ -56,7 +56,7 @@ UnitsLayer = function () {
     };
 
     this.display = function (x, y) {
-        var gridX, gridY, i, j, unit;
+        var gridX, gridY, i, j, unit, currentY, currentX, offsetX;
         canvasContext.globalCompositeOperation = 'destination-out';
         canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
         canvasContext.globalCompositeOperation = 'source-over';
@@ -64,13 +64,16 @@ UnitsLayer = function () {
         gridY = Math.max(0, Math.floor(y / tileHeight) - 1);
         y -= 2;
         for (i = verticalTilesOnDisplay; i--;) {
+            currentY = gridY + i;
+            offsetX = ((currentY) % 2) * tileWidth / 2;
             for (j = horizonzalTilesOnDisplay; j--;) {
-                if (grid[gridY + i] && (unit = grid[gridY + i][gridX + j])) {
+                currentX = gridX + j;
+                if (grid[currentY] && (unit = grid[currentY][currentX])) {
                     canvasContext.drawImage(UnitsDefinition.getType(unit.type).
                             imageData[unit.direction],
-                            ((i + gridY) % 2) * tileWidth / 2 + (j + gridX) *
-                            tileWidth - x + unit.moveOffsetX,
-                            (i + gridY) * tileHeight - y + unit.moveOffsetY);
+                            offsetX + currentX * tileWidth - x +
+                            unit.moveOffsetX,
+                            currentY * tileHeight - y + unit.moveOffsetY);
                 }
             }
         }
