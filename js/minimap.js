@@ -3,17 +3,17 @@ var MiniMap;
 MiniMap = function () {
     var map, container, buildingsLayer, unitsLayer, width, height, mapWidth,
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
-            tileWidth, tileHeight, changedTerain, changedBuildings,
+            tileWidth, tileHeight, changedTerrain, changedBuildings,
             changedUnits, drawTileLine, fill, buildingsLayerIndex, createIndex,
             xRatioC, yRatioC, initRenderer, renderUnitsLayer,
-            renderBuildingsLayer, renderTerainLayer;
+            renderBuildingsLayer, renderTerrainLayer;
 
     map = [];
     buildingsLayer = document.createElement('canvas');
     buildingsLayerCtx = buildingsLayer.getContext('2d');
     unitsLayer = document.createElement('canvas');
     unitsLayerCtx = unitsLayer.getContext('2d');
-    changedTerain = false;
+    changedTerrain = false;
     changedBuildings = false;
     changedUnits = false;
 
@@ -56,7 +56,7 @@ MiniMap = function () {
     };
 
     this.render = function () {
-        changedTerain && renderTerainLayer();
+        changedTerrain && renderTerrainLayer();
         changedBuildings.length && renderBuildingsLayer();
         changedUnits.length && renderUnitsLayer();
     };
@@ -111,7 +111,7 @@ MiniMap = function () {
         changedBuildings = [];
     };
 
-    renderTerainLayer = function () {
+    renderTerrainLayer = function () {
         var i, j, row;
         for (i = map.length; i--;) {
             row = map[i];
@@ -124,7 +124,7 @@ MiniMap = function () {
         container.style.backgroundImage = 'url(' + buildingsLayer.toDataURL() +
                 ')';
         buildingsLayerCtx.clearRect(0, 0, width, height);
-        changedTerain = false;
+        changedTerrain = false;
     };
 
     createIndex = function () {
@@ -184,7 +184,7 @@ MiniMap = function () {
         yRatioC = Math.ceil(yRatio);
         tileWidth = Math.ceil(xRatio);
         tileHeight = Math.ceil(yRatio);
-        changedTerain = true;
+        changedTerrain = true;
         changedBuildings = [];
         changedUnits = [];
         buildingsLayerIndex = createIndex();
