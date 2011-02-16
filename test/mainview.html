@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5 Transitional//EN">
+<html>
+  <head>
+    <title>MainView test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../js/require.js"></script>
+    <script type="text/javascript">
+(function () {
+    var init, doStuff, gC;
+
+    require('imageloader', 'mainview');
+
+    init = function () {
+        var loader;
+        loader = new ImageLoader();
+        loader.addObserver(function (percent) {
+            if (percent == 1) {
+                doStuff();
+            }
+        });
+        loader.setPathPrefix('../');
+        loader.load(BuildingsDefinition, UnitsDefinition, TilesDefinition);
+    };
+
+    gC = function (id) {
+        return document.getElementById(id);
+    };
+
+    doStuff = function () {
+        var map, view, x, y, tx, ty, dimensions, unit, building, i, canvas,
+                context;
+        map = new Map();
+        map.randomMap(100, 100);
+        view = new MainView();
+        view.setCanvases(gC('terrain'), gC('buildings'), canvas = gC('units'));
+        view.setMap(map);
+        for (i = 25; i--;) {
+            building = new Building(Math.floor(Math.random() * 100),
+                    Math.floor(Math.random() * 100), 0, 0, 'rgb(0,0,0)');
+                    view.onBuildingChange(building);
+        }
+        for (i = 500; i--;) {
+            x = Math.floor(Math.random() * 100);
+            y = Math.floor(Math.random() * 100);
+            unit = new Unit(x, y, Math.floor(Math.random() * 8), 0, 0,
+                    'rgb(0,0,0)');
+            view.onUnitChange(unit);
+        }
+        x = y = tx = ty = 0;
+        dimensions = view.getLayersDimensions();
+        context = canvas.getContext('2d');
+        setInterval(function () {
+            var date = new Date().getTime();
+            view.display(x, y);
+            context.fillText("RenderTime: " + (new Date().getTime() - date) + " ms", 9, 9);
+            context.fillText("FPS: " + (1000 / (new Date().getTime() - date)), 9, 24);
+            if ((tx == x) && (ty == y)) {
+                tx = Math.floor(Math.random() * dimensions.width - 1);
+                ty = Math.floor(Math.random() * dimensions.height - 1);
+            }
+            x += tx > x ? 1 : (tx < x ? -1 : 0);
+            y += ty > y ? 1 : (ty < y ? -1 : 0);
+        }, 10);
+    };
+
+    addEventListener('DOMContentLoaded', init, false);
+}());
+    </script>
+  </head>
+  <body>
+      <div style="height: 0px"><canvas id="terrain" width="800" height="600" style="border: 1px solid red"></canvas></div>
+      <div style="height: 0px"><canvas id="buildings" width="800" height="600" style="border: 1px solid green"></canvas></div>
+      <canvas id="units" width="800" height="600" style="border: 1px solid black"></canvas>
+  </body>
+</html>
