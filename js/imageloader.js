@@ -4,7 +4,7 @@ require('settings', '../data/settings');
 ImageLoader = function () {
     var loadBuildingImages, notifyObservers, buildingsIndex, observers,
             unitsIndex, loadUnitImages, tilesIndex, loadTilesImages,
-            transformTileImage, pathPrefix;
+            transformTileImage, pathPrefix, transformBuildingImage;
 
     observers = [];
     pathPrefix = '';
@@ -37,7 +37,8 @@ ImageLoader = function () {
                 image = new Image();
                 image.onload = function () {
                     tilesIndex[type] = true;
-                    tileDefinition.imageData = transformTileImage(image);
+                    tileDefinition.imageData = Settings.tileImagesTransformed ?
+                            image : transformTileImage(image);
                     notifyObservers();
                 };
                 image.src = pathPrefix + tile.image;
@@ -73,6 +74,11 @@ ImageLoader = function () {
                                     return;
                                 }
                             }
+                            if (!Settings.unitImagesTransformed) {
+                                for (i = 8; i--;) {
+                                    images[i] = transformTileImage(images[i]);
+                                }
+                            }
                             unitsIndex[type] = true;
                             unitDefinition.imageData = images;
                             notifyObservers();
@@ -102,7 +108,9 @@ ImageLoader = function () {
                 image = new Image();
                 image.onload = function () {
                     buildingsIndex[type] = true;
-                    buildingDefinition.imageData = image;
+                    buildingDefinition.imageData =
+                            Settings.buildingImagesTransformed ?
+                            image : transformBuildingImage(image);
                     notifyObservers();
                 };
                 image.src = pathPrefix + building.image;
@@ -133,6 +141,10 @@ ImageLoader = function () {
         for (i = observers.length; i--;) {
             observers[i](done);
         }
+    };
+
+    transformBuildingImage = function (source) {
+        throw new Error('not yet implemented');
     };
 
     transformTileImage = function (source) {
