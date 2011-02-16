@@ -175,8 +175,11 @@ MiniMap = function () {
             y1 += vy;
             rx = Math.round(x1);
             ry = Math.round(y1);
-            buildingsLayerIndex[rx][ry] = true;
-            ctx.fillRect(xRatio * rx, yRatio * ry, xRatioC, yRatioC);
+            if (buildingsLayerIndex[rx] &&
+                    (buildingsLayerIndex[rx][ry] !== undefined)) {
+                buildingsLayerIndex[rx][ry] = true;
+                ctx.fillRect(xRatio * rx, yRatio * ry, xRatioC, yRatioC);
+            }
         } while ((Math.round(x1) != x2) && (Math.round(y1) != y2))
     };
 
