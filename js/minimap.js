@@ -1,4 +1,5 @@
 var MiniMap;
+require('map', 'tile', 'building', 'unit');
 
 MiniMap = function () {
     var map, container, buildingsLayer, unitsLayer, width, height, mapWidth,
