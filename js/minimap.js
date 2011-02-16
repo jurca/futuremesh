@@ -40,8 +40,10 @@ MiniMap = function () {
         height = container.offsetHeight;
         buildingsLayer.width = unitsLayer.width = width;
         buildingsLayer.height = unitsLayer.height = height;
-        unitsLayer.style.marginTop = -height + 'px';
-        container.appendChild(buildingsLayer);
+        newContainer = document.createElement('div');
+        newContainer.style.height = '0px';
+        newContainer.appendChild(buildingsLayer);
+        container.appendChild(newContainer);
         container.appendChild(unitsLayer);
         if (mapWidth) {
             initRenderer();
