@@ -29,19 +29,43 @@ Unit = (function () {
                 Player.getPlayer(player).color : color;
 
         this.move = function (distance) {
-            this.lastX = this.x;
-            this.lastY = this.y;
-            if ((this.direction >= 1) && (this.direction <= 3)) {
-                this.x += distance;
+            var lastX, lastY;
+            lastX = this.x;
+            lastY = this.y;
+            if (distance > 1) {
+                this.move(distance - 1);
             }
-            if (this.direction >= 5) {
-                this.x -= distance;
-            }
-            if ((this.direction == 7) || (this.direction <= 1)) {
-                this.y -= distance;
-            }
-            if ((this.direction >= 3) && (this.direction <= 5)) {
-                this.y += distance;
+            this.lastX = lastX;
+            this.lastY = lastY;
+            switch (this.direction) {
+                case 0:
+                    this.y -= 2;
+                    break;
+                case 1:
+                    this.x += this.y % 2;
+                    this.y -= 1;
+                    break;
+                case 2:
+                    this.x += 1;
+                    break;
+                case 3:
+                    this.x += this.y % 2;
+                    this.y += 1;
+                    break;
+                case 4:
+                    this.y += 2;
+                    break;
+                case 5:
+                    this.x -= 1 - (this.y % 2);
+                    this.y += 1;
+                    break;
+                case 6:
+                    this.x -= 1;
+                    break;
+                case 7:
+                    this.x -= 1 - (this.y % 2);
+                    this.y -= 1;
+                    break;
             }
             this.action = 2;
         };
