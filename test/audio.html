@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Audio engine test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../js/audio.js"></script>
+    <script type="text/javascript">
+(function () {
+    var init;
+
+    init = function () {
+        var audio;
+        audio = new Audio(['test.mp3', 'test.ogg'], {
+            onload: function () {
+                document.getElementsByTagName('span')[0].innerHTML = 'ready';
+            },
+            onended: function () {
+                document.getElementsByTagName('span')[0].innerHTML = 'Finished!';
+            }
+        });
+        document.getElementById('play').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.play();
+        }, false);
+        document.getElementById('pause').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.pause();
+        }, false);
+    };
+
+    addEventListener('DOMContentLoaded', init, false);
+}());
+    </script>
+  </head>
+  <body>
+      <span>loading...</span><br />
+      <a href="#" id="play">play</a>
+      <a href="#" id="pause">pause</a>
+      <pre></pre>
+  </body>
+</html>
