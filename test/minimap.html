@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Minimap</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../js/require.js"></script>
+    <script type="text/javascript" src="../js/minimap.js"></script>
+    <script type="text/javascript">
+var init = function () {
+    var map, minimap, building, unit, timer, interval;
+    map = new Map();
+    map.randomMap(150, 150);
+    minimap = new MiniMap();
+    minimap.setMap(map.getMap());
+    minimap.setContainer(document.getElementsByTagName('div')[0]);
+
+    building = new Building(17, 2, 0, 0, 'rgb(150,150,200)');
+    minimap.onBuildingChange(building);
+
+    unit = new Unit(75, 75, 0, 0, 0, 'rgb(200,0,0)');
+    minimap.onUnitChange(unit);
+
+    minimap.render();
+
+    timer = 150;
+    interval = setInterval(function () {
+        if (!timer--) {
+            clearInterval(interval);
+            return;
+        }
+        unit.move(1);
+        unit.direction = Math.floor(Math.random() * 8);
+        minimap.onUnitChange(unit);
+        minimap.render();
+    }, 10);
+
+    setTimeout(function () {
+        building.type = false;
+        minimap.onBuildingChange(building);
+        unit.action = 1;
+        minimap.onUnitChange(unit);
+        minimap.render();
+    }, 2000);
+};
+
+addEventListener('DOMContentLoaded', init, false);
+    </script>
+  </head>
+  <body>
+      <div style="width: 700px; height: 700px;"></div>
+  </body>
+</html>
