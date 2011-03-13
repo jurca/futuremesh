@@ -17,23 +17,27 @@
             onended: function () {
                 document.getElementsByTagName('span')[0].innerHTML = 'Finished!';
             },
-            duration: 197
+            duration: 81
         });
         document.getElementById('play').addEventListener('click', function (e) {
             e.preventDefault();
             audio.play();
+            document.getElementsByTagName('span')[0].innerHTML = 'playing';
         }, false);
         document.getElementById('pause').addEventListener('click', function (e) {
             e.preventDefault();
             audio.pause();
+            document.getElementsByTagName('span')[0].innerHTML = 'paused';
         }, false);
         document.getElementById('stop').addEventListener('click', function (e) {
             e.preventDefault();
             audio.stop();
+            document.getElementsByTagName('span')[0].innerHTML = 'stop';
         }, false);
         document.getElementById('play-from-start').addEventListener('click', function (e) {
             e.preventDefault();
             audio.playFromStart();
+            document.getElementsByTagName('span')[0].innerHTML = 'playing';
         }, false);
 
         setInterval(function () {
