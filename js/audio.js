@@ -37,7 +37,9 @@ Audio = (function () {
     };
 
     return function (src, options) {
-        var audio, i, runOnEnded, container;
+        var audio, i, runOnEnded, container, duration, playOffset, playStart,
+                instance;
+        instance = this;
         if (!defaultContainer) {
             defaultContainer = document.body;
         }
@@ -51,23 +53,19 @@ Audio = (function () {
                 }
             }, 10);
         }
+        duration = options.duration;
+        playOffset = 0;
         runOnEnded = false;
+
         if (options.onended instanceof Function) {
+            if (!duration) {
+                throw new Error('Cannot use onended API withou duration info');
+            }
             setInterval(function () {
-                var tmp;
-                if (audio.ended && !runOnEnded) {
+                if (!runOnEnded && (instance.getCurrentTime() >= duration)) {
+                    options.onended();
                     runOnEnded = true;
-                    if (isNaN(audio.duration)) {
-                        options.onended();
-                    } else {
-                        tmp = setInterval(function () {
-                            options.onended();
-                            clearInterval(tmp);
-                            audio.parentNode.removeChild(audio);
-                            audio = createAudio(src, options);
-                            container.appendChild(audio);
-                        }, 12000);
-                    }
+                    instance.stop();
                 }
             }, 10);
         }
@@ -78,15 +76,39 @@ Audio = (function () {
 
         this.play = function () {
             audio.play();
+            playStart = (new Date()).getTime();
             runOnEnded = false;
         };
 
         this.pause = function () {
             audio.pause();
+            playOffset += ((new Date()).getTime() - playStart) / 1000;
+        };
+
+        this.stop = function () {
+            audio.pause();
+            playOffset = 0;
+            audio.parentNode.removeChild(audio);
+            audio = createAudio(src, options);
+            container.appendChild(audio);
+        };
+
+        this.playFromStart = function () {
+            this.stop();
+            this.play();
+        };
+
+        this.isPaused = function () {
+            return audio.paused;
         };
 
         this.getCurrentTime = function () {
-            return audio.currentTime;
+            if (!duration) {
+                throw new Error(
+                        'cannot determine current time without duration info');
+            }
+            return playOffset + (this.isPaused() ? 0 :
+                    ((new Date()).getTime() - playStart) / 1000);
         };
 
         this.getVolume = function () {
@@ -96,6 +118,18 @@ Audio = (function () {
         this.setVolume = function (volume) {
             audio.volume = volume;
         };
+
+        setInterval(function () {
+            var s = '', i;
+            for (i in audio) {
+                try {
+                    s += i + "\t=\t" + audio[i] + "\n";
+                } catch (e) {
+                    s += i + "\r=\t[well... something]\n";
+                }
+            }
+            document.getElementsByTagName('pre')[0].innerHTML = s;
+        }, 50);
 
         container.appendChild(audio);
     }
