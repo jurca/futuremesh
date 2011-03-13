@@ -16,7 +16,8 @@
             },
             onended: function () {
                 document.getElementsByTagName('span')[0].innerHTML = 'Finished!';
-            }
+            },
+            duration: 197
         });
         document.getElementById('play').addEventListener('click', function (e) {
             e.preventDefault();
@@ -26,6 +27,18 @@
             e.preventDefault();
             audio.pause();
         }, false);
+        document.getElementById('stop').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.stop();
+        }, false);
+        document.getElementById('play-from-start').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.playFromStart();
+        }, false);
+
+        setInterval(function () {
+            document.getElementsByTagName('span')[1].innerHTML = audio.getCurrentTime();
+        }, 15);
     };
 
     addEventListener('DOMContentLoaded', init, false);
@@ -34,8 +47,11 @@
   </head>
   <body>
       <span>loading...</span><br />
+      Current time: <span></span><br />
       <a href="#" id="play">play</a>
       <a href="#" id="pause">pause</a>
+      <a href="#" id="stop">stop</a>
+      <a href="#" id="play-from-start">play from start</a>
       <pre></pre>
   </body>
 </html>
