@@ -7,9 +7,12 @@ MiniMap = function () {
             tileWidth, tileHeight, changedTerrain, changedBuildings,
             changedUnits, drawTileLine, fill, buildingsLayerIndex, createIndex,
             xRatioC, yRatioC, initRenderer, renderUnitsLayer,
-            renderBuildingsLayer, renderTerrainLayer;
+            renderBuildingsLayer, renderTerrainLayer, terrainLayer,
+            terrainLayerCtx;
 
     map = [];
+    terrainLayer = document.createElement('canvas');
+    terrainLayerCtx = terrainLayer.getContext('2d');
     buildingsLayer = document.createElement('canvas');
     buildingsLayerCtx = buildingsLayer.getContext('2d');
     unitsLayer = document.createElement('canvas');
@@ -38,8 +41,13 @@ MiniMap = function () {
         container = newContainer;
         width = container.offsetWidth;
         height = container.offsetHeight;
-        buildingsLayer.width = unitsLayer.width = width;
-        buildingsLayer.height = unitsLayer.height = height;
+        terrainLayer.width = buildingsLayer.width = unitsLayer.width = width;
+        terrainLayer.height = buildingsLayer.height = unitsLayer.height =
+                height;
+        newContainer = document.createElement('div');
+        newContainer.style.height = '0px';
+        newContainer.appendChild(terrainLayer);
+        container.appendChild(newContainer);
         newContainer = document.createElement('div');
         newContainer.style.height = '0px';
         newContainer.appendChild(buildingsLayer);
@@ -119,14 +127,11 @@ MiniMap = function () {
         for (i = map.length; i--;) {
             row = map[i];
             for (j = row.length; j--;) {
-                buildingsLayerCtx.fillStyle = row[j].minimap;
-                buildingsLayerCtx.fillRect(xRatio * j, yRatio * i,
+                terrainLayerCtx.fillStyle = row[j].minimap;
+                terrainLayerCtx.fillRect(xRatio * j, yRatio * i,
                         tileWidth, tileHeight);
             }
         }
-        container.style.backgroundImage = 'url(' + buildingsLayer.toDataURL() +
-                ')';
-        buildingsLayerCtx.clearRect(0, 0, width, height);
         changedTerrain = false;
     };
 
