@@ -3,7 +3,7 @@ require('../data/tilesdefinition');
 
 TerrainLayer = function () {
     var buffer, canvas, canvasWidth, canvasHeight, canvasContext, map,
-            bufferWidth, bufferHeight;
+            bufferWidth, bufferHeight, rawBuffer;
 
     this.setCanvas = function (newCanvas) {
         canvas = newCanvas;
@@ -27,8 +27,7 @@ TerrainLayer = function () {
     };
 
     this.display = function (x, y) {
-        canvasContext.putImageData(buffer.getImageData(x, y, canvasWidth,
-                canvasHeight), 0, 0);
+        canvasContext.putImageData(rawBuffer, -x, -y);
     };
 
     this.init = function () {
@@ -62,5 +61,6 @@ TerrainLayer = function () {
         bufferWidth = buffer.width;
         bufferHeight = buffer.height;
         buffer = context;
+        rawBuffer = context.getImageData(0, 0, bufferWidth, bufferHeight);
     };
 };
