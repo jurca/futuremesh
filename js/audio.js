@@ -119,18 +119,6 @@ Audio = (function () {
             audio.volume = volume;
         };
 
-        setInterval(function () {
-            var s = '', i;
-            for (i in audio) {
-                try {
-                    s += i + "\t=\t" + audio[i] + "\n";
-                } catch (e) {
-                    s += i + "\r=\t[well... something]\n";
-                }
-            }
-            document.getElementsByTagName('pre')[0].innerHTML = s;
-        }, 50);
-
         container.appendChild(audio);
     }
 }());
