@@ -3,7 +3,7 @@ require('../data/tilesdefinition', '../data/buildingsdefinition');
 
 BuildingsLayer = function () {
     var buffer, canvas, canvasWidth, canvasHeight, canvasContext, bufferWidth,
-            bufferHeight, tileWidth, tileHeight;
+            bufferHeight, tileWidth, tileHeight, rawBuffer;
 
     this.setCanvas = function (newCanvas) {
         canvas = newCanvas;
@@ -31,6 +31,7 @@ BuildingsLayer = function () {
         buffer.width = bufferWidth;
         buffer.height = bufferHeight;
         buffer = buffer.getContext('2d');
+        rawBuffer = buffer.getImageData(0, 0, bufferWidth, bufferHeight);
     };
 
     this.onBuildingAdded = function (building) {
@@ -40,6 +41,7 @@ BuildingsLayer = function () {
         y = tileHeight * building.y;
         buffer.globalCompositeOperation = 'source-over';
         buffer.drawImage(type.imageData, x, y);
+        rawBuffer = buffer.getImageData(0, 0, bufferWidth, bufferHeight);
     };
 
     this.onBuildingRemoved = function (building) {
@@ -49,10 +51,10 @@ BuildingsLayer = function () {
         y = tileHeight * building.y;
         buffer.globalCompositeOperation = 'destination-out';
         buffer.drawImage(type.imageData, x, y);
+        rawBuffer = buffer.getImageData(0, 0, bufferWidth, bufferHeight);
     };
 
     this.display = function (x, y) {
-        canvasContext.putImageData(buffer.getImageData(x, y, canvasWidth,
-                canvasHeight), 0, 0);
+        canvasContext.putImageData(rawBuffer, -x, -y);
     };
 };
