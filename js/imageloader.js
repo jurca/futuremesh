@@ -1,6 +1,11 @@
 var ImageLoader;
 require('settings', '../data/settings');
 
+/**
+ * Utility for loading images of tiles, buildings and units and providing info
+ * about loading progress. If the tiles', buildings' or units' images are not
+ * pre-rotated, this utility will auto-rotate them.
+ */
 ImageLoader = function () {
     var loadBuildingImages, notifyObservers, buildingsIndex, observers,
             unitsIndex, loadUnitImages, tilesIndex, loadTilesImages,
@@ -9,20 +14,47 @@ ImageLoader = function () {
     observers = [];
     pathPrefix = '';
 
+    /**
+     * Begins the loading procedure.
+     *
+     * @param {BuildingsDefinition} buildings The BuildingsDefinition class.
+     * @param {UnitsDefinition} units The UnitsDefinition class.
+     * @param {TilesDefinition} tiles The TilesDefinition class.
+     */
     this.load = function (buildings, units, tiles) {
         loadBuildingImages(buildings);
         loadUnitImages(units);
         loadTilesImages(tiles);
     };
 
+    /**
+     * Rgisters an observer function that will be notified on each progress
+     * of loading.
+     *
+     * @param {Function} observer The observer function that should be executed
+     *        when the loading process progresses. This function receives
+     *        single parameter - a Number from the [0,1] interval. The value
+     *        will be 1 once the loading process is complete.
+     */
     this.addObserver = function (observer) {
         observers.push(observer);
     };
 
+    /**
+     * Sets path prefix that will be used with paths to tiles', buildings' and
+     * units' images.
+     *
+     * @param {String} prefix The prefix that should be prepended to all paths.
+     */
     this.setPathPrefix = function (prefix) {
         pathPrefix = prefix;
     };
 
+    /**
+     * Starts loading of tiles' images.
+     *
+     * @param {TilesDefinition} tiles The TilesDefinition class.
+     */
     loadTilesImages = function (tiles) {
         var tile, currentType;
         tilesIndex = [];
@@ -47,6 +79,11 @@ ImageLoader = function () {
         }
     };
 
+    /**
+     * Starts loading units' images.
+     *
+     * @param {UnitsDefinition} units The UnitsDefinition class.
+     */
     loadUnitImages = function (units) {
         var unit, currentType;
         unitsIndex = [];
@@ -94,6 +131,11 @@ ImageLoader = function () {
         }
     };
 
+    /**
+     * Starts loading building's images.
+     *
+     * @param {BuildingsDefinition} buildings The BuildingsDefinition class.
+     */
     loadBuildingImages = function (buildings) {
         var building, currentType;
         buildingsIndex = [];
@@ -121,6 +163,11 @@ ImageLoader = function () {
         }
     };
 
+    /**
+     * Executes all registered observers, passing them the current progress
+     * through single parameter in form of a Number from range [0,1], where 1
+     * means that all images has been loaded.
+     */
     notifyObservers = function () {
         var i, done;
         done = 0;
@@ -145,6 +192,14 @@ ImageLoader = function () {
         }
     };
 
+    /**
+     * Transforms raw building's image by rotating it by 25 degrees clockwise.
+     *
+     * @param {Image} source The raw image to transform.
+     * @param {Number} width The width of the building in tiles.
+     * @param {Number} height The height of the building in tiles.
+     * @return {Image} A transformed image.
+     */
     transformBuildingImage = function (source, width, height) {
         var canvas, context, data;
         canvas = document.createElement('canvas');
@@ -166,6 +221,13 @@ ImageLoader = function () {
         return data;
     };
 
+    /**
+     * Transforms raw tiles's / unit's image by rotating it by 25 degrees
+     * clockwise.
+     *
+     * @param {Image} source The raw image to transform.
+     * @return {Image} A transformed image.
+     */
     transformTileImage = function (source) {
         var canvas, context, data;
         canvas = document.createElement('canvas');
