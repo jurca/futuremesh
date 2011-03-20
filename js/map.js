@@ -25,12 +25,11 @@ Map = function () {
     };
 
     this.randomMap = function (width, height) {
-        var i, j, row, random;
+        var i, j, row;
         map = [];
         for (i = height; i--;) {
             row = [];
             for (j = width; j--;) {
-                random = Math.round(Math.random() * 155) + 50;
                 row.push(new Tile(Math.floor(Math.random() * 3)));
             }
             map.push(row);
