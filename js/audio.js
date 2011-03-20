@@ -96,8 +96,8 @@ var Audio;
         if (options.onload instanceof Function) {
             i = setInterval(function () {
                 if (audio.readyState == 4) {
-                    options.onload();
                     clearInterval(i);
+                    options.onload();
                 }
             }, 10);
         }
@@ -111,9 +111,9 @@ var Audio;
             }
             setInterval(function () {
                 if (!runOnEnded && (instance.getCurrentTime() >= duration)) {
-                    options.onended();
                     runOnEnded = true;
                     instance.stop();
+                    options.onended();
                 }
             }, 10);
         }
