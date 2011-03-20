@@ -68,6 +68,10 @@ Music = function () {
     this.getCurrentTrack = function () {
         return current;
     };
+
+    this.getCurrentTime = function () {
+        return playlist[current].audio.getCurrentTime();
+    };
     
     this.setLoop = function (newLoop) {
         loop = newLoop;
@@ -95,8 +99,8 @@ Music = function () {
         }
         speed *= 1000;
         start = (new Date()).getTime();
-        playlist[next].setVolume(0);
-        playlist[next].play();
+        playlist[next].audio.setVolume(0);
+        playlist[next].audio.play();
         interval = setInterval(function () {
             var offset;
             offset = (new Date()).getTime() - start;
@@ -105,7 +109,7 @@ Music = function () {
             playlist[current].audio.setVolume(volume * (1 - offset));
             playlist[next].audio.setVolume(volume * offset);
             if (offset >= 1) {
-                playlist[current].stop();
+                playlist[current].audio.stop();
                 clearInterval(interval);
                 current = next;
             }
