@@ -1,6 +1,10 @@
 var MiniMap;
 require('map', 'tile', 'building', 'unit');
 
+/**
+ * The minimap renderer. Uses passive rendering - renderes only changes from
+ * the previous renderered state.
+ */
 MiniMap = function () {
     var map, container, buildingsLayer, unitsLayer, width, height, mapWidth,
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
@@ -21,6 +25,11 @@ MiniMap = function () {
     changedBuildings = false;
     changedUnits = false;
 
+    /**
+     * Sets the raw map data and initializes the renderer.
+     *
+     * @param {Array} newMap The raw map data.
+     */
     this.setMap = function (newMap) {
         if (!(newMap instanceof Array) || !newMap[0] ||
                 !(newMap[0] instanceof Array)) {
@@ -34,6 +43,15 @@ MiniMap = function () {
         }
     };
 
+    /**
+     * Sets the container in which the minimap should be rendered. The renderer
+     * will place additional canvases into the container that will be used to
+     * render the separate layers of the minimap. Then the renderer is
+     * intialized.
+     *
+     * @param {HTMLElement} newContainer The container which shall be used to
+     *        render the minimap.
+     */
     this.setContainer = function (newContainer) {
         if (!(newContainer instanceof HTMLElement)) {
             throw new Error("container must be an HTML element");
@@ -58,20 +76,37 @@ MiniMap = function () {
         }
     };
 
+    /**
+     * Event handler of change of building (creation or destruction).
+     *
+     * @param {Building} building The building which status has changed.
+     */
     this.onBuildingChange = function (building) {
         changedBuildings.push(building);
     };
 
+    /**
+     * Event handler of change of unit (creation, destruction or movement).
+     *
+     * @param {Unit} unit The unit which status has changed.
+     */
     this.onUnitChange = function (unit) {
         changedUnits.push(unit);
     };
 
+    /**
+     * Renders the registered changes of buildings and units. If the terrain
+     * has not been rendered so far, it is rendered too.
+     */
     this.render = function () {
         changedTerrain && renderTerrainLayer();
         changedBuildings.length && renderBuildingsLayer();
         changedUnits.length && renderUnitsLayer();
     };
 
+    /**
+     * Renders changes in the unit's layer.
+     */
     renderUnitsLayer = function () {
         var i, unit;
         for (i = changedUnits.length; i--;) {
@@ -97,6 +132,9 @@ MiniMap = function () {
         changedUnits = [];
     };
 
+    /**
+     * Renders the changes in the buildings layer.
+     */
     renderBuildingsLayer = function () {
         var i, building, x1, y1, x2, y2, x3, y3, x4, y4;
         for (i = changedBuildings.length; i--;) {
@@ -122,6 +160,9 @@ MiniMap = function () {
         changedBuildings = [];
     };
 
+    /**
+     * Renders the terrain layer.
+     */
     renderTerrainLayer = function () {
         var i, j, row;
         for (i = map.length; i--;) {
@@ -135,6 +176,12 @@ MiniMap = function () {
         changedTerrain = false;
     };
 
+    /**
+     * Creates index used by the renderer for storing positions of units or
+     * buildings.
+     *
+     * @return {Array} The two-dimensional array index.
+     */
     createIndex = function () {
         var index, i, j;
         index = new Array(mapWidth);
@@ -147,6 +194,19 @@ MiniMap = function () {
         return index;
     };
 
+    /**
+     * Fills the area of tiles on the minimap. The area is defined by the tiles
+     * of the same color.
+     *
+     * @param {Number} x The X coordinate of the tile position where the
+     *        filling should be performed.
+     * @param {Number} y The Y coordinate of the tile position where the
+     *        filling should be performed.
+     * @param {CanvasRenderingContext2D} ctx The 2D context of the canvas for
+     *        rendering.
+     * @param {fillColor} fillColor The color that should be used to color the
+     *        area.
+     */
     fill = function (x, y, ctx, fillColor) {
         var thisColor;
         if ((x >= mapWidth) || (x < 0) || (y >= mapHeight) || (y < 0)) {
@@ -166,6 +226,16 @@ MiniMap = function () {
         }
     };
 
+    /**
+     * Draw a line of tiles onto the canvas.
+     *
+     * @param {Number} x1 The starting X coordinate.
+     * @param {Number} y1 The starting Y coordinate.
+     * @param {Number} x2 The ending X coordinate.
+     * @param {Number} y2 The ending Y coordinate.
+     * @param {CanvasRenderingContext2D} ctx The 2D context of the canvas to be
+     *        used for rendering.
+     */
     drawTileLine = function (x1, y1, x2, y2, ctx) {
         var len, vx, vy, rx, ry;
         vx = x2 - x1;
@@ -188,6 +258,9 @@ MiniMap = function () {
         } while ((Math.round(x1) != x2) && (Math.round(y1) != y2))
     };
 
+    /**
+     * Initalizes the renderer - scaling, tile sizes and private properties.
+     */
     initRenderer = function () {
         xRatio = width / mapWidth;
         yRatio = height / mapHeight;
