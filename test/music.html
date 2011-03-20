@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Music engine test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../js/require.js"></script>
+    <script type="text/javascript">
+(function () {
+    var init, music, $, $$;
+
+    require('music');
+
+    $ = function (select) {
+        return document.querySelectorAll(select);
+    };
+
+    $$ = function (select) {
+        return $(select)[0];
+    };
+
+    init = function () {
+        music = new Music();
+        music.addLoadingObserver(function (percent) {
+            $$('#loading').innerHTML = Math.round(percent * 100) + ' %';
+        });
+        music.setPlaylist([
+            {
+                src: ['test.mp3', 'test.ogg'],
+                duration: 81
+            },
+            {
+                src: ['test2.mp3', 'test2.ogg'],
+                duration: 81
+            }
+        ]);
+        setInterval(function () {
+            $$('#song').innerHTML = music.getCurrentTrack();
+            $$('#playing').innerHTML = music.isPlaying();
+            $$('#loop').innerHTML = music.getLoop();
+            $$('#time').innerHTML = music.getCurrentTime();
+        }, 100);
+        $$('#play').addEventListener('click', function (e) {
+            e.preventDefault();
+            music.play();
+        }, false);
+        $$('#pause').addEventListener('click', function (e) {
+            e.preventDefault();
+            music.pause();
+        }, false);
+        $$('#stop').addEventListener('click', function (e) {
+            e.preventDefault();
+            music.stop();
+        }, false);
+        $$('#loop').addEventListener('click', function (e) {
+            e.preventDefault();
+            music.setLoop(!music.getLoop());
+        }, false);
+        $$('#previous').addEventListener('click', function (e) {
+            e.preventDefault();
+            music.previous();
+        }, false);
+        $$('#next').addEventListener('click', function (e) {
+            e.preventDefault();
+            music.next();
+        }, false);
+        $$('#volume').addEventListener('change', function (e) {
+            music.setVolume($$('#volume').value);
+        }, false);
+        $$('#fade').addEventListener('click', function (e) {
+            e.preventDefault();
+            music.fadeToSong(0, 4);
+        }, false);
+    };
+
+    addEventListener('DOMContentLoaded', init, false);
+}());
+    </script>
+  </head>
+  <body>
+      <p>
+          Loading progress: <span id="loading"></span>
+      </p>
+      <p>
+          Current song: <span id="song"></span>
+      </p>
+      <p>
+          <a href="#" id="previous">previous</a>
+          <a href="#" id="play">play</a>
+          <a href="#" id="pause">pause</a>
+          <a href="#" id="stop">stop</a>
+          <a href="#" id="next">next</a>
+      </p>
+      <p>
+          <a href="#" id="fade">fade to song 0</a>
+      </p>
+      <p>Playing: <span id="playing"></span></p>
+      <p>Loop: <a href="#" id="loop"></a></p>
+      <p>Current time: <span id="time"></span></p>
+      <p>Volume: <input type="range" min="0" max="1" step="0.05" value="1" id="volume" /></p>
+      <pre></pre>
+  </body>
+</html>
