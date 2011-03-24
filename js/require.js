@@ -12,8 +12,22 @@ var require;
         }
     }
 
+    /**
+     * Index of JS files loaded using the require function used to avoid
+     * reloading of the already loaded files.
+     */
     loaded = {};
 
+    /**
+     * Loads additional JS files. This funcion should be used <strong>only
+     * before</strong> the DOMContentLoaded event occurs.
+     *
+     * The function uses variable number of parameters, each parameter should
+     * be name of the JS file to load. These files are loaded from the
+     * directory where the require.js file is located.
+     *
+     * Example: require('tile', 'unit'); // will load tile.js and unit.js.
+     */
     require = function () {
         var i, file, length;
         length = arguments.length;
