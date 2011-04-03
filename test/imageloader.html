@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>ImageLoader test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../js/require.js"></script>
+    <script type="text/javascript" src="../js/imageloader.js"></script>
+    <script type="text/javascript" src="../js/settings.js"></script>
+    <script type="text/javascript" src="../data/tilesdefinition.js"></script>
+    <script type="text/javascript" src="../data/buildingsdefinition.js"></script>
+    <script type="text/javascript" src="../data/unitsdefinition.js"></script>
+    <script type="text/javascript" src="../data/settings.js"></script>
+    <script type="text/javascript">
+var init = function () {
+    var loader, i;
+    loader = new ImageLoader();
+    loader.addObserver(function (percent) {
+        document.getElementsByTagName('span')[0].innerHTML = percent * 100;
+        if (percent == 1) {
+            drawImages();
+        }
+    });
+    for (i = 0; TilesDefinition.getType(i); i++) {
+        TilesDefinition.getType(i).image =
+                '../' + TilesDefinition.getType(i).image;
+    }
+    for (i = 0; BuildingsDefinition.getType(i); i++) {
+        BuildingsDefinition.getType(i).image =
+                '../' + BuildingsDefinition.getType(i).image;
+    }
+    for (i = 0; UnitsDefinition.getType(i); i++) {
+        UnitsDefinition.getType(i).image =
+                '../' + UnitsDefinition.getType(i).image;
+    }
+    loader.load(BuildingsDefinition, UnitsDefinition, TilesDefinition);
+};
+
+var drawImages = function () {
+    var i, canvas, context, j;
+    canvas = document.getElementById('tiles');
+    context = canvas.getContext('2d');
+    for (i = 0; TilesDefinition.getType(i); i++) {
+        context.drawImage(TilesDefinition.getType(i).imageData, i * 30 + 10,
+                5);
+    }
+    canvas = document.getElementById('units');
+    context = canvas.getContext('2d');
+    for (i = 0; UnitsDefinition.getType(i); i++) {
+        for (j = 8; j--;) {
+            context.drawImage(UnitsDefinition.getType(i).imageData[j],
+                    i * 30 + 10, j * 30 + 10);
+        }
+    }
+    canvas = document.getElementById('bldngs');
+    context = canvas.getContext('2d');
+    for (i = 0; BuildingsDefinition.getType(i); i++) {
+        context.drawImage(BuildingsDefinition.getType(i).imageData,
+                30 * i + 10, 10);
+    }
+};
+
+window.addEventListener('DOMContentLoaded', init, false);
+    </script>
+  </head>
+  <body style="background: #afa;">
+      <p>Loading images: <span>0</span> % done</p>
+      <p><canvas width="1000" height="50" id="tiles" style="border: 1px solid #000;"></canvas></p>
+      <p><canvas width="1000" height="300" id="units" style="border: 1px solid #000;"></canvas></p>
+      <p><canvas width="1000" height="200" id="bldngs" style="border: 1px solid #000;"></canvas></p>
+  </body>
+</html>
