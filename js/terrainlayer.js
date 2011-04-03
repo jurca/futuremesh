@@ -2,13 +2,11 @@ var TerrainLayer;
 require('../data/tilesdefinition');
 
 TerrainLayer = function () {
-    var buffer, canvas, canvasWidth, canvasHeight, canvasContext, map,
-            bufferWidth, bufferHeight, rawBuffer;
+    var buffer, canvas, canvasContext, map, bufferWidth, bufferHeight,
+            rawBuffer;
 
     this.setCanvas = function (newCanvas) {
         canvas = newCanvas;
-        canvasWidth = canvas.width;
-        canvasHeight = canvas.height;
         canvasContext = canvas.getContext('2d');
     };
 
