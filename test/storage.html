@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>Storage test</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../js/require.js"></script>
+        <script type="text/javascript">
+(function () {
+    require('storage');
+    
+    addEventListener('DOMContentLoaded', function () {
+        var keys, i;
+        keys = Storage.getKeys();
+        for (i = keys.length; i--;) {
+            document.querySelector('pre').innerHTML += keys[i] + ": " +
+                    JSON.stringify(Storage.get(keys[i]));
+        }
+        
+        document.querySelector("#set").addEventListener('click', function (e) {
+            e.preventDefault();
+            Storage.persist("test", {
+                n: 1,
+                b: false,
+                s: "string"
+            });
+        }, false);
+        document.querySelector("#clear").addEventListener('click', function (e) {
+            e.preventDefault();
+            Storage.clear()
+        }, false);
+        document.querySelector("#modify").addEventListener('click', function (e) {
+            e.preventDefault();
+            window.test ? test.n++ : false;
+        }, false);
+    }, false);
+}());
+        </script>
+    </head>
+    <body>
+        <p>
+            <a id="set" href="#">Persist data object to storage</a>
+            <a id="modify" href="#">Modify global copy of persisted object</a>
+            <a id="clear" href="#">Clear storage</a>
+        </p>
+        <p>Reload the page to see the changes in the storage</p>
+        <p>Contents of the localStorage:</p>
+        <pre></pre>
+    </body>
+</html>
