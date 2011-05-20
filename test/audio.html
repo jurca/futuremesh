@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Audio engine test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="../js/audio.js"></script>
+    <script type="text/javascript">
+(function () {
+    var init;
+
+    init = function () {
+        var audio;
+        audio = new Audio(['test.mp3', 'test.ogg'], {
+            onload: function () {
+                document.getElementsByTagName('span')[0].innerHTML = 'ready';
+            },
+            onended: function () {
+                document.getElementsByTagName('span')[0].innerHTML = 'Finished!';
+            },
+            duration: 81
+        });
+        document.getElementById('play').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.play();
+            document.getElementsByTagName('span')[0].innerHTML = 'playing';
+        }, false);
+        document.getElementById('pause').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.pause();
+            document.getElementsByTagName('span')[0].innerHTML = 'paused';
+        }, false);
+        document.getElementById('stop').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.stop();
+            document.getElementsByTagName('span')[0].innerHTML = 'stop';
+        }, false);
+        document.getElementById('play-from-start').addEventListener('click', function (e) {
+            e.preventDefault();
+            audio.playFromStart();
+            document.getElementsByTagName('span')[0].innerHTML = 'playing';
+        }, false);
+
+        setInterval(function () {
+            document.getElementsByTagName('span')[1].innerHTML = audio.getCurrentTime();
+        }, 15);
+    };
+
+    addEventListener('DOMContentLoaded', init, false);
+}());
+    </script>
+  </head>
+  <body>
+      <span>loading...</span><br />
+      Current time: <span></span><br />
+      <a href="#" id="play">play</a>
+      <a href="#" id="pause">pause</a>
+      <a href="#" id="stop">stop</a>
+      <a href="#" id="play-from-start">play from start</a>
+      <pre></pre>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5 Transitional//EN">
+<html>
+  <head>
+    <title>HTML5 map Smart Canvas render</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+body {
+    margin: 0px;
+    padding: 0px;
+}
+    </style>
+    <script type="text/javascript">
+var Renderer = function () {
+    var canvas, c2d, width, height, tiles, i, createPNGImage, mapLayerData,
+            tileSize, tileWidth, tileHeight, heightScale, quality;
+
+    tileSize = 20;
+    heightScale = 0.82;
+    quality = 0.5;
+    tileWidth = tileSize * Math.cos(Math.PI / 4) * 2 * quality;
+    tileHeight = tileSize * quality * Math.sin(Math.PI / 4) * 2 * heightScale;
+
+    canvas = document.getElementsByTagName('canvas')[0];
+    width = window.innerWidth;
+    height = window.innerHeight - 5;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    width *= quality;
+    height *= quality;
+    canvas.width = width;
+    canvas.height = height;
+
+    c2d = canvas.getContext("2d");
+    c2d.save();
+    c2d.scale(1, heightScale);
+    c2d.rotate(45 * Math.PI / 180);
+
+    createPNGImage = function (imgData) {
+        var canvas;
+        canvas = document.createElement('canvas');
+        canvas.width = imgData.width;
+        canvas.height = imgData.height;
+        canvas.getContext("2d").putImageData(imgData, 0, 0);
+        imgData = new Image();
+        imgData.src = canvas.toDataURL();
+        imgData.alt = 'done';
+        return imgData;
+    };
+
+    tiles = [new Image(), new Image()];
+    for (i = tiles.length; i--;) {
+        (function () {
+            var index = i;
+            tiles[i].onload = function () {
+                c2d.drawImage(this, 30 * quality, 0, tileSize * quality,
+                        tileSize * quality);
+                tiles[index] = c2d.getImageData(7, 22 * quality * heightScale,
+                        tileWidth, tileHeight);
+                tiles[index] = createPNGImage(tiles[index]);
+                if ((tiles[0].alt === 'done') && (tiles[1].alt === 'done')) {
+                    c2d.restore();
+                }
+            };
+            tiles[i].src = (i + 1) + '.png';
+        }());
+    }
+
+    this.render = function () {
+        var ctx, data, w, h;
+        ctx = c2d;
+        data = mapLayerData;
+        w = width / 2;
+        h = height / 2;
+        ctx.putImageData(data[0][0], 0, 0);
+        ctx.putImageData(data[0][1], w, 0);
+        ctx.putImageData(data[1][0], 0, h);
+        ctx.putImageData(data[1][1], w, h);
+    };
+
+    this.renderInit = function () {
+        var tls, ctx, i, j, rowsCount, colsCount, xOffset, yOffset;
+        tls = tiles;
+        ctx = c2d;
+        rowsCount = Math.ceil(height / (tileHeight - 2) + 1) * 2;
+        colsCount = Math.ceil(width / tileWidth + 1) * 2;
+
+        yOffset = -tileHeight;
+        for (i = rowsCount; i--;) {
+            xOffset = i % 2 * (-tileWidth / 2);
+            for (j = colsCount; j--;) {
+                ctx.drawImage(tls[j % 2], xOffset + j * (tileWidth - 1),
+                        yOffset);
+            }
+            yOffset += (tileHeight - 2) / 2;
+        }
+        mapLayerData = [
+            [
+                ctx.getImageData(0, 0, width / 2, height / 2),
+                ctx.getImageData(width / 2, 0, width / 2, height / 2)
+            ],
+            [
+                ctx.getImageData(0, height / 2, width / 2, height / 2),
+                ctx.getImageData(width / 2, height / 2, width / 2, height / 2)
+            ]
+        ]
+    };
+};
+
+addEventListener('load', function () {
+    var renderer, results, i;
+    renderer = new Renderer();
+    setTimeout(function () {
+        renderer.renderInit();
+    }, 500);
+    results = [];
+    for (i = 20; i--;) {
+        setTimeout(function () {
+            var start, end;
+            start = new Date();
+            renderer.render();
+            setTimeout(function () {
+                end = new Date();
+                results.push(end.getTime() - start.getTime());
+            }, 0);
+        }, 1000 * (i + 1));
+    }
+    i = setInterval(function () {
+        var sum;
+        if (results.length < 20) {
+            return;
+        }
+        clearInterval(i);
+        sum = 0;
+        for (i = 20; i--;) {
+            sum += results[i];
+        }
+        alert('Average rendering time: ' + (sum / 20) + 'ms\nDetails: ' +
+                results);
+    }, 1000);
+}, false);
+    </script>
+  </head>
+  <body>
+        <canvas></canvas>
+  </body>
+</html>
