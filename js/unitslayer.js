@@ -3,6 +3,9 @@ var UnitsLayer;
 require('settings', '../data/settings', '../data/unitsdefinition',
         '../data/tilesdefinition');
 
+/**
+ * Renderer of the units layer in the UI main View.
+ */
 UnitsLayer = function () {
     var canvas, canvasWidth, canvasHeight, canvasContext, tileWidth,
             tileHeight, grid, addUnit, removeUnit, gridWidth, gridHeight,
@@ -10,6 +13,12 @@ UnitsLayer = function () {
             horizonzalIndexTilesOnDisplay, verticalIndexTilesOnDisplay,
             indexGranularity, displayIndexCell;
 
+    /**
+     * Sets the canvas that will be used for rendering. This has to be done
+     * before map is set.
+     *
+     * @param {HTMLCanvasElement} newCanvas
+     */
     this.setCanvas = function (newCanvas) {
         canvas = newCanvas;
         canvasWidth = canvas.width;
@@ -17,6 +26,14 @@ UnitsLayer = function () {
         canvasContext = canvas.getContext('2d');
     };
 
+    /**
+     * Sets the map for the renderer. This cannot be done before canvas has
+     * been set. The map isn't actually used in any way - it is used only to
+     * determine the dimensions of grid index used to optimize rendering of the
+     * units layer. The granularity of the index may be set using Settings.
+     * 
+     * @param {Array} map Raw map data
+     */
     this.setMap = function (map) {
         var i, j, row;
         if (!canvas) {
@@ -51,6 +68,21 @@ UnitsLayer = function () {
                 Math.ceil(verticalTilesOnDisplay / indexGranularity);
     };
 
+    /**
+     * Return an object containing dimensions of the layer being rendered. This
+     * renderer however doesn't use an inner buffer of which dimensions could
+     * be returned. Because units usually move with each drawn frame, the
+     * renderer uses only grid index to identify the section of the map of
+     * which units should be rendered, so the values returned by this method
+     * are dimensions of a hypothetical inner rendering buffer.
+     * 
+     * @return {Object} Objection containing information about layer dimensions
+     *         in two properties:
+     *         <ul>
+     *             <li>width - width of the layer in pixels</li>
+     *             <li>height - height of the layer in pixels</li>
+     *         </ul>
+     */
     this.getLayerDimensions = function () {
         return {
             width: gridWidth * tileWidth + tileWidth / 2,
@@ -58,6 +90,13 @@ UnitsLayer = function () {
         };
     };
 
+    /**
+     * Event handler for change of any unit's state. If any unit is created,
+     * destroyed or moved or has performed any action, the units layer render
+     * can be notified of this change using this method.
+     * 
+     * @param {Unit} unit Unit of which state has changed.
+     */
     this.onUnitChange = function (unit) {
         switch (unit.action) {
             case 2:
@@ -71,6 +110,12 @@ UnitsLayer = function () {
         }
     };
 
+    /**
+     * Display chosen part of the whole map view's units.
+     * 
+     * @param {Number} x The X offset of the view specified in pixels
+     * @param {Number} y The Y offset of the view specified in pixels
+     */
     this.display = function (x, y) {
         var gridX, gridY, indexX, indexY, i, j;
         canvasContext.globalCompositeOperation = 'destination-out';
@@ -92,6 +137,17 @@ UnitsLayer = function () {
         }
     };
 
+    /**
+     * Display content of a grid index' cell - the units contained in this cell
+     * - onto the renderer's canvas
+     * 
+     * @param {Number} x The X coordinate in the grid index indentifying the
+     *        column of the grid index containing the cell
+     * @param {Number} y The Y coordinate in the grid index indentifying the
+     *        row of the grid index containing the cell
+     * @param {Number} screenX The X offset of the view specified in pixels
+     * @param {Number} screenY The Y offset of the view specified in pixels
+     */
     displayIndexCell = function (x, y, screenX, screenY) {
         var i, j, unit, gridX, gridY, currentX, currentY, offsetX;
         gridX = x * indexGranularity;
@@ -112,12 +168,22 @@ UnitsLayer = function () {
         }
     };
 
+    /**
+     * Adds a new unit to the index and grid index.
+     * 
+     * @param {Unit} unit Unit to be added to the index.
+     */
     addUnit = function (unit) {
         grid[unit.y][unit.x] = unit;
         index[Math.floor(unit.y / indexGranularity)][Math.floor(unit.x /
                 indexGranularity)]++;
     };
 
+    /**
+     * Removes a unit from the index and the grid index.
+     * 
+     * @param {Unit} unit Unit to be removed from the index.
+     */
     removeUnit = function (unit) {
         if (unit.action == 1) {
             grid[unit.y][unit.x] = false;
