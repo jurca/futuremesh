@@ -1,3 +1,4 @@
+"use strict";
 var MiniMap;
 require('map', 'tile', 'building', 'unit');
 

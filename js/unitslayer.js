@@ -1,3 +1,4 @@
+"use strict";
 var UnitsLayer;
 require('settings', '../data/settings', '../data/unitsdefinition',
         '../data/tilesdefinition');

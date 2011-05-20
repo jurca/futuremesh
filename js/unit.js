@@ -1,3 +1,4 @@
+"use strict";
 var Unit;
 require('../data/unitsdefinition', 'player');
 

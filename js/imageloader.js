@@ -1,3 +1,4 @@
+"use strict";
 var ImageLoader;
 require('settings', '../data/settings');
 

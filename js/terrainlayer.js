@@ -1,3 +1,4 @@
+"use strict";
 var TerrainLayer;
 require('../data/tilesdefinition');
 

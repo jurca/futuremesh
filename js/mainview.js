@@ -1,3 +1,4 @@
+"use strict";
 var MainView;
 require('terrainlayer', 'buildingslayer', 'unitslayer', 'tile', 'building',
         'unit', 'map');

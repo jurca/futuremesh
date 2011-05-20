@@ -1,7 +1,7 @@
-var Audio;
+"use strict";
 
 (function () {
-    var defaultContainer, getExtension, createAudio;
+    var Audio, defaultContainer, getExtension, createAudio;
 
     defaultContainer = false;
 
@@ -224,4 +224,6 @@ var Audio;
     Audio.setDefaultContainer = function (container) {
         defaultContainer = container;
     };
+    
+    window.Audio = Audio;
 }());

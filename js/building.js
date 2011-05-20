@@ -1,3 +1,4 @@
+"use strict";
 var Building;
 require('../data/buildingsdefinition', 'player');
 

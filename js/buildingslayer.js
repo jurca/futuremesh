@@ -1,3 +1,4 @@
+"use strict";
 var BuildingsLayer;
 require('../data/tilesdefinition', '../data/buildingsdefinition');
 

@@ -1,3 +1,4 @@
+"use strict";
 var Tile;
 require('../data/tilesdefinition');
 
