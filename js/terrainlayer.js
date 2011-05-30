@@ -7,7 +7,7 @@ require('../data/tilesdefinition');
  */
 TerrainLayer = function () {
     var buffer, canvas, canvasContext, map, bufferWidth, bufferHeight,
-            rawBuffer;
+            bufferCanvas;
 
     /**
      * Sets the canvas to be used to render the terrain in the UI.
@@ -59,7 +59,7 @@ TerrainLayer = function () {
      * @param {Number} y The Y offset of the terrain layer to be displayed.
      */
     this.display = function (x, y) {
-        canvasContext.putImageData(rawBuffer, -x, -y);
+        canvasContext.drawImage(buffer.canvas, -x, -y);
     };
 
     /**
@@ -81,26 +81,24 @@ TerrainLayer = function () {
         if (!map) {
             throw new Error('Cannot init terrain renderer without map data');
         }
-        buffer = document.createElement('canvas');
+        bufferCanvas = document.createElement('canvas');
         tileWidth = TilesDefinition.getType(0).imageData.width;
         tileHeight = TilesDefinition.getType(0).imageData.height;
-        context = buffer.getContext('2d');
+        buffer = bufferCanvas.getContext('2d');
         tileHeight /= 2;
         tileWidth -= 1;
         tileHeight -= 1;
-        buffer.width = map[0].length * tileWidth + tileWidth / 2;
-        buffer.height = map.length * tileHeight + tileHeight;
+        bufferCanvas.width = map[0].length * tileWidth + tileWidth / 2;
+        bufferCanvas.height = map.length * tileHeight + tileHeight;
         for (i = map.length; i--;) {
             row = map[i];
             xOffset = (i % 2) * (tileWidth / 2);
             for (j = row.length; j--;) {
-                context.drawImage(TilesDefinition.getType(row[j].type).
+                buffer.drawImage(TilesDefinition.getType(row[j].type).
                         imageData, xOffset + j * tileWidth, i * tileHeight);
             }
         }
-        bufferWidth = buffer.width;
-        bufferHeight = buffer.height;
-        buffer = context;
-        rawBuffer = context.getImageData(0, 0, bufferWidth, bufferHeight);
+        bufferWidth = bufferCanvas.width;
+        bufferHeight = bufferCanvas.height;
     };
 };
