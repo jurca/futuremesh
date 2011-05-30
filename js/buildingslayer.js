@@ -7,7 +7,7 @@ require('../data/tilesdefinition', '../data/buildingsdefinition');
  */
 BuildingsLayer = function () {
     var buffer, canvas, canvasWidth, canvasHeight, canvasContext, bufferWidth,
-            bufferHeight, tileWidth, tileHeight, rawBuffer;
+            bufferHeight, tileWidth, tileHeight, bufferCanvas;
 
     /**
      * Sets the canvas that will be used for rendering of the buildings layer.
@@ -50,11 +50,10 @@ BuildingsLayer = function () {
         tileHeight -= 1;
         bufferWidth = map[0].length * tileWidth + tileWidth / 2;
         bufferHeight = map.length * tileHeight + tileHeight;
-        buffer = document.createElement('canvas');
-        buffer.width = bufferWidth;
-        buffer.height = bufferHeight;
-        buffer = buffer.getContext('2d');
-        rawBuffer = buffer.getImageData(0, 0, bufferWidth, bufferHeight);
+        bufferCanvas = document.createElement('canvas');
+        bufferCanvas.width = bufferWidth;
+        bufferCanvas.height = bufferHeight;
+        buffer = bufferCanvas.getContext('2d');
     };
 
     /**
@@ -71,7 +70,6 @@ BuildingsLayer = function () {
         y = tileHeight * building.y;
         buffer.globalCompositeOperation = 'source-over';
         buffer.drawImage(type.imageData, x, y);
-        rawBuffer = buffer.getImageData(0, 0, bufferWidth, bufferHeight);
     };
 
     /**
@@ -88,7 +86,6 @@ BuildingsLayer = function () {
         y = tileHeight * building.y;
         buffer.globalCompositeOperation = 'destination-out';
         buffer.drawImage(type.imageData, x, y);
-        rawBuffer = buffer.getImageData(0, 0, bufferWidth, bufferHeight);
     };
 
     /**
@@ -99,6 +96,7 @@ BuildingsLayer = function () {
      * @param {Number} y The Y offset in pixels.
      */
     this.display = function (x, y) {
-        canvasContext.putImageData(rawBuffer, -x, -y);
+        canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
+        canvasContext.drawImage(bufferCanvas, -x, -y);
     };
 };
