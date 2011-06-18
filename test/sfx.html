@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SFX test</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../js/require.js"></script>
+        <script type="text/javascript">
+(function () {
+    var init, doStuff;
+    
+    require('imageloader', 'building', 'tile', 'unit', 'map', 'terrainlayer',
+            'sfx');
+    
+    init = function () {
+        var loader;
+        loader = new ImageLoader();
+        loader.addObserver(function (percent) {
+            if (percent == 1) {
+                doStuff();
+            }
+        });
+        loader.setPathPrefix('../');
+        loader.load(BuildingsDefinition, UnitsDefinition, TilesDefinition);
+    };
+    
+    doStuff = function () {
+        var map, terrain, canvas, x, y, tx, ty, dimensions, context, i, sfx;
+        map = new Map();
+        map.randomMap(100, 100);
+        terrain = new TerrainLayer();
+        terrain.setCanvas(document.getElementById('terrain'));
+        terrain.setMap(map.getMap());
+        terrain.init();
+        sfx = new SFX();
+        sfx.setCanvas(canvas = document.querySelector('#sfx'));
+        sfx.setMap(map);
+        x = y = tx = ty = 0;
+        dimensions = terrain.getBufferDimensions();
+        context = canvas.getContext('2d');
+        setInterval(function () {
+            var date = new Date().getTime();
+            terrain.display(x, y);
+            sfx.display(x, y);
+            context.fillText("RenderTime: " + (new Date().getTime() - date) + " ms", 9, 9);
+            context.fillText("FPS: " + (1000 / (new Date().getTime() - date)), 9, 24);
+            if ((tx == x) && (ty == y)) {
+                tx = Math.floor(Math.random() * dimensions.width - 1);
+                ty = Math.floor(Math.random() * dimensions.height - 1);
+            }
+            x += tx > x ? 1 : (tx < x ? -1 : 0);
+            y += ty > y ? 1 : (ty < y ? -1 : 0);
+        }, 10);
+    };
+    
+    addEventListener('DOMContentLoaded', init, false);
+}());
+        </script>
+    </head>
+    <body>
+        <div style="height: 0px"><canvas id="terrain" width="800" height="600" style="border: 1px solid red"></canvas></div>
+        <canvas id="sfx" width="800" height="600" style="border: 1px solid black"></canvas>
+        <!--<canvas id="sfx" width="800" height="600" style="border: 1px solid black;"></canvas>
+        <pre id="console" style="overflow: auto; width: 800px; height: 200px; border: 1px solid gray"></pre>-->
+    </body>
+</html>

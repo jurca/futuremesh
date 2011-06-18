@@ -60,12 +60,15 @@ Map = function () {
      * @param {Number} height The height of the required random map
      */
     this.randomMap = function (width, height) {
-        var i, j, row;
+        var i, j, row, tile;
         map = [];
         for (i = height; i--;) {
             row = [];
             for (j = width; j--;) {
-                row.push(new Tile(Math.floor(Math.random() * 3)));
+                tile = new Tile(Math.floor(Math.random() * 3));
+                tile.lightSfx = !Math.floor(Math.random() * 10) ?
+                        Math.floor(Math.random() * 5) : 0;
+                row.push(tile);
             }
             map.push(row);
         }
