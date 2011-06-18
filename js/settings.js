@@ -59,6 +59,14 @@ Settings = {
     unitImagesTransformed: false,
 
     /**
+     * Sets the "depth" factor of the 3D sfx light beams from the terrain.
+     * Should be a real number greater than 1.
+     *
+     * @type Number
+     */
+    sfx3DLightFactor: undefined,
+
+    /**
      * Sets and loads the settings. Some properties will be calculated
      * automatically.
      *
@@ -83,6 +91,9 @@ Settings = {
      *          <li>unitImagesTransformed - Set to true if the images of units
      *              has been already transformed. If set to false the engine
      *              will rotate and skew the unit images.</li>
+     *          <li>sfx3DLightFactor - Sets the "depth" factor of the 3D light
+     *              beams from the terrain. Should be a real number greater
+     *              than 1.</li>
      *        </ul>
      *        If any of these properties will be ommited, default value will be
      *        used (if exists).
@@ -104,5 +115,6 @@ Settings = {
         if (settings.unitImagesTransformed !== undefined) {
             this.unitImagesTransformed = settings.unitImagesTransformed;
         }
+        this.sfx3DLightFactor = settings.sfx3DLightFactor;
     }
 };
