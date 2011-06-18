@@ -19,10 +19,14 @@ View = function () {
      *        render the buildings
      * @param {HTMLCanvasElement} unitsCanvas Canvas that should be used to
      *        render the units
+     * @param {HTMLCanvasElement} sfxCanvas Canvas that should be used to
+     *        render sfx
      */
-    this.setCanvases = function (terrainCanvas, buildingsCanvas, unitsCanvas) {
+    this.setCanvases = function (terrainCanvas, buildingsCanvas, unitsCanvas,
+            sfxCanvas) {
         mainview = new MainView();
-        mainview.setCanvases(terrainCanvas, buildingsCanvas, unitsCanvas);
+        mainview.setCanvases(terrainCanvas, buildingsCanvas, unitsCanvas,
+                sfxCanvas);
     };
 
     /**
