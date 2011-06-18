@@ -123,7 +123,6 @@ UnitsLayer = function () {
         canvasContext.globalCompositeOperation = 'source-over';
         gridX = Math.max(0, Math.floor(x / tileWidth) - 1);
         gridY = Math.max(0, Math.floor(y / tileHeight) - 1);
-        y -= 2;
         indexX = Math.floor(gridX / indexGranularity);
         indexY = Math.floor(gridY / indexGranularity);
         for (i = verticalIndexTilesOnDisplay; i--;) {

@@ -39,7 +39,7 @@ SFX = function () {
     this.display = function (x, y) {
         var mapOffsetX, mapOffsetY, i, j, offsetX, offsetY, shiftX, endX, endY,
                 mapRow, mapTile;
-        y -= 2 + tileHeight;
+        y -= tileHeight;
         x -= tileWidth / 2;
         context.clearRect(0, 0, canvasWidth, canvasHeight);
         mapOffsetX = Math.floor(x / tileWidth);
