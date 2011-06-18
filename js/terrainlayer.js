@@ -95,7 +95,8 @@ TerrainLayer = function () {
             xOffset = (i % 2) * (tileWidth / 2);
             for (j = row.length; j--;) {
                 buffer.drawImage(TilesDefinition.getType(row[j].type).
-                        imageData, xOffset + j * tileWidth, i * tileHeight);
+                        imageData, xOffset + j * tileWidth,
+                        i * tileHeight - 2);
             }
         }
         bufferWidth = bufferCanvas.width;
