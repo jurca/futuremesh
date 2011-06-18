@@ -66,7 +66,7 @@ Map = function () {
             row = [];
             for (j = width; j--;) {
                 tile = new Tile(Math.floor(Math.random() * 3));
-                tile.lightSfx = !Math.floor(Math.random() * 10) ?
+                tile.lightSfx = !Math.floor(Math.random() * 20) ?
                         Math.floor(Math.random() * 5) : 0;
                 row.push(tile);
             }
