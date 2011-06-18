@@ -1,14 +1,14 @@
 "use strict";
 var MainView;
 require('terrainlayer', 'buildingslayer', 'unitslayer', 'tile', 'building',
-        'unit', 'map');
+        'unit', 'map', 'sfx');
 
 /**
  * Unifying class handling the rendering of terrain, buildings and units
  * layers.
  */
 MainView = function () {
-    var terrainLayer, buildingsLayer, unitsLayer;
+    var terrainLayer, buildingsLayer, unitsLayer, sfxLayer;
 
     /**
      * Sets rendering canvases for terrain layer, buildings layer and units
@@ -20,14 +20,19 @@ MainView = function () {
      *        layer renderer.
      * @param {HTMLCanvasElement} unitsCanvas The canvas for the units layer
      *        renderer.
+     * @param {HTMLCanvasElement} sfxCanvas The canvas for the sfx layer
+     *        renderer.
      */
-    this.setCanvases = function (terrainCanvas, buildingsCanvas, unitsCanvas) {
+    this.setCanvases = function (terrainCanvas, buildingsCanvas, unitsCanvas,
+            sfxCanvas) {
         terrainLayer = new TerrainLayer();
         terrainLayer.setCanvas(terrainCanvas);
         buildingsLayer = new BuildingsLayer();
         buildingsLayer.setCanvas(buildingsCanvas);
         unitsLayer = new UnitsLayer();
         unitsLayer.setCanvas(unitsCanvas);
+        sfxLayer = new SFX();
+        sfxLayer.setCanvas(sfxCanvas);
     };
 
     /**
@@ -45,6 +50,7 @@ MainView = function () {
         terrainLayer.setMap(map);
         buildingsLayer.setMap(map);
         unitsLayer.setMap(map);
+        sfxLayer.setMap(map);
         terrainLayer.init();
     };
 
@@ -58,6 +64,7 @@ MainView = function () {
         terrainLayer.display(x, y);
         buildingsLayer.display(x, y);
         unitsLayer.display(x, y);
+        sfxLayer.display(x, y);
     };
 
     /**

@@ -32,7 +32,8 @@
         map = new Map();
         map.randomMap(100, 100);
         view = new MainView();
-        view.setCanvases(gC('terrain'), gC('buildings'), canvas = gC('units'));
+        view.setCanvases(gC('terrain'), gC('buildings'), canvas = gC('units'),
+                gC('sfx'));
         view.setMap(map);
         for (i = 25; i--;) {
             building = new Building(Math.floor(Math.random() * 100),
@@ -70,6 +71,7 @@
   <body>
       <div style="height: 0px"><canvas id="terrain" width="800" height="600" style="border: 1px solid red"></canvas></div>
       <div style="height: 0px"><canvas id="buildings" width="800" height="600" style="border: 1px solid green"></canvas></div>
-      <canvas id="units" width="800" height="600" style="border: 1px solid black"></canvas>
+      <div style="height: 0px"><canvas id="units" width="800" height="600" style="border: 1px solid black"></canvas></div>
+      <canvas id="sfx" width="800" height="600" style="border: 1px solid black"></canvas>
   </body>
 </html>
