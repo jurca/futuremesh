@@ -85,7 +85,7 @@ BuildingsLayer = function () {
         x = (tileWidth / 2) * (building.y % 2) + tileWidth * building.x;
         y = tileHeight * building.y;
         buffer.globalCompositeOperation = 'destination-out';
-        buffer.drawImage(type.imageData, x, y);
+        buffer.drawImage(type.imageData, x, y - 2);
     };
 
     /**
