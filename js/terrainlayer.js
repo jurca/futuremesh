@@ -71,10 +71,7 @@ TerrainLayer = function () {
      * buffer that is used to display the terrain in the UI.
      */
     this.init = function () {
-        var tileWidth, tileHeight, i, j, row, xOffset, context;
-        if (buffer) {
-            return;
-        }
+        var tileWidth, tileHeight, i, j, row, xOffset;
         if (!canvasContext) {
             throw new Error("Missing renderer's target canvas");
         }
