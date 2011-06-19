@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>FutureMesh Map Editor 0.1</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="mapeditor/ui.css" media="all" />
+        <link rel="stylesheet" type="text/css" href="mapeditor/uicomponents.css" media="all" />
+        <script type="text/javascript" src="js/require.js"></script>
+        <script type="text/javascript" src="mapeditor/mapeditor.js"></script>
+    </head>
+    <body>
+        <div class="body">
+            <ul id="menu">
+                <li id="menu-newmap">New map</li>
+                <li class="disabled">Save map</li>
+                <li class="disabled">Load map</li>
+                <li id="menu-import">Import map</li>
+                <li id="menu-export">Export map</li>
+            </ul>
+            <div id="view">
+                <div id="viewmap">
+                    <div class="canvas-container"><canvas id="terrain" width="800" height="600"></canvas></div>
+                    <div class="canvas-container"><canvas id="buildings" width="800" height="600"></canvas></div>
+                    <div class="canvas-container"><canvas id="units" width="800" height="600"></canvas></div>
+                    <canvas id="sfx" width="800" height="600"></canvas>
+                </div>
+                <div id="v-scroll-container">
+                    <input id="v-scroll" type="range" min="0" max="1" step="0.001" value="0" />
+                </div>
+                <input id="h-scroll" type="range" min="0" max="1" step="0.001" value="0" />
+                <div id="view-resize">
+                    <div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div id="pallete">
+                <label>
+                    <span>Terrain tiles</span> <input type="radio" name="pallete-group" checked="" />
+                    <span id="palette-terrain">TODO</span>
+                </label>
+                <label>
+                    <span>Buildings</span> <input type="radio" name="pallete-group" />
+                    <span id="palette-buildings">TODO</span>
+                </label>
+                <label>
+                    <span>Units</span> <input type="radio" name="pallete-group" />
+                    <span id="palette-units">TODO</span>
+                </label>
+                <label>
+                    <span>SFX</span> <input type="radio" name="pallete-group" />
+                    <span id="palette-sfx">TODO</span>
+                </label>
+            </div>
+            <div class="clear"></div>
+            <div id="bottom-panel">
+                <label title="Toggle terrain view"><input type="checkbox" checked="" id="terrain-toggle" /><span>T</span></label>
+                <label title="Toggle buildings view"><input type="checkbox" checked="" id="buildings-toggle" /><span>B</span></label>
+                <label title="Toggle units view"><input type="checkbox" checked="" id="units-toggle" /><span>U</span></label>
+                <label title="Toggle SFX view"><input type="checkbox" checked="" id="sfx-toggle" /><span>S</span></label>
+            </div>
+        </div>
+    </body>
+</html>
