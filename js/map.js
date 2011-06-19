@@ -91,4 +91,47 @@ Map = function () {
             map.push(row);
         }
     };
+
+    /**
+     * Exports the information about the map in a form of a JSON-serializable
+     * object so that the map could be reconstructed from this data later.
+     *
+     * @return {Object} object representing the information about the map
+     *         required to restore it to it's current state. This object is
+     *         JSON-serializable.
+     */
+    this.exportData = function () {
+        var i, j, data, mapRow, dataRow;
+        data = [];
+        for (i = map.length; i--;) {
+            mapRow = map[i];
+            dataRow = [];
+            for (j = mapRow.length; j--;) {
+                dataRow.unshift(mapRow[j].exportData());
+            }
+            data.unshift(dataRow);
+        }
+        return {
+            tiles: data
+        };
+    };
+
+    /**
+     * Creates map from provided data. The data should be a result of the
+     * exportData method.
+     *
+     * @param {Object} data The data from the exportData method.
+     */
+    this.importData = function (data) {
+        var i, j, mapRow, dataRow;
+        map = [];
+        for (i = data.tiles.length; i--;) {
+            mapRow = [];
+            dataRow = data.tiles[i];
+            for (j = dataRow.length; j--;) {
+                mapRow.unshift(Tile.importData(dataRow[j]));
+            }
+            map.unshift(mapRow);
+        }
+    };
 };

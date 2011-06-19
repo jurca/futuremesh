@@ -50,4 +50,32 @@ Tile = function (type) {
      * @type Number
      */
     this.lightSfx = 0;
+
+    /**
+     * Exports the information about the tile in form of a JSON-serializable
+     * object so that the tile can be recostructed from this data later.
+     *
+     * @return {Object} object representing the information about the tile
+     *         required to restore it to it's current state. This object is
+     *         JSON-serializable.
+     */
+    this.exportData = function () {
+        return {
+            type: this.type,
+            lightSfx: this.lightSfx
+        };
+    };
+};
+
+/**
+ * Creates new tile from provided data. The data should be a result of the
+ * exportData method.
+ *
+ * @param {Object} data The data from the exportData method.
+ */
+Tile.importData = function (data) {
+    var tile;
+    tile = new Tile(data.type);
+    tile.lightSfx = data.lightSfx;
+    return tile;
 };
