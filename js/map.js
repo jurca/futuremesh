@@ -53,6 +53,24 @@ Map = function () {
     };
 
     /**
+     * Generates a completely empty map consisting of only type 0 tiles.
+     * 
+     * @param {Number} width The width of the required map
+     * @param {Number} height The height of the required map
+     */
+    this.emptyMap = function (width, height) {
+        var i, j, row;
+        map = [];
+        for (i = height; i--;) {
+            row = [];
+            for (j = width; j--;) {
+                row.push(new Tile(0))
+            }
+            map.push(row);
+        }
+    };
+
+    /**
      * Generates a completely random map - completely random without any mean
      * or semantic or usefulness. Useful for simple testing.
      *
