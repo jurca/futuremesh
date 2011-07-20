@@ -13,6 +13,8 @@ body {
         color-stop(0.03, rgb(150,150,150)),
         color-stop(1, rgb(208,217,217))
     );
+    background-color: rgb(150,150,150);
+    background-repeat: no-repeat;
 }
 
 .body {
@@ -85,7 +87,7 @@ body {
     height: 8px;
 }
 
-#pallete {
+#palette {
     float: left;
     margin-left: 5px;
     width: 165px;
@@ -118,7 +120,7 @@ body {
     color: #777;
 }
 
-#pallete span {
+#palette span {
     display: block;
     background: #eee;
     font-size: 1.1em;
@@ -128,11 +130,11 @@ body {
     padding-right: 5px;
 }
 
-#pallete span + input {
+#palette span + input {
     display: none;
 }
 
-#pallete input + span {
+#palette input + span {
     border: none;
     background: none;
     height: 534px;
@@ -140,7 +142,7 @@ body {
     display: none;
 }
 
-#pallete input:checked + span {
+#palette input:checked + span {
     display: block;
 }
 
@@ -171,4 +173,18 @@ body {
     border-color: black;
     color: black;
     background: white;
+}
+
+#palette img {
+    display: block;
+    float: left;
+    margin: 5px;
+    padding: 5px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+}
+
+#palette img.selected {
+    border-color: black;
+    background: #e9e9e9;
 }
