@@ -1,3 +1,4 @@
+"use strict";
 require('imageloader', '../mapeditor/modal', '../mapeditor/progressbar',
         '../mapeditor/mapeditorviewui', '../mapeditor/mapeditormainmenu',
         '../mapeditor/mapeditorpallets', '../mapeditor/mapeditormouse');
