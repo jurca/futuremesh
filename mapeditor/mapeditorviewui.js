@@ -5,7 +5,7 @@ var MapEditorViewUI;
 /**
  * Class handling UI interaction with the map view.
  */
-MapEditorViewUI = function () {
+MapEditorViewUI = function (mouse) {
     var $, viewX, viewY, view, layerSize, currentMap;
     
     $ = function (selector) {
@@ -19,6 +19,7 @@ MapEditorViewUI = function () {
         if (layerSize) {
             viewY = this.value * (layerSize.height - $('terrain').height);
             view.display(viewX, viewY);
+            mouse.setMapOffset(viewX, viewY);
         }
     }, false);
     
@@ -26,6 +27,7 @@ MapEditorViewUI = function () {
         if (layerSize) {
             viewX = this.value * (layerSize.width - $('terrain').width);
             view.display(viewX, viewY);
+            mouse.setMapOffset(viewX, viewY);
         }
     }, false);
     
@@ -63,6 +65,7 @@ MapEditorViewUI = function () {
         $('h-scroll').value = 0;
         layerSize = view.getLayersDimensions();
         view.display(viewX, viewY);
+        mouse.setMapOffset(viewX, viewY);
     };
 
     /**
