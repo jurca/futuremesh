@@ -1,11 +1,12 @@
 require('imageloader', '../mapeditor/modal', '../mapeditor/progressbar',
         '../mapeditor/mapeditorviewui', '../mapeditor/mapeditormainmenu',
-        '../mapeditor/mapeditorpallets');
+        '../mapeditor/mapeditorpallets', '../mapeditor/mapeditormouse');
 
 var MapEditor;
 
 MapEditor = function () {
-    var $, viewUI, defaultMapWidth, defaultMapHeight, map, currentBrush;
+    var $, viewUI, defaultMapWidth, defaultMapHeight, map, currentBrush,
+            mouse;
     
     defaultMapWidth = 170;
     defaultMapHeight = 400;
@@ -16,7 +17,8 @@ MapEditor = function () {
 
     map = new Map();
     map.emptyMap(defaultMapWidth, defaultMapHeight);
-    viewUI = new MapEditorViewUI();
+    mouse = new MapEditorMouse();
+    viewUI = new MapEditorViewUI(mouse);
     viewUI.setMap(map);
     new MapEditorMainMenu(this, defaultMapWidth, defaultMapHeight);
     new MapEditorPallets(this);
