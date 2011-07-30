@@ -1,6 +1,10 @@
+"use strict";
 var SFX;
 require('settings', '../data/settings', 'map');
 
+/**
+ * Renderer of simple SFX on the map.
+ */
 SFX = function () {
     var canvas, map, canvasWidth, canvasHeight, mapWidth, mapHeight, tileWidth,
         tileHeight, context, canvasTileWidth, canvasTileHeight, depthFactor,
@@ -8,6 +12,11 @@ SFX = function () {
     
     depthFactor = Settings.sfx3DLightFactor;
     
+    /**
+     * Sets the output canvas for rendering.
+     * 
+     * @param {HTMLCavansElement} newCanvas New output canvas for rendering.
+     */
     this.setCanvas = function (newCanvas) {
         canvas = newCanvas;
         canvasWidth = canvas.width;
@@ -20,6 +29,12 @@ SFX = function () {
         canvasCenterY = canvasHeight / 2;
     };
     
+    /**
+     * Sets the current map of which SFX should be renderer.
+     * 
+     * @param {Map} newMap The map for rendering. The method also accepts raw
+     *        map data.
+     */
     this.setMap = function (newMap) {
         if (!canvas) {
             throw new Error("cannot set map for SFX before canvas!");
@@ -36,6 +51,13 @@ SFX = function () {
         canvasTileHeight = Math.ceil(canvasHeight / tileHeight);
     };
 
+    /**
+     * Displays the SFX of the map on the chosen offset on the provided
+     * canvas.
+     * 
+     * @param {Number} x X offset for rendering.
+     * @param {Number} y Y offset for rendering.
+     */
     this.display = function (x, y) {
         var mapOffsetX, mapOffsetY, i, j, offsetX, offsetY, shiftX, endX, endY,
                 mapRow, mapTile;
