@@ -94,3 +94,7 @@ form input[type="submit"] {
     font-weight: bold;
     margin-left: 10px;
 }
+
+.center {
+    text-align: center;
+}
