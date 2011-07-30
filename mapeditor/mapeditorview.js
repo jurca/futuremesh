@@ -19,6 +19,16 @@ MapEditorView = function () {
     enableSFX = true;
 
     /**
+     * Updates the display of the tile at the provided coordinates.
+     * 
+     * @param {Number} x The x coordinate of the changed tile.
+     * @param {Number} y The y coordinate of the changed tile.
+     */
+    this.updateTerrain = function (x, y) {
+        terrainLayer.updateTile(x, y);
+    };
+
+    /**
      * Toggles displaying of the terrain layer.
      */
     this.toggleTerrain = function () {

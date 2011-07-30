@@ -1,19 +1,42 @@
 "use strict";
 require('imageloader', 'mapeditor.modal', 'mapeditor.progressbar',
         'mapeditor.mapeditorviewui', 'mapeditor.mapeditormainmenu',
-        'mapeditor.mapeditorpallets', 'mapeditor.mapeditormouse');
+        'mapeditor.mapeditorpallets', 'mapeditor.mapeditormouse',
+        'mapeditor.mapeditorbrush');
 
 var MapEditor;
 
 MapEditor = function () {
     var $, viewUI, defaultMapWidth, defaultMapHeight, map, currentBrush,
-            mouse;
+            mouse, brush;
     
     defaultMapWidth = 170;
     defaultMapHeight = 400;
     
     $ = function (selector) {
         return document.getElementById(selector);
+    };
+
+    this.setMap = function (map) {
+        viewUI.setMap(map);
+        brush.setMap(map);
+    };
+
+    this.getMap = function () {
+        return viewUI.getMap();
+    };
+    
+    this.setCurrentBrush = function (newBrush) {
+        currentBrush = newBrush;
+        brush.setBrush(newBrush);
+    };
+    
+    this.getCurrentBrush = function () {
+        return currentBrush;
+    };
+    
+    this.updateTerrain = function (x, y) {
+        viewUI.updateTerrain(x, y);
     };
 
     map = new Map();
@@ -23,22 +46,7 @@ MapEditor = function () {
     viewUI.setMap(map);
     new MapEditorMainMenu(this, defaultMapWidth, defaultMapHeight);
     new MapEditorPallets(this);
-
-    this.setMap = function (map) {
-        viewUI.setMap(map);
-    };
-
-    this.getMap = function () {
-        return viewUI.getMap();
-    };
-    
-    this.setCurrentBrush = function (brush) {
-        currentBrush = brush;
-    };
-    
-    this.getCurrentBrush = function () {
-        return currentBrush;
-    };
+    brush = new MapEditorBrush(this, mouse, $('sfx'));
 };
 
 addEventListener('load', function () {

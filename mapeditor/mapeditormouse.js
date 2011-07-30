@@ -19,6 +19,14 @@ MapEditorMouse = function () {
         mouse.setMapOffset(x, y);
     };
     
+    this.getX = function () {
+        return mouse.getMapX();
+    };
+    
+    this.getY = function() {
+        return mouse.getMapY();
+    };
+    
     addEventListener('mousemove', function () {
         if (inCanvas) {
             status.innerHTML = '[' + mouse.getMapX() + ',' +

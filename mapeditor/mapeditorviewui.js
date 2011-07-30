@@ -68,6 +68,17 @@ MapEditorViewUI = function (mouse) {
         view.display(viewX, viewY);
         mouse.setMapOffset(viewX, viewY);
     };
+    
+    /**
+     * Updates the terrain layer's tile display at the provided coordinates.
+     * 
+     * @param {Number} x The x-coordinate of the updated tile.
+     * @param {Number} y THe y-coordinate of the updated tile.
+     */
+    this.updateTerrain = function (x, y) {
+        view.updateTerrain(x, y);
+        view.display(viewX, viewY);
+    };
 
     /**
      * Returns instance of Map class that is currently being displayed in the
