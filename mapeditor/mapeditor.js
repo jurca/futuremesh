@@ -1,7 +1,7 @@
 "use strict";
-require('imageloader', '../mapeditor/modal', '../mapeditor/progressbar',
-        '../mapeditor/mapeditorviewui', '../mapeditor/mapeditormainmenu',
-        '../mapeditor/mapeditorpallets', '../mapeditor/mapeditormouse');
+require('imageloader', 'mapeditor.modal', 'mapeditor.progressbar',
+        'mapeditor.mapeditorviewui', 'mapeditor.mapeditormainmenu',
+        'mapeditor.mapeditorpallets', 'mapeditor.mapeditormouse');
 
 var MapEditor;
 

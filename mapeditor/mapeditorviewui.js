@@ -1,5 +1,5 @@
 "use strict";
-require('../mapeditor/mapeditorview');
+require('mapeditor.mapeditorview');
 
 var MapEditorViewUI;
 
