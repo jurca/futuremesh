@@ -1,3 +1,4 @@
+"use strict";
 var MapEditorPallets;
 
 MapEditorPallets = function (mapEditor) {

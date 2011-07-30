@@ -1,3 +1,4 @@
+"use strict";
 require('../mapeditor/modal', '../mapeditor/formbuilder');
 
 var MapEditorMainMenu;

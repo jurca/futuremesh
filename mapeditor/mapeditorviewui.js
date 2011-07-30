@@ -1,3 +1,4 @@
+"use strict";
 require('../mapeditor/mapeditorview');
 
 var MapEditorViewUI;
