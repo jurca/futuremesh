@@ -59,7 +59,26 @@ TerrainLayer = function () {
      * @param {Number} y The Y offset of the terrain layer to be displayed.
      */
     this.display = function (x, y) {
-        canvasContext.drawImage(buffer.canvas, -x, -y);
+        canvasContext.drawImage(bufferCanvas, -x, -y);
+    };
+    
+    /**
+     * Updates the display of the tile at the provided coordinates.
+     * 
+     * @param {Number} x The x coordinate of the changed tile.
+     * @param {Number} y The y coordinate of the changed tile.
+     */
+    this.updateTile = function (x, y) {
+        var xOffset, tileWidth, tileHeight;
+        tileWidth = TilesDefinition.getType(0).imageData.width;
+        tileWidth -= 1;
+        tileHeight = TilesDefinition.getType(0).imageData.height;
+        tileHeight /= 2;
+        tileHeight -= 1;
+        xOffset = (y % 2) * (tileWidth / 2);
+        buffer.drawImage(TilesDefinition.getType(map[y][x].type).
+                        imageData, xOffset + x * tileWidth,
+                        y * tileHeight - 2);
     };
 
     /**
