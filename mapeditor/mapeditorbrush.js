@@ -2,8 +2,9 @@
 var MapEditorBrush;
 
 MapEditorBrush = function (mapEditor, mouse, canvas) {
-    var map, brush;
+    var map, brush, mouseDown;
     map = mapEditor.getMap();
+    mouseDown = false;
     
     this.setBrush = function (newBrush) {
         brush = newBrush;
@@ -29,6 +30,28 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
                     mapEditor.updateTerrain(x, y);
                 }
                 break;
+        }
+    }, false);
+    
+    canvas.addEventListener('mousedown', function () {
+        mouseDown = true;
+    }, false);
+    
+    addEventListener('mouseup', function () {
+        mouseDown = false;
+    }, false);
+    
+    canvas.addEventListener('mousemove', function () {
+        var x, y, mapData;
+        if (!mouseDown || (brush.layer != 'terrain')) {
+            return;
+        }
+        mapData = map.getMap();
+        x = mouse.getX();
+        y = mouse.getY();
+        if (mapData[y] && mapData[y][x]) {
+            mapData[y][x] = new Tile(brush.type);
+            mapEditor.updateTerrain(x, y);
         }
     }, false);
 };
