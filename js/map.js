@@ -64,7 +64,7 @@ Map = function () {
         for (i = height; i--;) {
             row = [];
             for (j = width; j--;) {
-                row.push(new Tile(0))
+                row.push(new Tile(0));
             }
             map.push(row);
         }
