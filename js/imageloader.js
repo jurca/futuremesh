@@ -1,6 +1,6 @@
 "use strict";
 var ImageLoader;
-require('settings', '../data/settings');
+require('settings', 'data.settings');
 
 /**
  * Utility for loading images of tiles, buildings and units and providing info

@@ -1,6 +1,6 @@
 "use strict";
 var SFX;
-require('settings', '../data/settings', 'map');
+require('settings', 'data.settings', 'map');
 
 /**
  * Renderer of simple SFX on the map.
