@@ -98,3 +98,13 @@ form input[type="submit"] {
 .center {
     text-align: center;
 }
+
+.filechooser input, .filechooser select {
+    width: 400px;
+}
+
+.filechooser select {
+    padding: 3px;
+    border-radius: 4px;
+    width: 408px;
+}
