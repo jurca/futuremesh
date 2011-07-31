@@ -2,7 +2,7 @@
 require('imageloader', 'mapeditor.modal', 'mapeditor.progressbar',
         'mapeditor.mapeditorviewui', 'mapeditor.mapeditormainmenu',
         'mapeditor.mapeditorpallets', 'mapeditor.mapeditormouse',
-        'mapeditor.mapeditorbrush');
+        'mapeditor.mapeditorbrush', 'player');
 
 var MapEditor;
 
@@ -38,6 +38,10 @@ MapEditor = function () {
     this.updateTerrain = function (x, y) {
         viewUI.updateTerrain(x, y);
     };
+    
+    this.updateBuilding = function (building) {
+        viewUI.updateBuilding(building);
+    };
 
     map = new Map();
     map.emptyMap(defaultMapWidth, defaultMapHeight);
@@ -47,6 +51,7 @@ MapEditor = function () {
     new MapEditorMainMenu(this, defaultMapWidth, defaultMapHeight);
     new MapEditorPallets(this);
     brush = new MapEditorBrush(this, mouse, $('sfx'));
+    Player.createGenericPlayers();
 };
 
 addEventListener('load', function () {

@@ -27,6 +27,15 @@ MapEditorView = function () {
     this.updateTerrain = function (x, y) {
         terrainLayer.updateTile(x, y);
     };
+    
+    /**
+     * Updates the display of the buildings layer with the provided building.
+     * 
+     * @param {Building} building The building that was updated.
+     */
+    this.updateBuilding = function (building) {
+        buildingsLayer.onBuildingAdded(building);
+    };
 
     /**
      * Toggles displaying of the terrain layer.
