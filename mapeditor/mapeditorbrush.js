@@ -49,7 +49,8 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
         mapData = map.getMap();
         x = mouse.getX();
         y = mouse.getY();
-        if (mapData[y] && mapData[y][x]) {
+        if (mapData[y] && mapData[y][x] &&
+                (mapData[y][x].type != brush.type)) {
             mapData[y][x] = new Tile(brush.type);
             mapEditor.updateTerrain(x, y);
         }
