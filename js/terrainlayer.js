@@ -1,6 +1,6 @@
 "use strict";
 var TerrainLayer;
-require('../data/tilesdefinition');
+require('data.tilesdefinition');
 
 /**
  * Renderer of the terrain in the UI.

@@ -1,6 +1,6 @@
 "use strict";
 var Tile;
-require('../data/tilesdefinition');
+require('data.tilesdefinition');
 
 /**
  * The Tile class representing a tile in the map. This class only holds details
