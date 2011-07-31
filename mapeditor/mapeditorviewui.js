@@ -79,6 +79,16 @@ MapEditorViewUI = function (mouse) {
         view.updateTerrain(x, y);
         view.display(viewX, viewY);
     };
+    
+    /**
+     * Updates the buildings layer with the provided building.
+     *
+     * @param {Building} building The building that was updated.
+     */
+    this.updateBuilding = function (building) {
+        view.updateBuilding(building);
+        view.display(viewX, viewY);
+    };
 
     /**
      * Returns instance of Map class that is currently being displayed in the
