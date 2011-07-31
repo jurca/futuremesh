@@ -7,9 +7,10 @@ require('tile');
  * manipulating the map and extracting useful information.
  */
 Map = function () {
-    var map;
+    var map, buildings, createBuildingsIndex;
 
     map = [];
+    buildings = [];
 
     /**
      * Sets raw map data.
@@ -19,6 +20,7 @@ Map = function () {
      */
     this.setMap = function (newMap) {
         map = newMap;
+        createBuildingsIndex();
     };
 
     /**
@@ -68,6 +70,7 @@ Map = function () {
             }
             map.push(row);
         }
+        createBuildingsIndex();
     };
 
     /**
@@ -90,6 +93,7 @@ Map = function () {
             }
             map.push(row);
         }
+        createBuildingsIndex();
     };
 
     /**
@@ -132,6 +136,18 @@ Map = function () {
                 mapRow.unshift(Tile.importData(dataRow[j]));
             }
             map.unshift(mapRow);
+        }
+    };
+    
+    createBuildingsIndex = function () {
+        var i, j, row;
+        buildings = [];
+        for (i = map.length; i--;) {
+            row = [];
+            for (j = map[0].length; j--;) {
+                row.push(null);
+            }
+            buildings.push(row);
         }
     };
 };
