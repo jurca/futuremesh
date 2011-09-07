@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mouse Gestures Test</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../js/mousegestures.js"></script>
+        <script type="text/javascript">
+var init;
+
+init = function () {
+    var gestures, console;
+    console = document.getElementById('console');
+    gestures = new MouseGestures(4, true, 5, 2);
+    gestures.addListener(function (gesture) {
+        console.appendChild(document.createTextNode('registered gesture: ' +
+                gesture.join('') + '\n'));
+    });
+    gestures.addGestureListener('0123', function () {
+        console.appendChild(document.
+                createTextNode('the square has been painted!\n'));
+    });
+};
+
+addEventListener('load', init, false);
+        </script>
+    </head>
+    <body>
+        <p>Hold down the right mouse button and then stroke the gesture.</p>
+        <pre id="console"></pre>
+    </body>
+</html>
