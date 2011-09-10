@@ -38,18 +38,15 @@ MainView = function () {
     /**
      * Sets the map for the renderer layers.
      *
-     * @param {Map} map The map instance or raw map data.
+     * @param {Map} map The map instance.
      */
     this.setMap = function (map) {
         if (!terrainLayer) {
             throw new Error('Cannot set map before canvas');
         }
-        if (map instanceof Map) {
-            map = map.getMap();
-        }
-        terrainLayer.setMap(map);
+        terrainLayer.setMap(map.getMap());
         buildingsLayer.setMap(map);
-        unitsLayer.setMap(map);
+        unitsLayer.setMap(map.getMap());
         sfxLayer.setMap(map);
         terrainLayer.init();
     };

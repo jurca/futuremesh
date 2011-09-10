@@ -103,12 +103,9 @@ MapEditorView = function () {
         if (!terrainLayer) {
             throw new Error('Cannot set map before canvas');
         }
-        if (map instanceof Map) {
-            map = map.getMap();
-        }
-        terrainLayer.setMap(map);
+        terrainLayer.setMap(map.getMap());
         buildingsLayer.setMap(map);
-        unitsLayer.setMap(map);
+        unitsLayer.setMap(map.getMap());
         sfxLayer.setMap(map);
         terrainLayer.init();
     };
