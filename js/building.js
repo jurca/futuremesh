@@ -96,6 +96,24 @@ require('data.buildingsdefinition', 'player');
         this.color = color === undefined ?
                 Player.getPlayer(player).color : color;
         buldings.push(this);
+        
+        /**
+         * Exports the information about the building in form of a
+         * JSON-serializable object so that the building can be recostructed
+         * from this data later.
+         *
+         * @return {Object} object representing the information about the
+         *         building required to restore it to it's current state. This
+         *         object is JSON-serializable.
+         */
+        this.exportData = function () {
+            return {
+                x: this.x,
+                y: this.y,
+                type: this.type,
+                player: this.player
+            };
+        };
     };
 
     /**
@@ -106,5 +124,15 @@ require('data.buildingsdefinition', 'player');
      */
     Building.getBuilding = function (id) {
         return buldings[id];
+    };
+    
+    /**
+     * Creates new building from provided data. The data should be a result of
+     * the exportData method.
+     *
+     * @param {Object} data The data from the exportData method.
+     */
+    Building.importData = function (data) {
+        return new Building(data.x, data.y, data.type, data.player);
     };
 }());
