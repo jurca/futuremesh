@@ -7,10 +7,35 @@ require('tile');
  * manipulating the map and extracting useful information.
  */
 Map = function () {
-    var map, buildings, createBuildingsIndex;
+    var map, buildings, buildingsList, createBuildingsIndex,
+            getBuildingPositions;
 
     map = [];
+    /**
+     * Two-dimensional array matching the tiles of the map. Each item is a null
+     * or a reference to the building occupying a tile. If a building is
+     * uccupying several tiles at once, all occupied tiles hold reference to
+     * the building.
+     * The structure of the index is: [verical axis (y)][horizontal axis (x)]
+     */
     buildings = [];
+    /**
+     * List of all buildings instances present on the map.
+     */
+    buildingsList = [];
+
+    /**
+     * Updates the building's status on the map (e.g. adding to the map).
+     */
+    this.updateBuilding = function (building) {
+        var positions, position, i;
+        buildingsList.push(building);
+        positions = getBuildingPositions(building);
+        for (i = positions.length; i--;) {
+            position = positions[i];
+            buildings[position.y][position.x] = building;
+        }
+    };
 
     /**
      * Sets raw map data.
@@ -32,6 +57,15 @@ Map = function () {
     this.getMap = function () {
         return map;
     }
+
+    /**
+     * Returns list of all buildings the map contains.
+     * 
+     * @return {Array} List of all buildings on the map.
+     */
+    this.getBuildings = function () {
+        return buildingsList;
+    };
 
     /**
      * Returns the chosen part of the raw map data. Originaly meant for the
@@ -105,7 +139,7 @@ Map = function () {
      *         JSON-serializable.
      */
     this.exportData = function () {
-        var i, j, data, mapRow, dataRow;
+        var i, j, data, mapRow, dataRow, buildingData;
         data = [];
         for (i = map.length; i--;) {
             mapRow = map[i];
@@ -115,8 +149,13 @@ Map = function () {
             }
             data.unshift(dataRow);
         }
+        buildingData = [];
+        for (i = buildingsList.length; i--;) {
+            buildingData.push(buildingsList[i].exportData());
+        }
         return {
-            tiles: data
+            tiles: data,
+            buildings: buildingData
         };
     };
 
@@ -137,6 +176,35 @@ Map = function () {
             }
             map.unshift(mapRow);
         }
+        buildingsList = [];
+        createBuildingsIndex();
+        for (i = data.buildings.length; i--;) {
+            this.updateBuilding(Building.importData(data.buildings[i]));
+        }
+    };
+    
+    getBuildingPositions = function (building) {
+        var positions, startX, startY, i, j, x, y;
+        positions = [];
+        startX = building.x + Math.floor((building.height - 1) / 2);
+        startY = building.y;
+        for (j = 0; j < building.height; j++) {
+            x = startX - Math.ceil(j / 2);
+            y = startY + j;
+            for (i = 0; i < building.width; i++) {
+                positions.push({
+                    x: x,
+                    y: y
+                });
+                if (y % 2) {
+                    x++;
+                    y++;
+                } else {
+                    y++;
+                }
+            }
+        }
+        return positions;
     };
     
     createBuildingsIndex = function () {
