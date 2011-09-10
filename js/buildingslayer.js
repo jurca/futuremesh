@@ -39,21 +39,25 @@ BuildingsLayer = function () {
      * Sets the map that is to be rendered. The map itself is not rendered by
      * this layer, it is used only to set up some properties of the renderer.
      *
-     * @param {Array} map Raw map data (two-dimensional array of tiles
-     *        objects).
+     * @param {Map} map The map to be rendered
      */
     this.setMap = function (map) {
+        var buildings, i;
         tileWidth = TilesDefinition.getType(0).imageData.width;
         tileHeight = TilesDefinition.getType(0).imageData.height;
         tileHeight /= 2;
         tileWidth -= 1;
         tileHeight -= 1;
-        bufferWidth = map[0].length * tileWidth + tileWidth / 2;
-        bufferHeight = map.length * tileHeight + tileHeight;
+        bufferWidth = map.getMap()[0].length * tileWidth + tileWidth / 2;
+        bufferHeight = map.getMap().length * tileHeight + tileHeight;
         bufferCanvas = document.createElement('canvas');
         bufferCanvas.width = bufferWidth;
         bufferCanvas.height = bufferHeight;
         buffer = bufferCanvas.getContext('2d');
+        buildings = map.getBuildings();
+        for (i = buildings.length; i--;) {
+            this.onBuildingAdded(buildings[i]);
+        }
     };
 
     /**
