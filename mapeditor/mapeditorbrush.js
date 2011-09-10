@@ -41,7 +41,7 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
             var building;
             e.preventDefault();
             modal.close();
-            building = new Building(x, y, type, select.value);
+            building = new Building(x, y, type, parseInt(select.value));
             mapEditor.updateBuilding(building);
         }, false);
         modal.center();
