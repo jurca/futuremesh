@@ -40,6 +40,7 @@ MapEditor = function () {
     };
     
     this.updateBuilding = function (building) {
+        this.getMap().updateBuilding(building);
         viewUI.updateBuilding(building);
     };
 
