@@ -5,9 +5,9 @@ Mouse = function () {
     var x, y, mapX, mapY, canvasLeftOffset, canvasTopOffset, tileWidth,
             tileHeight, tileWidthHalf, mapXOffset, mapYOffset;
     
-    tileWidth = Math.floor(Settings.tileWidth);
-    tileHeight = Math.floor(Settings.tileHeight / 2);
-    tileWidthHalf = Math.floor(tileWidth / 2);
+    tileWidth = TilesDefinition.getType(0).imageData.width - 1;
+    tileHeight = TilesDefinition.getType(0).imageData.height / 2 - 1;
+    tileWidthHalf = tileWidth / 2;
     mapXOffset = 0;
     mapYOffset = 0;
     
