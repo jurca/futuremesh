@@ -51,11 +51,8 @@ View = function () {
             throw new Error('Cannot set map befor canvases and minimap ' +
                     'container');
         }
-        if (map instanceof Map) {
-            map = map.getMap();
-        }
         mainview.setMap(map);
-        minimap.setMap(map);
+        minimap.setMap(map.getMap());
     };
 
     /**
