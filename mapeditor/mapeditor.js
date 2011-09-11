@@ -45,6 +45,7 @@ MapEditor = function () {
     };
     
     this.updateUnit = function (unit) {
+        this.getMap().updateUnit(unit);
         viewUI.updateUnit(unit);
     };
 
