@@ -35,7 +35,7 @@ UnitsLayer = function () {
      * @param {Map} map A Map class instance.
      */
     this.setMap = function (map) {
-        var i, j, row, mapData;
+        var i, j, row, mapData, units;
         if (!canvas) {
             throw new Error('The canvas has to be set before map');
         }
@@ -67,6 +67,10 @@ UnitsLayer = function () {
                 Math.ceil(horizonzalTilesOnDisplay / indexGranularity);
         verticalIndexTilesOnDisplay =
                 Math.ceil(verticalTilesOnDisplay / indexGranularity);
+        units = map.getUnits();
+        for (i = units.length; i--;) {
+            this.onUnitChange(units[i]);
+        }
     };
 
     /**
