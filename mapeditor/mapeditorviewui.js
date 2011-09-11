@@ -32,6 +32,26 @@ MapEditorViewUI = function (mouse) {
         }
     }, false);
     
+    $('viewmap').addEventListener('mousewheel', function (e) {
+        var distance, scrollbar;
+        distance = -e.wheelDelta * Settings.mouseWheelSpeed;
+        if (e.wheelDeltaX) {
+            distance = distance / (layerSize.width - $('terrain').width);
+            scrollbar = $('h-scroll');
+            scrollbar.value = Math.min(1, Math.max(0,
+                    parseFloat(scrollbar.value) + distance));
+            viewX = scrollbar.value * (layerSize.width - $('terrain').width);
+        } else {
+            distance = distance / (layerSize.height - $('terrain').height);
+            scrollbar = $('v-scroll');
+            scrollbar.value = Math.min(1, Math.max(0,
+                    parseFloat(scrollbar.value) + distance));
+            viewY = scrollbar.value * (layerSize.height - $('terrain').height);
+        }
+        view.display(viewX, viewY);
+        mouse.setMapOffset(viewX, viewY);
+    }, false);
+    
     $('terrain-toggle').addEventListener('change', function () {
         view.toggleTerrain();
         view.display(viewX, viewY);
