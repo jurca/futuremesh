@@ -7,13 +7,13 @@ require('tile');
  * manipulating the map and extracting useful information.
  */
 Map = function () {
-    var map, buildings, buildingsList, createBuildingsIndex,
-            getBuildingPositions;
+    var map, buildings, buildingsList, createBuildingsIndex, units, unitsList,
+            getBuildingPositions, createUnitsIndex;
 
     map = [];
     /**
      * Two-dimensional array matching the tiles of the map. Each item is a null
-     * or a reference to the building occupying a tile. If a building is
+     * or a reference to the building occupying the tile. If a building is
      * uccupying several tiles at once, all occupied tiles hold reference to
      * the building.
      * The structure of the index is: [verical axis (y)][horizontal axis (x)]
@@ -23,9 +23,21 @@ Map = function () {
      * List of all buildings instances present on the map.
      */
     buildingsList = [];
+    /**
+     * Tow-dimensional array matching the tiles of the map. Each item is a null
+     * or a reference to the unit occupying the tile. The structure of the index
+     * is: [vertical axis(y)][horizontal axis (x)]
+     */
+    units = [];
+    /**
+     * List of all units instances present on the map.
+     */
+    unitsList = [];
 
     /**
      * Updates the building's status on the map (e.g. adding to the map).
+     * 
+     * @param {Building} building The building that has been updated on the map.
      */
     this.updateBuilding = function (building) {
         var positions, position, i;
@@ -35,6 +47,16 @@ Map = function () {
             position = positions[i];
             buildings[position.y][position.x] = building;
         }
+    };
+    
+    /**
+     * Updates the unit's status on the map (e.g. adding to the map).
+     * 
+     * @param {Unit} unit The unit that has been updated on the map.
+     */
+    this.updateUnit = function (unit) {
+        unitsList.push(unit);
+        units[unit.y][unit.x] = unit;
     };
 
     /**
@@ -65,6 +87,15 @@ Map = function () {
      */
     this.getBuildings = function () {
         return buildingsList;
+    };
+    
+    /**
+     * Returns list of all units the map contains.
+     * 
+     * @return {Array} List of all units on the map.
+     */
+    this.getUnits = function () {
+        return unitsList;
     };
 
     /**
@@ -105,6 +136,7 @@ Map = function () {
             map.push(row);
         }
         createBuildingsIndex();
+        createUnitsIndex();
     };
 
     /**
@@ -128,6 +160,7 @@ Map = function () {
             map.push(row);
         }
         createBuildingsIndex();
+        createUnitsIndex();
     };
 
     /**
@@ -139,7 +172,7 @@ Map = function () {
      *         JSON-serializable.
      */
     this.exportData = function () {
-        var i, j, data, mapRow, dataRow, buildingData;
+        var i, j, data, mapRow, dataRow, buildingData, unitsData;
         data = [];
         for (i = map.length; i--;) {
             mapRow = map[i];
@@ -153,9 +186,14 @@ Map = function () {
         for (i = buildingsList.length; i--;) {
             buildingData.push(buildingsList[i].exportData());
         }
+        unitsData = [];
+        for (i = unitsList.length; i--;) {
+            unitsData.push(unitsList[i].exportData());
+        }
         return {
             tiles: data,
-            buildings: buildingData
+            buildings: buildingData,
+            units: unitsData
         };
     };
 
@@ -180,6 +218,11 @@ Map = function () {
         createBuildingsIndex();
         for (i = data.buildings.length; i--;) {
             this.updateBuilding(Building.importData(data.buildings[i]));
+        }
+        unitsList = [];
+        createUnitsIndex();
+        for (i = data.units.length; i--;) {
+            this.updateUnit(Unit.importData(data.units[i]));
         }
     };
     
@@ -216,6 +259,18 @@ Map = function () {
                 row.push(null);
             }
             buildings.push(row);
+        }
+    };
+    
+    createUnitsIndex = function () {
+        var i, j, row;
+        units = [];
+        for (i = map.length; i--;) {
+            row = [];
+            for (j = map[0].length; j--;) {
+                row.push(null);
+            }
+            units.push(row);
         }
     };
 };
