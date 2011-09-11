@@ -32,21 +32,22 @@ UnitsLayer = function () {
      * determine the dimensions of grid index used to optimize rendering of the
      * units layer. The granularity of the index may be set using Settings.
      * 
-     * @param {Array} map Raw map data
+     * @param {Map} map A Map class instance.
      */
     this.setMap = function (map) {
-        var i, j, row;
+        var i, j, row, mapData;
         if (!canvas) {
             throw new Error('The canvas has to be set before map');
         }
+        mapData = map.getMap();
         tileWidth = TilesDefinition.getType(0).imageData.width - 1;
         tileHeight = TilesDefinition.getType(0).imageData.height / 2 - 1;
         horizonzalTilesOnDisplay = Math.ceil(canvasWidth / tileWidth) + 2;
         verticalTilesOnDisplay = Math.ceil(canvasHeight / tileHeight) + 2;
         grid = [];
-        for (i = map.length; i--;) {
+        for (i = mapData.length; i--;) {
             row = [];
-            for (j = map[0].length; j--;) {
+            for (j = mapData[0].length; j--;) {
                 row.push(false);
             }
             grid.push(row);

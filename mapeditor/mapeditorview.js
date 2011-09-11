@@ -105,7 +105,7 @@ MapEditorView = function () {
         }
         terrainLayer.setMap(map.getMap());
         buildingsLayer.setMap(map);
-        unitsLayer.setMap(map.getMap());
+        unitsLayer.setMap(map);
         sfxLayer.setMap(map);
         terrainLayer.init();
     };
