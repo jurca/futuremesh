@@ -95,7 +95,6 @@ require('data.buildingsdefinition', 'player');
          */
         this.color = color === undefined ?
                 Player.getPlayer(player).color : color;
-        buldings.push(this);
         
         /**
          * Exports the information about the building in form of a
@@ -114,6 +113,8 @@ require('data.buildingsdefinition', 'player');
                 player: this.player
             };
         };
+        
+        buldings.push(this);
     };
 
     /**
