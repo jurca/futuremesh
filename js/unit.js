@@ -240,6 +240,24 @@ require('data.unitsdefinition', 'player');
                         (this.direction == 4 ? 1 : 0.5);
             }
         };
+        
+        /**
+         * Exports the information about the unit in form of a JSON-serializable
+         * object so that the unit can be recostructed from this data later.
+         *
+         * @return {Object} object representing the information about the unit
+         *         required to restore it to it's current state. This object is
+         *         JSON-serializable.
+         */
+        this.exportData = function () {
+            return {
+                x: this.x,
+                y: this.y,
+                direction: this.direction,
+                type: this.type,
+                player: this.player
+            };
+        };
 
         units.push(this);
     };
@@ -252,5 +270,15 @@ require('data.unitsdefinition', 'player');
      */
     Unit.getUnit = function (id) {
         return units[id];
+    };
+    
+    /**
+     * Creates new unit from provided data. The data should be a result of the
+     * exportData method.
+     *
+     * @param {Object} data The data from the exportData method.
+     */
+    Unit.importData = function (data) {
+        return new Unit(data.x, data.y, data.direction, data.type, data.player);
     };
 }());
