@@ -43,6 +43,10 @@ MapEditor = function () {
         this.getMap().updateBuilding(building);
         viewUI.updateBuilding(building);
     };
+    
+    this.updateUnit = function (unit) {
+        viewUI.updateUnit(unit);
+    };
 
     map = new Map();
     map.emptyMap(defaultMapWidth, defaultMapHeight);
