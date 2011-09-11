@@ -65,6 +65,14 @@ Settings = {
      * @type Number
      */
     sfx3DLightFactor: undefined,
+    
+    /**
+     * Sets the speed how fast the map can be scrolled using the mouse wheel.
+     * Recommended value is 0.4.
+     * 
+     * @type Number
+     */
+    mouseWheelSpeed: undefined,
 
     /**
      * Sets and loads the settings. Some properties will be calculated
@@ -94,6 +102,9 @@ Settings = {
      *          <li>sfx3DLightFactor - Sets the "depth" factor of the 3D light
      *              beams from the terrain. Should be a real number greater
      *              than 1.</li>
+     *          <li>mouseWheelSpeed - Sets the speed how fast the map can be
+     *              scrolled using the mouse wheel. Recommended value is
+     *              0.4.</li>
      *        </ul>
      *        If any of these properties will be ommited, default value will be
      *        used (if exists).
@@ -116,5 +127,6 @@ Settings = {
             this.unitImagesTransformed = settings.unitImagesTransformed;
         }
         this.sfx3DLightFactor = settings.sfx3DLightFactor;
+        this.mouseWheelSpeed = settings.mouseWheelSpeed;
     }
 };
