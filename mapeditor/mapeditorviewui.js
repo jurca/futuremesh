@@ -109,6 +109,11 @@ MapEditorViewUI = function (mouse) {
         view.updateBuilding(building);
         view.display(viewX, viewY);
     };
+    
+    this.updateUnit = function (unit) {
+        view.onUnitChange(unit);
+        view.display(viewX, viewY);
+    };
 
     /**
      * Returns instance of Map class that is currently being displayed in the
