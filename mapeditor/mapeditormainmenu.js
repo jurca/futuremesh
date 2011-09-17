@@ -1,5 +1,5 @@
 "use strict";
-require('mapeditor.modal', 'mapeditor.formbuilder');
+require('mapeditor.modal', 'mapeditor.formbuilder', 'mapcompressor');
 
 var MapEditorMainMenu;
 
@@ -7,7 +7,9 @@ var MapEditorMainMenu;
  * Class handling the main menu of the Map Editor.
  */
 MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
-    var $;
+    var $, compressor;
+
+    compressor = new MapCompressor();
 
     $ = function (selector) {
         return document.getElementById(selector);
@@ -64,13 +66,14 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         textarea.rows = 6;
         modal.appendChild(textarea);
         modal.center();
-        textarea.value = JSON.stringify(mapEditor.getMap().exportData());
+        textarea.value = compressor.compress(mapEditor.getMap().exportData(),
+                3);
     }, false);
 
     $('menu-import').addEventListener('click', function () {
         var modal, form;
         modal = new Modal('Import map', true);
-        form = new FormBuilder('Import map from JSON data', [
+        form = new FormBuilder('Import map from serialized data', [
             {
                 label: '',
                 value: '',
@@ -85,7 +88,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         form.setHandler(function (data) {
             var map;
             map = new Map;
-            map.importData(JSON.parse(data.data));
+            map.importData(compressor.decompress(data.data, 3));
             mapEditor.setMap(map);
             modal.close();
         });
