@@ -3,7 +3,9 @@ require('mapeditor.modal', 'player', 'building');
 var MapEditorBrush;
 
 MapEditorBrush = function (mapEditor, mouse, canvas) {
-    var map, brush, mouseDown, displayBuildingForm, displayUnitForm;
+    var map, brush, mouseDown, displayBuildingForm, displayUnitForm,
+            displaySFXForm;
+
     map = mapEditor.getMap();
     mouseDown = false;
     
@@ -84,6 +86,31 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
         modal.center();
     };
     
+    displaySFXForm = function (x, y) {
+        var modal, form, select, i, option, button;
+        modal = new Modal('Set SFX 3D light', true);
+        form = document.createElement('form');
+        select = document.createElement('select');
+        for (i = 0; i < 6; i++) {
+            option = document.createElement('option');
+            option.value = i;
+            option.appendChild(document.createTextNode(i));
+            select.appendChild(option);
+        }
+        form.appendChild(select);
+        button = document.createElement('input');
+        button.type = 'submit';
+        button.value = 'OK';
+        form.appendChild(button);
+        modal.appendChild(form);
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            modal.close();
+            map.getMap()[y][x].lightSfx = parseInt(select.value, 10);
+            mapEditor.updateTerrain(x, y);
+        }, false);
+    };
+    
     canvas.addEventListener('click', function () {
         var x, y, mapData;
         mapData = map.getMap();
@@ -104,6 +131,11 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
             case 'units':
                 if (mapData[y] && mapData[y][x]) {
                     displayUnitForm(x, y, brush.type);
+                }
+                break
+            case 'sfx':
+                if (mapData[y] && mapData[y][x]) {
+                    displaySFXForm(x, y);
                 }
                 break;
         }
