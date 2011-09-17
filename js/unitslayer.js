@@ -163,7 +163,7 @@ UnitsLayer = function () {
                 currentX = gridX + j;
                 if (grid[currentY] && (unit = grid[currentY][currentX])) {
                     canvasContext.drawImage(UnitsDefinition.getType(unit.type).
-                            imageData[unit.direction],
+                            playerImages[unit.direction][unit.player],
                             offsetX + currentX * tileWidth - screenX +
                             unit.moveOffsetX, currentY * tileHeight - screenY +
                             unit.moveOffsetY);
