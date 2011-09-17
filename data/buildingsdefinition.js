@@ -11,7 +11,9 @@ BuildingsDefinition = (function () {
             imageHeight: undefined,
             width: 3,
             height: 3,
-            passable: false
+            passable: false,
+            colorify: '#ffffff',
+            colorifyDistance: 440
         }
     ];
 
