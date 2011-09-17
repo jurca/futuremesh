@@ -132,6 +132,25 @@ require('data.unitsdefinition', 'player');
          */
         this.player = player;
         /**
+         * The color in the building's image that should be replaced by the
+         * player's color. So far only hex format (#rrggbb or rrggbb is
+         * supported).
+         * 
+         * @type String
+         */
+        this.colorify = definition.colorify;
+        /**
+         * The maximum "distance" from the color specified in the colorify
+         * property for the color in the building's image to be replaced by the
+         * player's color. The distance from the colorify color will be
+         * transformed to the distance from the player's color, so gradients
+         * are kept intact. The distance is computed as distance in 3D
+         * euclid space, where red, green and blue represent axis.
+         * 
+         * @type Number
+         */
+        this.colorifyDistance = definition.colorifyDistance;
+        /**
          * Progress of the movement of the unit from one tile to another
          * represented by a number from interval [0,1]. When set to 0, the unit
          * is displayed on the movement source tile, when set to number greater
