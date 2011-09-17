@@ -1,11 +1,29 @@
 "use strict";
 var MapCompressor;
 
+/**
+ * Map compression utility for compressing an object obtained as a result of
+ * the Map.exportData method into string while preserving all the exported
+ * data. The utility supports various levels of compression:
+ * <ul>
+ *     <li>0 - no compression</li>
+ *     <li>1 - object property names are shortened, tiles are reorganized into
+ *             single array</li>
+ *     <li>2 - tile, building and unit data objects are replaced by arrays</li>
+ *     <li>3 - all arrays and whole map is serialized into a single string</li>
+ * </ul>
+ */
 MapCompressor = function () {
     var compressLevel1, compressLevel2, compressLevel1Buildings,
             compressLevel3, decompressLevel1, decompressLevel2,
             decompressLevel3, spliceTiles, decompressLevel1Tiles;
     
+    /**
+     * Compresses exported map data according to the given compression level.
+     * 
+     * @param {Object} map Exported map data.
+     * @param {Number} level The compression level.
+     */
     this.compress = function (map, level) {
         (level > 0) && (map = compressLevel1(map));
         (level > 1) && (map = compressLevel2(map));
@@ -13,10 +31,17 @@ MapCompressor = function () {
         return map;
     };
     
+    /**
+     * Decompresses compressed map data to map data that can be imported by the
+     * Map class. The specified compression level must match the one used for
+     * compression, otherwise the decompression will fail.
+     * 
+     * @param {String} map The compressed string representing the map data.
+     * @param {Number} level The compression level used for data compression.
+     */
     this.decompress = function (map, level) {
         (level > 2) && (map = decompressLevel3(map));
         (level > 1) && (map = decompressLevel2(map));
-        console.log(JSON.stringify(map));
         (level > 0) && (map = decompressLevel1(map));
         return map;
     };
