@@ -10,7 +10,8 @@ BuildingsDefinition = (function () {
             imageWidth: undefined,
             imageHeight: undefined,
             width: 3,
-            height: 3
+            height: 3,
+            passable: false
         }
     ];
 
