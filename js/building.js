@@ -75,6 +75,25 @@ require('data.buildingsdefinition', 'player');
          */
         this.height = definition.height;
         /**
+         * The color in the building's image that should be replaced by the
+         * player's color. So far only hex format (#rrggbb or rrggbb is
+         * supported).
+         * 
+         * @type String
+         */
+        this.colorify = definition.colorify;
+        /**
+         * The maximum "distance" from the color specified in the colorify
+         * property for the color in the building's image to be replaced by the
+         * player's color. The distance from the colorify color will be
+         * transformed to the distance from the player's color, so gradients
+         * are kept intact. The distance is computed as distance in 3D
+         * euclid space, where red, green and blue represent axis.
+         * 
+         * @type Number
+         */
+        this.colorifyDistance = definition.colorifyDistance;
+        /**
          * The building's type's ID. This ID is used to set default building's
          * properties.
          *
