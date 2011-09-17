@@ -1,6 +1,6 @@
 "use strict";
 var ImageLoader;
-require('settings', 'data.settings');
+require('settings', 'data.settings', 'colorifier');
 
 /**
  * Utility for loading images of tiles, buildings and units and providing info
@@ -10,10 +10,11 @@ require('settings', 'data.settings');
 ImageLoader = function () {
     var loadBuildingImages, notifyObservers, buildingsIndex, observers,
             unitsIndex, loadUnitImages, tilesIndex, loadTilesImages,
-            transformTileImage, pathPrefix, transformBuildingImage;
+            transformTileImage, pathPrefix, transformBuildingImage, colorifier;
 
     observers = [];
     pathPrefix = '';
+    colorifier = new Colorifier();
 
     /**
      * Begins the loading procedure.
@@ -119,6 +120,14 @@ ImageLoader = function () {
                             }
                             unitsIndex[type] = true;
                             unitDefinition.imageData = images;
+                            unitDefinition.playerImages = [];
+                            for (i = 8; i--;) {
+                                unitDefinition.playerImages[i] =
+                                        colorifier.colorifyForPlayers(
+                                        images[i],
+                                        unitDefinition.colorify,
+                                        unitDefinition.colorifyDistance);
+                            }
                             notifyObservers();
                         };
                     }());
@@ -156,6 +165,11 @@ ImageLoader = function () {
                             image : transformBuildingImage(image,
                             buildingDefinition.width,
                             buildingDefinition.height);
+                    buildingDefinition.playerImages =
+                            colorifier.colorifyForPlayers(
+                            buildingDefinition.imageData,
+                            buildingDefinition.colorify,
+                            buildingDefinition.colorifyDistance);
                     notifyObservers();
                 };
                 image.src = pathPrefix + building.image;
