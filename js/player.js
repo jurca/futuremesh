@@ -103,8 +103,11 @@ var Player;
      */
     Player.createGenericPlayers = function () {
         var i;
+        if (players.length) {
+            return;
+        }
         for (i = 0; PlayersDefinition.getType(i); i++) {
-            new Player(i, true, 'Player ' + (i + 1), [], undefined, undefined);
+            new Player(i, true, 'Player ' + (i + 1), []);
         }
     };
 }());
