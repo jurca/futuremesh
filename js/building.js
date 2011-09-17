@@ -71,7 +71,7 @@ require('data.buildingsdefinition', 'player');
         /**
          * The height of the building in tiles.
          *
-         * @types Number
+         * @type Number
          */
         this.height = definition.height;
         /**
@@ -81,6 +81,14 @@ require('data.buildingsdefinition', 'player');
          * @type Number
          */
         this.type = type;
+        /**
+         * When set to true, units may pass through the building like through
+         * empty space. However other buildings cannot be build upon this
+         * building.
+         * 
+         * @type Boolean
+         */
+        this.passable = definition.passable;
         /**
          * The ID of the player owning the building.
          *
