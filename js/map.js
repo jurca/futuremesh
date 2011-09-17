@@ -10,6 +10,12 @@ Map = function () {
     var map, buildings, buildingsList, createBuildingsIndex, units, unitsList,
             getBuildingPositions, createUnitsIndex;
 
+    /**
+     * Two-dimensional array of tiles on the map. The first index is vertical
+     * axis (y), the second index is horizontal index (x). The name map is
+     * used instead of tiles only for legacy reasons and should be changed one
+     * day in the future.
+     */
     map = [];
     /**
      * Two-dimensional array matching the tiles of the map. Each item is a null
