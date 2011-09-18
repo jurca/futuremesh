@@ -6,9 +6,9 @@ require('settings', 'data.settings', 'map');
  * Renderer of simple SFX on the map.
  */
 SFX = function () {
-    var canvas, map, canvasWidth, canvasHeight, mapWidth, mapHeight, tileWidth,
-        tileHeight, context, canvasTileWidth, canvasTileHeight, depthFactor,
-        canvasCenterX, canvasCenterY;
+    var canvas, map, canvasWidth, canvasHeight, tileWidth, tileHeight, context,
+            canvasTileWidth, canvasTileHeight, depthFactor, canvasCenterX,
+            canvasCenterY;
     
     depthFactor = Settings.sfx3DLightFactor;
     
@@ -43,8 +43,6 @@ SFX = function () {
             newMap = newMap.getMap();
         }
         map = newMap;
-        mapWidth = map[0].length;
-        mapHeight = map.length;
         tileWidth = TilesDefinition.getType(0).imageData.width - 1;
         tileHeight = TilesDefinition.getType(0).imageData.height / 2 - 1;
         canvasTileWidth = Math.ceil(canvasWidth / tileWidth);
