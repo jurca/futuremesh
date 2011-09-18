@@ -7,8 +7,8 @@ require('tile');
  * manipulating the map and extracting useful information.
  */
 Map = function () {
-    var map, buildings, buildingsList, createBuildingsIndex, units, unitsList,
-            getBuildingPositions, createUnitsIndex;
+    var map, buildings, buildingsList, units, unitsList,
+            getBuildingPositions, createIndex, createIndexes;
 
     /**
      * Two-dimensional array of tiles on the map. The first index is vertical
@@ -73,7 +73,7 @@ Map = function () {
      */
     this.setMap = function (newMap) {
         map = newMap;
-        createBuildingsIndex();
+        createIndexes();
     };
 
     /**
@@ -151,8 +151,7 @@ Map = function () {
             }
             map.push(row);
         }
-        createBuildingsIndex();
-        createUnitsIndex();
+        createIndexes();
     };
 
     /**
@@ -175,8 +174,7 @@ Map = function () {
             }
             map.push(row);
         }
-        createBuildingsIndex();
-        createUnitsIndex();
+        createIndexes();
     };
 
     /**
@@ -231,12 +229,11 @@ Map = function () {
             map.unshift(mapRow);
         }
         buildingsList = [];
-        createBuildingsIndex();
+        createIndexes();
         for (i = data.buildings.length; i--;) {
             this.updateBuilding(Building.importData(data.buildings[i]));
         }
         unitsList = [];
-        createUnitsIndex();
         for (i = data.units.length; i--;) {
             this.updateUnit(Unit.importData(data.units[i]));
         }
@@ -266,27 +263,21 @@ Map = function () {
         return positions;
     };
     
-    createBuildingsIndex = function () {
-        var i, j, row;
-        buildings = [];
+    createIndex = function () {
+        var i, j, row, index;
+        index = [];
         for (i = map.length; i--;) {
             row = [];
             for (j = map[0].length; j--;) {
                 row.push(null);
             }
-            buildings.push(row);
+            index.push(row);
         }
+        return index;
     };
     
-    createUnitsIndex = function () {
-        var i, j, row;
-        units = [];
-        for (i = map.length; i--;) {
-            row = [];
-            for (j = map[0].length; j--;) {
-                row.push(null);
-            }
-            units.push(row);
-        }
+    createIndexes = function () {
+        buildings = createIndex();
+        units = createIndex();
     };
 };
