@@ -10,9 +10,12 @@ SFX = function () {
             canvasTileWidth, canvasTileHeight, depthFactor, canvasCenterX,
             canvasCenterY, buildingsIndex, displayLightSFX,
             displayBuildableTiles, displayTileOverlay, enableBuildOverlay,
-            displayNavigableTiles, navigationIndex, enableNavigationIndex;
+            displayNavigableTiles, navigationIndex, enableNavigationIndex,
+            inaccessibleColor, accessibleColor;
     
     depthFactor = Settings.sfx3DLightFactor;
+    accessibleColor = Settings.sfxAccessibleTileColor;
+    inaccessibleColor = Settings.sfxInaccessibleTileColor;
     enableBuildOverlay = false;
     enableNavigationIndex = false;
     
@@ -28,7 +31,6 @@ SFX = function () {
         context = canvas.getContext('2d');
         context.globalAlpha = 0.3;
         context.strokeStyle = Settings.sfx3DLightColor;
-        context.fillStyle = Settings.sfxBuildLayerColor;
         context.lineCap = 'round';
         canvasCenterX = canvasWidth / 2;
         canvasCenterY = canvasHeight / 2;
@@ -117,6 +119,7 @@ SFX = function () {
     displayBuildableTiles = function (x, y) {
         var mapOffsetX, mapOffsetY, i, j, mapRow, offsetY, shiftX, mapTile,
                 offsetX;
+        context.fillStyle = Settings.sfxBuildLayerColor;
         mapOffsetX = Math.floor(x / tileWidth) - 1;
         mapOffsetY = Math.floor(y / tileHeight) - 1;
         for (j = canvasTileHeight + 2; j--;) {
@@ -160,7 +163,8 @@ SFX = function () {
             shiftX = ((mapOffsetY + j) % 2) * tileWidth / 2;
             for (i = canvasTileWidth + 2; i--;) {
                 mapTile = mapRow[i + mapOffsetX];
-                context.fillStyle = mapTile ? '#00a000' : '#a00000';
+                context.fillStyle = mapTile ? accessibleColor :
+                        inaccessibleColor;
                 offsetX = (i + mapOffsetX) * tileWidth + shiftX - x;
                 displayTileOverlay(offsetX, offsetY);
             }
