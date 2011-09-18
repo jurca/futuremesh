@@ -105,6 +105,16 @@ Map = function () {
     };
 
     /**
+     * Returns the tile index referencing to the buildings occuyping the tiles.
+     * 
+     * @return {Array} Two-dimensional array matching the tiles containing
+     *         references to buildings occupying them.
+     */
+    this.getBuildingsIndex = function () {
+        return buildings;
+    };
+
+    /**
      * Returns the chosen part of the raw map data. Originaly meant for the
      * DOM-based renderer of the main view. Currently has no known usage.
      *
@@ -238,7 +248,7 @@ Map = function () {
         startX = building.x + Math.floor((building.height - 1) / 2);
         startY = building.y;
         for (j = 0; j < building.height; j++) {
-            x = startX - Math.ceil(j / 2);
+            x = startX - Math.ceil((j - startY % 2) / 2);
             y = startY + j;
             for (i = 0; i < building.width; i++) {
                 positions.push({
