@@ -73,6 +73,11 @@ MapEditorViewUI = function (mouse) {
         view.display(viewX, viewY);
     }, false);
     
+    $('buildable-toggle').addEventListener('change', function () {
+        view.toggleBuildable();
+        view.display(viewX, viewY);
+    }, false);
+    
     /**
      * Sets map to be displayed.
      * 
