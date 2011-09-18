@@ -78,6 +78,11 @@ MapEditorViewUI = function (mouse) {
         view.display(viewX, viewY);
     }, false);
     
+    $('passable-toggle').addEventListener('change', function () {
+        view.toggleNavigationIndex();
+        view.display(viewX, viewY);
+    }, false);
+    
     /**
      * Sets map to be displayed.
      * 
