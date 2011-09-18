@@ -67,6 +67,23 @@ Settings = {
     sfx3DLightFactor: undefined,
     
     /**
+     * Sets the color of the SFX 3D light beams. Should be a CSS color
+     * definition.
+     * 
+     * @type String
+     */
+    sfx3DLightColor: undefined,
+    
+    /**
+     * Sets the color of the building overlay rendered by the SFX renderer over
+     * the tiles that are occupied by buildings. Should be a CSS color
+     * definition.
+     * 
+     * @type String
+     */
+    sfxBuildLayerColor: undefined,
+    
+    /**
      * Sets the speed how fast the map can be scrolled using the mouse wheel.
      * Recommended value is 0.4.
      * 
@@ -102,6 +119,10 @@ Settings = {
      *          <li>sfx3DLightFactor - Sets the "depth" factor of the 3D light
      *              beams from the terrain. Should be a real number greater
      *              than 1.</li>
+     *          <li>sfx3DLightColor - Sets the color of the 3D light
+     *              beams.</li>
+     *          <li>sfxBuildLayerColor - Sets the color of the building
+     *              overlay.</li>
      *          <li>mouseWheelSpeed - Sets the speed how fast the map can be
      *              scrolled using the mouse wheel. Recommended value is
      *              0.4.</li>
@@ -127,6 +148,8 @@ Settings = {
             this.unitImagesTransformed = settings.unitImagesTransformed;
         }
         this.sfx3DLightFactor = settings.sfx3DLightFactor;
+        this.sfx3DLightColor = settings.sfx3DLightColor;
+        this.sfxBuildLayerColor = settings.sfxBuildLayerColor;
         this.mouseWheelSpeed = settings.mouseWheelSpeed;
     }
 };
