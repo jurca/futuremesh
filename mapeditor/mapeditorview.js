@@ -11,12 +11,14 @@ require('terrainlayer', 'buildingslayer', 'unitslayer', 'tile', 'building',
 MapEditorView = function () {
     var terrainLayer, buildingsLayer, unitsLayer, sfxLayer, enableTerrain,
             enableBuildings, enableUnits, enableSFX, terrainLayerCanvas,
-            buildingsLayerCanvas, unitsLayerCanvas, sfxLayerCanvas;
+            buildingsLayerCanvas, unitsLayerCanvas, sfxLayerCanvas,
+            enableBuildable;
 
     enableTerrain = true;
     enableBuildings = true;
     enableUnits = true;
     enableSFX = true;
+    enableBuildable = false;
 
     /**
      * Updates the display of the tile at the provided coordinates.
@@ -63,6 +65,11 @@ MapEditorView = function () {
      */
     this.toggleSFX = function () {
         enableSFX = !enableSFX;
+    };
+    
+    this.toggleBuildable = function () {
+        enableBuildable = !enableBuildable;
+        sfxLayer.setDisplayBuildableOverlay(enableBuildable);
     };
 
     /**
