@@ -9,10 +9,12 @@ SFX = function () {
     var canvas, map, canvasWidth, canvasHeight, tileWidth, tileHeight, context,
             canvasTileWidth, canvasTileHeight, depthFactor, canvasCenterX,
             canvasCenterY, buildingsIndex, displayLightSFX,
-            displayBuildableTiles, displayTileOverlay, enableBuildOverlay;
+            displayBuildableTiles, displayTileOverlay, enableBuildOverlay,
+            displayNavigableTiles, navigationIndex, enableNavigationIndex;
     
     depthFactor = Settings.sfx3DLightFactor;
     enableBuildOverlay = false;
+    enableNavigationIndex = false;
     
     /**
      * Sets the output canvas for rendering.
@@ -48,6 +50,7 @@ SFX = function () {
         canvasTileWidth = Math.ceil(canvasWidth / tileWidth);
         canvasTileHeight = Math.ceil(canvasHeight / tileHeight);
         buildingsIndex = newMap.getBuildingsIndex();
+        navigationIndex = newMap.getNavigationIndex();
     };
     
     /**
@@ -61,6 +64,10 @@ SFX = function () {
     this.setDisplayBuildableOverlay = function (displayBuildableOverlay) {
         enableBuildOverlay = displayBuildableOverlay;
     };
+    
+    this.setDisplayNavigationIndex = function (displayNavigationIndex) {
+        enableNavigationIndex = displayNavigationIndex;
+    };
 
     /**
      * Displays the SFX of the map on the chosen offset on the provided
@@ -72,6 +79,7 @@ SFX = function () {
     this.display = function (x, y) {
         displayLightSFX(x, y);
         enableBuildOverlay && displayBuildableTiles(x, y);
+        enableNavigationIndex && displayNavigableTiles(x, y);
     };
     
     displayLightSFX = function (x, y) {
@@ -136,5 +144,26 @@ SFX = function () {
         context.lineTo(x + (tileWidth / 2), y + (tileHeight * 2));
         context.lineTo(x, y + tileHeight);
         context.fill();
+    };
+    
+    displayNavigableTiles = function (x, y) {
+        var mapOffsetX, mapOffsetY, i, j, mapRow, offsetY, shiftX, mapTile,
+                offsetX;
+        mapOffsetX = Math.floor(x / tileWidth) - 1;
+        mapOffsetY = Math.floor(y / tileHeight) - 1;
+        for (j = canvasTileHeight + 2; j--;) {
+            mapRow = navigationIndex[j + mapOffsetY];
+            if (!mapRow) {
+                continue;
+            }
+            offsetY = (j + mapOffsetY) * tileHeight - y;
+            shiftX = ((mapOffsetY + j) % 2) * tileWidth / 2;
+            for (i = canvasTileWidth + 2; i--;) {
+                mapTile = mapRow[i + mapOffsetX];
+                context.fillStyle = mapTile ? '#00a000' : '#a00000';
+                offsetX = (i + mapOffsetX) * tileWidth + shiftX - x;
+                displayTileOverlay(offsetX, offsetY);
+            }
+        }
     };
 };
