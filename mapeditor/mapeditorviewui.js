@@ -34,6 +34,7 @@ MapEditorViewUI = function (mouse) {
     
     $('viewmap').addEventListener('mousewheel', function (e) {
         var distance, scrollbar;
+        e.preventDefault();
         distance = -e.wheelDelta * Settings.mouseWheelSpeed;
         if (e.wheelDeltaX) {
             distance = distance / (layerSize.width - $('terrain').width);
