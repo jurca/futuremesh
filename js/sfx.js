@@ -50,6 +50,14 @@ SFX = function () {
         buildingsIndex = newMap.getBuildingsIndex();
     };
     
+    /**
+     * Set whether or not the SFX renderer should display an overlay over the
+     * buildings to signal that those tiles cannot be used for placing other
+     * buildings.
+     * 
+     * @param {Boolean} displayBuildableOverlay When set to true, the SFX
+     *        renderer will display an overlay over the buildings.
+     */
     this.setDisplayBuildableOverlay = function (displayBuildableOverlay) {
         enableBuildOverlay = displayBuildableOverlay;
     };
