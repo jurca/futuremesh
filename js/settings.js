@@ -84,6 +84,20 @@ Settings = {
     sfxBuildLayerColor: undefined,
     
     /**
+     * Sets the color used to paint the tiles accessible to units when
+     * displaying of the navigation index is enabled. Should be a CSS color
+     * definition.
+     */
+    sfxAccessibleTileColor: undefined,
+    
+    /**
+     * Sets the color used to paint the tiles inaccessible to units when
+     * displaying of the navigation index is enabled. Should be a CSS color
+     * definition.
+     */
+    sfxInaccessibleTileColor: undefined,
+    
+    /**
      * Sets the speed how fast the map can be scrolled using the mouse wheel.
      * Recommended value is 0.4.
      * 
@@ -150,6 +164,8 @@ Settings = {
         this.sfx3DLightFactor = settings.sfx3DLightFactor;
         this.sfx3DLightColor = settings.sfx3DLightColor;
         this.sfxBuildLayerColor = settings.sfxBuildLayerColor;
+        this.sfxAccessibleTileColor = settings.sfxAccessibleTileColor;
+        this.sfxInaccessibleTileColor = settings.sfxInaccessibleTileColor;
         this.mouseWheelSpeed = settings.mouseWheelSpeed;
     }
 };
