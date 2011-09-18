@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>FutureMesh Map Generator 0.1</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="mapeditor/ui.css" media="all" />
+        <link rel="stylesheet" type="text/css" href="mapeditor/uicomponents.css" media="all" />
+        <link rel="stylesheet" type="text/css" href="mapgenerator/ui.css" media="all" />
+        <script type="text/javascript" src="js/require.js"></script>
+        <script type="text/javascript" src="mapgenerator/bootstrap.js"></script>
+    </head>
+    <body>
+        <div class="body">
+            <div class="ui">
+                <div class="tabs">
+                    <span class="active">Settings</span>
+                    <span >Output</span>
+                    <div class="separator"></div>
+                    <div class="active">
+                        <form>
+                            <fieldset>
+                                <legend>Basic settings</legend>
+                                <label>
+                                    Minimal map width:
+                                    <input name="minWidth" type="range" min="100" max="800" step="1" value="170" />
+                                    <span></span>
+                                </label>
+                                <label>
+                                    Minimal map height:
+                                    <input name="minHeight" type="range" min="250" max="800" step="1" value="400" />
+                                    <span></span>
+                                </label>
+                                <label>
+                                    Maximum map width:
+                                    <input name="maxWidth" type="range" min="100" max="800" step="1" value="170" />
+                                    <span></span>
+                                </label>
+                                <label>
+                                    Maximum map height:
+                                    <input name="maxHeight" type="range" min="100" max="800" step="1" value="400" />
+                                    <span></span>
+                                </label>
+                                <label>
+                                    Number of players:
+                                    <input name="players" type="range" min="2" max="8" step="1" value="1" />
+                                    <span></span>
+                                </label>
+                                <label>
+                                    Include player buildings:
+                                    <input name="includePlayerBuildings" type="checkbox" />
+                                </label>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Neutral structures</legend>
+                                <label>
+                                    Include neutral buildings:
+                                    <input name="neutralBuildings" type="checkbox" />
+                                </label>
+                                <label>
+                                    Include neutral units:
+                                    <input name="neutralUnits" type="checkbox" />
+                                </label>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Advanced settings</legend>
+                                <label>
+                                    Base tile type:
+                                    <select name="baseTile"></select>
+                                </label>
+                                <label>
+                                    Minimal distance from map borders:
+                                    <input name="minDistanceFromBorders" type="range" min="2" max="100" step="1" value="10" />
+                                    <span></span>
+                                </label>
+                                <label>
+                                    Resources abundance:
+                                    <input name="resourcesAbundance" type="range" min="1" max="100" step="1" value="30" />
+                                    <span></span>
+                                </label>
+                            </fieldset>
+                            <input type="submit" value="generate" />
+                        </form>
+                    </div>
+                    <div>
+                        <div id="view">
+                            <div id="viewmap">
+                                <div class="canvas-container"><canvas id="terrain" width="800" height="600"></canvas></div>
+                                <div class="canvas-container"><canvas id="buildings" width="800" height="600"></canvas></div>
+                                <div class="canvas-container"><canvas id="units" width="800" height="600"></canvas></div>
+                                <canvas id="sfx" width="800" height="600"></canvas>
+                            </div>
+                            <div id="v-scroll-container">
+                                <input id="v-scroll" type="range" min="0" max="1" step="0.001" value="0" />
+                            </div>
+                            <input id="h-scroll" type="range" min="0" max="1" step="0.001" value="0" />
+                            <div id="view-resize">
+                                <div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <textarea cols="102" rows="4" id="map"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

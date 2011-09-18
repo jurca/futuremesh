@@ -1,0 +1,56 @@
+.ui {
+    border: 2px solid #555;
+    background: white;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.tabs > span {
+    display: inline-block;
+    border: 2px solid #555;
+    border-bottom: none;
+    margin-left: 5px;
+    padding: 1px 10px;
+    border-radius: 4px 4px 0 0;
+    background: whitesmoke;
+    position: relative;
+    top: 1px;
+    cursor: default;
+}
+
+.tabs > span.active {
+    background: none;
+    padding: 2px 10px;
+    top: 0;
+}
+
+.tabs > .separator {
+    border-top: 2px solid #555;
+}
+
+.tabs > div:not(.separator) {
+    display: none;
+    padding: 10px;
+}
+
+.tabs > div.active, .tabs > div.separator {
+    display: block;
+}
+
+label {
+    display: block;
+    vertical-align: top;
+    line-height: 1.8em;
+}
+
+label span {
+    vertical-align: top;
+}
+
+form input[type='range'] {
+    width: 600px;
+}
+
+fieldset {
+    margin: 10px 0;
+}
