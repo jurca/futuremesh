@@ -7,8 +7,9 @@ require('tile');
  * manipulating the map and extracting useful information.
  */
 Map = function () {
-    var map, buildings, buildingsList, units, unitsList,
-            getBuildingPositions, createIndex, createIndexes;
+    var map, buildings, buildingsList, units, unitsList, navigationIndex,
+            getBuildingPositions, createIndex, createIndexes,
+            initNavigationIndex;
 
     /**
      * Two-dimensional array of tiles on the map. The first index is vertical
@@ -39,6 +40,13 @@ Map = function () {
      * List of all units instances present on the map.
      */
     unitsList = [];
+    /**
+     * Two-dimensional array matching the tiles of the map. Each item is a
+     * boolean value representing whether the tile is occupied or empty. The
+     * tile can be occupied by either a unit or a building through which units
+     * cannot pass.
+     */
+    navigationIndex = [];
 
     /**
      * Updates the building's status on the map (e.g. adding to the map).
@@ -52,6 +60,8 @@ Map = function () {
         for (i = positions.length; i--;) {
             position = positions[i];
             buildings[position.y][position.x] = building;
+            (!building.passable) &&
+                    (navigationIndex[position.y][position.x] = false);
         }
     };
     
@@ -63,6 +73,7 @@ Map = function () {
     this.updateUnit = function (unit) {
         unitsList.push(unit);
         units[unit.y][unit.x] = unit;
+        navigationIndex[unit.y][unit.x] = false;
     };
 
     /**
@@ -112,6 +123,17 @@ Map = function () {
      */
     this.getBuildingsIndex = function () {
         return buildings;
+    };
+
+    /**
+     * Returns the tile index about which tiles are accessible to units and
+     * which are not.
+     * 
+     * @return {Array} Two-dimensional array matching the tiles containing
+     *         information whether the tile is accessible to units or not.
+     */
+    this.getNavigationIndex = function () {
+        return navigationIndex;
     };
 
     /**
@@ -279,5 +301,18 @@ Map = function () {
     createIndexes = function () {
         buildings = createIndex();
         units = createIndex();
+        navigationIndex = createIndex();
+        initNavigationIndex();
+    };
+    
+    initNavigationIndex = function () {
+        var i, j, row, navigationRow;
+        for (j = map.length; j--;) {
+            row = map[j];
+            navigationRow = navigationIndex[j];
+            for (i = row.length; i--;) {
+                navigationRow[i] = row[i].accessible;
+            }
+        }
     };
 };
