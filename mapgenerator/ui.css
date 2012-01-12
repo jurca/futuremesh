@@ -3,6 +3,7 @@
     background: white;
     border-radius: 5px;
     padding: 15px;
+    box-shadow: 0 0 15px #777;
 }
 
 .tabs > span {
@@ -53,4 +54,16 @@ form input[type='range'] {
 
 fieldset {
     margin: 10px 0;
+}
+
+#viewmap {
+    width: 900px;
+}
+
+#view {
+    width: 930px;
+}
+
+#h-scroll {
+    width: 900px;
 }
