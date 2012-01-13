@@ -48,6 +48,11 @@ label span {
     vertical-align: top;
 }
 
+label .text {
+    display: inline-block;
+    width: 180px;
+}
+
 form input[type='range'] {
     width: 600px;
 }
