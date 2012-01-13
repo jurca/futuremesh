@@ -2,7 +2,7 @@
 var MapGenerator;
 require('mapgenerator.tabs', 'mapgenerator.forms', 'mapeditor.modal',
         'mapeditor.progressbar', 'mainview', 'mapgenerator.terraingenerator',
-        'mapcompressor');
+        'mapcompressor', 'mapgenerator.mapgeneratorscrollbars');
 
 MapGenerator = function () {
     var tabs, form, select, option, i, type, forms, modal, progressbar, view,
@@ -20,6 +20,7 @@ MapGenerator = function () {
     view.setCanvases(document.getElementById('terrain'),
             document.getElementById('buildings'),
             document.getElementById('units'), document.getElementById('sfx'));
+    new MapGeneratorScrollbars(view);
     terrainGenerator = new TerrainGenerator();
     form = document.getElementsByTagName('form')[0];
     select = form.getElementsByTagName('select')[0];
