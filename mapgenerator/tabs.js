@@ -20,7 +20,9 @@ Tabs = function () {
         tabs[tabIndex].className = 'active';
         contents = set.getElementsByTagName('div');
         for (i = contents.length; i-- > 1;) {
-            contents[i].className = '';
+            if (contents[i].parentNode == set) {
+                contents[i].className = '';
+            }
         }
         contents[tabIndex + 1].className = 'active';
     };
