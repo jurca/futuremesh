@@ -26,10 +26,10 @@ Forms = function () {
             if (inputs[i].type == 'range') {
                 inputs[i].addEventListener('change', function () {
                     var span;
-                    span = this.parentNode.getElementsByTagName('span')[0];
+                    span = this.parentNode.getElementsByTagName('span')[1];
                     span.innerHTML = this.value;
                 }, false);
-                inputs[i].parentNode.getElementsByTagName('span')[0].
+                inputs[i].parentNode.getElementsByTagName('span')[1].
                         innerHTML = inputs[i].value;
             }
         }

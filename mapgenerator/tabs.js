@@ -15,7 +15,9 @@ Tabs = function () {
         set = this.getTabset(setIndex);
         tabs = set.getElementsByTagName('span');
         for (i = tabs.length; i--;) {
-            tabs[i].className = '';
+            if (tabs[i].parentNode == set) {
+                tabs[i].className = '';
+            }
         }
         tabs[tabIndex].className = 'active';
         contents = set.getElementsByTagName('div');
@@ -35,11 +37,13 @@ Tabs = function () {
         var tabs, i;
         tabs = set.getElementsByTagName('span');
         for (i = tabs.length; i--;) {
-            tabs[i].tabsetIndex = setIndex;
-            tabs[i].tabsetTabIndex = i;
-            tabs[i].addEventListener('click', function () {
-                instance.setActiveTab(this.tabsetIndex, this.tabsetTabIndex);
-            }, false);
+            if (tabs[i].parentNode == set) {
+                tabs[i].tabsetIndex = setIndex;
+                tabs[i].tabsetTabIndex = i;
+                tabs[i].addEventListener('click', function () {
+                    instance.setActiveTab(this.tabsetIndex, this.tabsetTabIndex);
+                }, false);
+            }
         }
     };
     
