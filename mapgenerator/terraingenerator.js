@@ -2,8 +2,18 @@
 var TerrainGenerator;
 require('map');
 
+/**
+ * Utility used by the Map Generator to generate the terrain of the map.
+ */
 TerrainGenerator = function () {
-    this.generate = function (data) {
+    /**
+     * Generates an empty map of random dimensions within the bounds specified
+     * in the form data. All tiles of the map will of the type specified in the
+     * form.
+     * 
+     * @param {Object} data The data obtained from the form.
+     */
+    this.generateEmptyMap = function (data) {
         var width, height, map, tiles, row, i, j;
         width = data.minWidth +
                 Math.round(Math.random() * (data.maxWidth - data.minWidth));
