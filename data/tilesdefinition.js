@@ -21,6 +21,12 @@ TilesDefinition = (function () {
             image: 'data/images/tiles/rock.jpg',
             accessible: false,
             minimap: 'rgb(128,128,128)'
+        },
+        {
+            type: 3,
+            image: 'data/images/tiles/energy.jpg',
+            accessible: false,
+            minimap: 'rgb(200,150,42)'
         }
     ];
 
