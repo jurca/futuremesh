@@ -58,7 +58,7 @@ UnitsLayer = function () {
         indexGranularity = Settings.gridIndexGranularity;
         for (i = Math.ceil(gridHeight / indexGranularity); i--;) {
             row = [];
-            for (j = Math.ceil(gridWidth) / indexGranularity; j--;) {
+            for (j = Math.ceil(gridWidth / indexGranularity); j--;) {
                 row.push(0);
             }
             index.push(row);
