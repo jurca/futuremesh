@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>FutureMesh Map Generator 0.1</title>
+        <title>FutureMesh Map Generator 0.2</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" href="mapeditor/ui.css" media="all" />
         <link rel="stylesheet" type="text/css" href="mapeditor/uicomponents.css" media="all" />
@@ -37,7 +37,7 @@
                                 </label>
                                 <label>
                                     <span class="text">Maximum map height:</span>
-                                    <input name="maxHeight" type="range" min="100" max="800" step="1" value="500" />
+                                    <input name="maxHeight" type="range" min="250" max="800" step="1" value="500" />
                                     <span></span>
                                 </label>
                                 <label>
@@ -64,12 +64,21 @@
                             <fieldset>
                                 <legend>Advanced settings</legend>
                                 <label>
-                                    <span class="text">Base tile type:</span>
+                                    <span class="text">Base inaccessible tile type:</span>
                                     <select name="baseTile"></select>
                                 </label>
                                 <label>
-                                    <span class="text">Minimal distance from borders:</span>
-                                    <input name="minDistanceFromBorders" type="range" min="2" max="100" step="1" value="10" />
+                                    <span class="text">Base accessible tile type:</span>
+                                    <select name="baseAccessibleTile"></select>
+                                </label>
+                                <label>
+                                    <span class="text">Distance from borders:</span>
+                                    <input name="minDistanceFromBorders" type="range" min="3" max="40" step="1" value="10" />
+                                    <span></span>
+                                </label>
+                                <label>
+                                    <span class="text">Base area radius:</span>
+                                    <input name="baseAreaRadius" type="range" min="25" max="100" step="1" value="45" />
                                     <span></span>
                                 </label>
                                 <label>

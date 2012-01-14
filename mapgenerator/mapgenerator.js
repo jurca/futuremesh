@@ -35,6 +35,15 @@ MapGenerator = function () {
             select.appendChild(option);
         }
     }
+    select = form.getElementsByTagName('select')[1];
+    for (i = 0; type = TilesDefinition.getType(i); i++) {
+        if (type.accessible) {
+            option = document.createElement('option');
+            option.appendChild(document.createTextNode(i));
+            option.value = i;
+            select.appendChild(option);
+        }
+    }
     
     form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -50,14 +59,21 @@ MapGenerator = function () {
      * Generates the map using the data provided in the form.
      */
     generateMap = function () {
-        var data, map;
+        var data, map, playersCount, positions;
         executeBatch([
             function () { // retrieve the form data
                 data = forms.getFormData(form);
+                playersCount = data.players;
                 progressbar.setValue(5);
             },
             function () { // generate an empty map
                 map = terrainGenerator.generateEmptyMap(data);
+                progressbar.setValue(15);
+            },
+            function () { // create places for players
+                positions = terrainGenerator.generatePlayerSpots(map, data,
+                        playersCount);
+                terrainGenerator.generatePlayerAreas(map, data, positions);
                 progressbar.setValue(90);
             },
             function () { // export the map data

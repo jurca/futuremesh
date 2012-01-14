@@ -50,7 +50,7 @@ label span {
 
 label .text {
     display: inline-block;
-    width: 180px;
+    width: 200px;
 }
 
 form input[type='range'] {
