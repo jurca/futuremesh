@@ -11,7 +11,7 @@ Tabs = function () {
     };
     
     this.setActiveTab = function (setIndex, tabIndex) {
-        var set, tabs, i, contents;
+        var set, tabs, i, contents, contentNodes;
         set = this.getTabset(setIndex);
         tabs = set.getElementsByTagName('span');
         for (i = tabs.length; i--;) {
@@ -20,13 +20,15 @@ Tabs = function () {
             }
         }
         tabs[tabIndex].className = 'active';
-        contents = set.getElementsByTagName('div');
-        for (i = contents.length; i-- > 1;) {
-            if (contents[i].parentNode == set) {
-                contents[i].className = '';
+        contentNodes = set.getElementsByTagName('div');
+        contents = [];
+        for (i = contentNodes.length; i-- > 1;) {
+            if (contentNodes[i].parentNode == set) {
+                contentNodes[i].className = '';
+                contents.unshift(contentNodes[i]);
             }
         }
-        contents[tabIndex + 1].className = 'active';
+        contents[tabIndex].className = 'active';
     };
     
     $ = function (selector) {
@@ -41,7 +43,8 @@ Tabs = function () {
                 tabs[i].tabsetIndex = setIndex;
                 tabs[i].tabsetTabIndex = i;
                 tabs[i].addEventListener('click', function () {
-                    instance.setActiveTab(this.tabsetIndex, this.tabsetTabIndex);
+                    instance.setActiveTab(this.tabsetIndex,
+                            this.tabsetTabIndex);
                 }, false);
             }
         }
