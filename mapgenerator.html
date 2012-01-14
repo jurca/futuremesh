@@ -14,7 +14,9 @@
             <div class="ui">
                 <div class="tabs">
                     <span class="active">Settings</span>
-                    <span >Output</span>
+                    <span>Output</span>
+                    <span>Global overview</span>
+                    <span>Exported map data</span>
                     <div class="separator"></div>
                     <div class="active">
                         <form>
@@ -108,7 +110,18 @@
                                 </div>
                             </div>
                         </div>
-                        <textarea cols="102" rows="4" id="map"></textarea>
+                        <div class="clear"></div>
+                    </div>
+                    <div>
+                        <div class="global-overview">
+                            <div class="canvas-container"><canvas id="global-terrain" width="1" height="1"></canvas></div>
+                            <div class="canvas-container"><canvas id="global-buildings" width="1" height="1"></canvas></div>
+                            <div class="canvas-container"><canvas id="global-units" width="1" height="1"></canvas></div>
+                            <canvas id="global-sfx" width="1" height="1"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <textarea cols="100" rows="16" id="map"></textarea>
                     </div>
                 </div>
             </div>

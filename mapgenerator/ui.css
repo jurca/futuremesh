@@ -72,3 +72,9 @@ fieldset {
 #h-scroll {
     width: 900px;
 }
+
+.global-overview canvas {
+    width: 900px;
+    height: 600px;
+    border: 1px solid black;
+}

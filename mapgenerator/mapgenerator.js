@@ -9,7 +9,7 @@ require('mapgenerator.tabs', 'mapgenerator.forms', 'mapeditor.modal',
  */
 MapGenerator = function () {
     var tabs, form, select, option, i, type, forms, modal, progressbar, view,
-            terrainGenerator, compressor, executeBatch, generateMap;
+            terrainGenerator, compressor, executeBatch, generateMap, getById;
     
     modal = new Modal('Initializing...');
     progressbar = new Progressbar(50);
@@ -74,14 +74,34 @@ MapGenerator = function () {
                 positions = terrainGenerator.generatePlayerSpots(map, data,
                         playersCount);
                 terrainGenerator.generatePlayerAreas(map, data, positions);
-                progressbar.setValue(90);
+                progressbar.setValue(85);
             },
             function () { // export the map data
                 document.getElementById('map').value =
                         compressor.compress(map.exportData(), 3);
+                progressbar.setValue(90);
+            },
+            function () { // generate the global overview of the map
+                var size;
+                view.setCanvases(getById('global-terrain'),
+                        getById('global-buildings'), getById('global-units'),
+                        getById('global-sfx'));
+                view.setMap(map);
+                size = view.getLayersDimensions();
+                getById('global-terrain').width = size.width;
+                getById('global-terrain').height = size.height;
+                getById('global-buildings').width = size.width;
+                getById('global-buildings').height = size.height;
+                getById('global-units').width = size.width;
+                getById('global-units').height = size.height;
+                getById('global-sfx').width = size.width;
+                getById('global-sfx').height = size.height;
+                view.display(0, 0);
                 progressbar.setValue(95);
             },
             function () { // display the map
+                view.setCanvases(getById('terrain'), getById('buildings'),
+                        getById('units'), getById('sfx'));
                 view.setMap(map);
                 view.display(0, 0);
                 modal.close();
@@ -107,6 +127,15 @@ MapGenerator = function () {
             }
             tasks[task++]();
         }, pause);
+    };
+    
+    /**
+     * Returns an element of the specified ID.
+     * 
+     * @return Element The element of the specified ID.
+     */
+    getById = function (elementId) {
+        return document.getElementById(elementId);
     };
     
     modal.close();
