@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JS Builder</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="jsbuilder/form.js"></script>
+        <script type="text/javascript" src="jsbuilder/ajax.js"></script>
+        <script type="text/javascript" src="jsbuilder/console.js"></script>
+        <script type="text/javascript" src="jsbuilder/jsbuilder.js"></script>
+        <script type="text/javascript" src="http://fmarcia.info/jsmin/fulljsmin.js"></script>
+    </head>
+    <body>
+        <form>
+            <fieldset>
+                <legend>Directories</legend>
+                <p><input type="text" name="dir" value="js" /> <a id="addDir">+</a></p>
+                <p><input type="text" name="dir" value="data" /></p>
+            </fieldset>
+            <fieldset>
+                <legend>Exclude list</legend>
+                <p><input type="text" name="exclude" value="js/require.js" /> <a id="addExclude">+</a></p>
+            </fieldset>
+            <fieldset>
+                <legend>Settings</legend>
+                <p>
+                    <label>
+                        <input type="checkbox" name="dummyRequire" checked="" />
+                        Add a dummy require function
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" name="useClosure" />
+                        Use closure
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" name="useJSMin" />
+                        Use JS Min (please refer to the respective licence)
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        JS Min level:
+                        <select name="level">
+                            <option value="1">minimal</option>
+                            <option value="2" selected="">conservative</option>
+                            <option value="3">agressive</option>
+                        </select>
+                    </label>
+                </p>
+            </fieldset>
+            <input type="submit" value="Build" />
+        </form>
+        <pre style="border: 1px solid black; white-space: pre-wrap; max-height: 100px; overflow: auto;" id="console">
+
+        </pre>
+        <textarea cols="80" rows="6" id="output"></textarea>
+    </body>
+</html>
