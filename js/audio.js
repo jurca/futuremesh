@@ -107,7 +107,7 @@
 
         if (options.onended instanceof Function) {
             if (!duration) {
-                throw new Error('Cannot use onended API withou duration info');
+                throw new Error('Cannot use onended without duration info');
             }
             setInterval(function () {
                 if (!runOnEnded && (instance.getCurrentTime() >= duration)) {
