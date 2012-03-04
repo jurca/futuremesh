@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sprite Loader</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript">
+            var require = function () {}; // a dummy require function
+        </script>
+        <script type="text/javascript" src="../js/settings.js"></script>
+        <script type="text/javascript" src="../js/colorifier.js"></script>
+        <script type="text/javascript" src="../js/player.js"></script>
+        <script type="text/javascript" src="../data/tilesdefinition.js"></script>
+        <script type="text/javascript" src="../data/buildingsdefinition.js"></script>
+        <script type="text/javascript" src="../data/unitsdefinition.js"></script>
+        <script type="text/javascript" src="../data/playersdefinition.js"></script>
+        <script type="text/javascript" src="../data/settings.js"></script>
+        <script type="text/javascript" src="../js/spriteloader.js"></script>
+        <script type="text/javascript">
+(function () {
+    var init, loader, console, draw, drawImage;
+    
+    init = function () {
+        console = document.getElementById('console');
+        console.value = 'Loading: ';
+        loader = new SpriteLoader();
+        loader.addObserver(function (progress) {
+            console.value += (progress * 100) + ' %    ';
+            if (progress == 1) {
+                draw();
+            }
+        });
+        loader.load();
+    };
+    
+    draw = function () {
+        var i, j, tile, container, building, unit;
+        container = document.getElementById('tiles');
+        for (i = 0; tile = TilesDefinition.getType(i); i++) {
+            drawImage(container, tile.imageData);
+        }
+        container = document.getElementById('buildings');
+        for (i = 0; building = BuildingsDefinition.getType(i); i++) {
+            drawImage(container, building.imageData);
+        }
+        container = document.getElementById('units');
+        for (i = 0; unit = UnitsDefinition.getType(i); i++) {
+            for (j = 0; j < 8; j++) {
+                drawImage(container, unit.imageData[j]);
+            }
+            container.appendChild(document.createElement('br'));
+        }
+    };
+
+    drawImage = function (container, image) {
+        container.appendChild(image);
+    };
+    
+    addEventListener('DOMContentLoaded', init, false);
+}());
+        </script>
+        <style type="text/css">
+            img {
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="console" cols="80" rows="6"></textarea>
+        <p id="tiles"></p>
+        <p id="buildings"></p>
+        <p id="units"></p>
+    </body>
+</html>
