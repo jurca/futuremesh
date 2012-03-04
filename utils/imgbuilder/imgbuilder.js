@@ -3,7 +3,8 @@ var ImgBuilder;
 
 ImgBuilder = function () {
     var $, canvas, context, code, addTiles, addBuildings, addUnits,
-            buildSprite, tiles, buildings, units, indexes, buildingOffsets;
+            buildSprite, tiles, buildings, units, indexes, buildingOffsets,
+            buildingHeights, buildingsStart;
     
     $ = function (selector) {
         return document.querySelectorAll(selector);
@@ -54,10 +55,12 @@ ImgBuilder = function () {
         height = 0;
         width = 0;
         buildingOffsets = [];
+        buildingHeights = [];
         for (i = 0; building = BuildingsDefinition.getType(i); i++) {
             height = Math.max(height, Math.ceil(building.imageData.height));
             width += Math.ceil(building.imageData.width);
             buildingOffsets.push(Math.ceil(building.imageData.width));
+            buildingHeights.push(Math.ceil(building.imageData.height));
         }
         canvas.width = width;
         canvas.height = height;
@@ -98,14 +101,19 @@ ImgBuilder = function () {
         canvas.height = height;
         context.putImageData(tiles, 0, 0);
         context.putImageData(units, 0, tiles.height);
-        context.putImageData(buildings, 0, tiles.height + units.height);
+        buildingsStart = tiles.height + units.height;
+        context.putImageData(buildings, 0, buildingsStart);
         img = document.createElement('img');
         img.src = canvas.toDataURL();
         img.style.border = '1px solid black';
         canvas.parentNode.replaceChild(img, canvas);
         indexes.value = JSON.stringify({
             unitsStart: tiles.height,
-            buildings: buildingOffsets
+            buildings: {
+                start: buildingsStart,
+                ends: buildingOffsets,
+                heights: buildingHeights
+            }
         }, undefined, 4);
         code.value += 'Done';
     };
