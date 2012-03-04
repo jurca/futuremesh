@@ -1,0 +1,12 @@
+{
+    "unitsStart": 24,
+    "buildings": {
+        "start": 48,
+        "ends": [
+            85
+        ],
+        "heights": [
+            70
+        ]
+    }
+}
