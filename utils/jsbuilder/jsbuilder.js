@@ -48,7 +48,7 @@ JsBuilder = function () {
     
     addFile = function (file, exclude) {
         var i;
-        if (file.indexOf('.js') < 0) {
+        if (!file.match(/^.*[.]js$/i)) {
             return;
         }
         for (i = exclude.length; i--;) {
