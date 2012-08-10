@@ -4,6 +4,21 @@ var SpriteLoader;
 require('data.tilesdefinition', 'data.buildingsdefinition',
         'data.unitsdefinition', 'settings', 'colorifier');
 
+/**
+ * The SpriteLoader is a highly-efficient alternative to the ImageLoader class.
+ * The SpriteLoader loads all images using two HTTP requests:
+ * 
+ * <ol>
+ *     <li>data/images.png - a sprite containing all unit, building and tile
+ *         images.</li>
+ *     <li>data/sprite.json - a helping index file easing the process of
+ *         extraction of the tile, building and unit images from the loaded
+ *         sprite image.</li>
+ * </ol>
+ * 
+ * The SpriteLoader then processes the loaded sprite, extract the images and
+ * uses the Colorifier utility to create variants for each side.
+ */
 SpriteLoader = function () {
     var observers, notifyObservers, loadSprite, indexes, getBaseURL, canvas,
             context, baseUrl, extractTiles, tileWidth, tileHeight,
@@ -12,12 +27,32 @@ SpriteLoader = function () {
     observers = [];
     colorifier = new Colorifier();
     
+    /**
+     * Add a new observer of the loading process. The loader executes all
+     * registered observers every time the loading process progresses. An
+     * observer is a single-argument function. The loader sets this argument
+     * to a floating-point number representing the current process, 0 being
+     * the start, 1 meaning finished. The argument may be alternatively set to
+     * -1 to indicate an error.
+     * 
+     * @param {Function} observer Loading progress observer.
+     */
     this.addObserver = function (observer) {
         if (observer instanceof Function) {
             observers.push(observer);
         }
     };
     
+    /**
+     * Initializes the loading process. The SpriteLoader loads first the index
+     * file, then loads the sprite, then extracts all images from the sprite
+     * and uses the Colorifier to finish the process.
+     * 
+     * <p>The loader executes the registered loading process observers each
+     * time the process progresses.</p>
+     * 
+     * @see #addObserver({Function} observer)
+     */
     this.load = function () {
         var xhr;
         tileWidth = Math.ceil(Settings.tileWidth);
@@ -43,6 +78,10 @@ SpriteLoader = function () {
         xhr.send(null);
     };
     
+    /**
+     * Loads the sprite containing all images. The progress is set to 0.7 upon
+     * completion and the loader continues then with extracting tile images.
+     */
     loadSprite = function () {
         var image;
         image = new Image();
@@ -70,6 +109,10 @@ SpriteLoader = function () {
         image.src = baseUrl + 'data/images.png';
     };
     
+    /**
+     * Extracts tile images from the loaded sprite. The progress is set to 0.8
+     * upon completion. The loader extracts unit images during the next step.
+     */
     extractTiles = function () {
         var i, tile;
         for (i = 0; tile = TilesDefinition.getType(i); i++) {
@@ -80,6 +123,11 @@ SpriteLoader = function () {
         setTimeout(extractUnits, 0);
     };
     
+    /**
+     * Extracts unit images from the loaded sprite and colorifies them. The
+     * progress is set to 0.9 upon completion. The loader extracts building
+     * images during the next step.
+     */
     extractUnits = function () {
         var i, j, unit, start;
         start = indexes.unitsStart;
@@ -98,6 +146,10 @@ SpriteLoader = function () {
         setTimeout(extractBuildings, 0);
     };
     
+    /**
+     * Extracts building images from the loaded sprite and colorifies them. The
+     * progress is set to 1 upon completion (the loading process has finished).
+     */
     extractBuildings = function () {
         var i, building, starts, heights, startY;
         starts = indexes.buildings.ends;
@@ -114,6 +166,17 @@ SpriteLoader = function () {
         notifyObservers(1);
     };
     
+    /**
+     * Extracts sub-image from the loaded sprite image.
+     * 
+     * @param {Number} x The X-coordinate of the left top corner of the
+     *        extracted image within the sprite image.
+     * @param {Number} y The Y-coordinate of the left top cornenr of the
+     *        extracted image within the sprite image.
+     * @param {Number} width Width of the extracted image.
+     * @param {Number} height Height of the extracted image.
+     * @return {Image} Extracted image.
+     */
     extractImage = function (x, y, width, height) {
         var imageCanvas, image;
         imageCanvas = document.createElement('canvas');
@@ -126,6 +189,15 @@ SpriteLoader = function () {
         return image;
     };
     
+    /**
+     * Attempts to auto-detect the base URL of the whole application for
+     * setting the correct URLs of the sprite and index file. The method
+     * requires a script tag within the current document pointing to this file
+     * (no compressed alternative).
+     * 
+     * @return {String} Detected base URL or an empty string if the
+     *         autodetection fails.
+     */
     getBaseURL = function () {
         var scripts, i, url;
         scripts = document.getElementsByTagName('script');
@@ -140,6 +212,12 @@ SpriteLoader = function () {
         return '';
     };
     
+    /**
+     * Executes all progress observers and passes them the provided argument.
+     * 
+     * @param {Number} progress Current loading progress. Should be a
+     *        floating-point number within the range [0, 1], or -1.
+     */
     notifyObservers = function (progress) {
         var i;
         for (i = observers.length; i--;) {
