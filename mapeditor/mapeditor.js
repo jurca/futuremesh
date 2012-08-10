@@ -1,5 +1,5 @@
 "use strict";
-require('imageloader', 'mapeditor.modal', 'mapeditor.progressbar',
+require('spriteloader', 'mapeditor.modal', 'mapeditor.progressbar',
         'mapeditor.mapeditorviewui', 'mapeditor.mapeditormainmenu',
         'mapeditor.mapeditorpallets', 'mapeditor.mapeditormouse',
         'mapeditor.mapeditorbrush', 'player');
@@ -67,7 +67,7 @@ addEventListener('load', function () {
         progressbar = new Progressbar(0);
         modal.appendChild(progressbar);
         modal.center();
-        imageLoader = new ImageLoader();
+        imageLoader = new SpriteLoader()
         imageLoader.addObserver(function (percent) {
             progressbar.setValue(percent * 100);
             if (percent == 1) {
@@ -75,7 +75,6 @@ addEventListener('load', function () {
                 modal.close();
             }
         });
-        imageLoader.load(BuildingsDefinition, UnitsDefinition,
-            TilesDefinition);
+        imageLoader.load();
     }, 100);
 }, false);
