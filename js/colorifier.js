@@ -51,7 +51,7 @@ Colorifier = function () {
         canvas.height = image.height;
         context = canvas.getContext('2d');
         context.drawImage(image, 0, 0);
-        data = context.getImageData(0, 0, image.width, image.height);
+        data = context.getImageData(0, 0, image.width - 1, image.height - 1);
         processData(data, decodeColor(source), decodeColor(target),
                 maxDistance);
         context.putImageData(data, 0, 0);
