@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>FutureMesh Map Generator 0.2</title>
+        <title>FutureMesh Map Generator 0.3</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" href="mapeditor/ui.css" media="all" />
         <link rel="stylesheet" type="text/css" href="mapeditor/uicomponents.css" media="all" />
         <link rel="stylesheet" type="text/css" href="mapgenerator/ui.css" media="all" />
-        <script type="text/javascript" src="js/require.js"></script>
+        <!-- the complete FutureMesh enginge -->
+        <script type="text/javascript" src="futuremesh.js"></script>
+        <!-- tiles, units, buildings, etc -->
+        <script type="text/javascript" src="data/buildingsdefinition.js"></script>
+        <script type="text/javascript" src="data/playersdefinition.js"></script>
+        <script type="text/javascript" src="data/settings.js"></script>
+        <script type="text/javascript" src="data/tilesdefinition.js"></script>
+        <script type="text/javascript" src="data/unitsdefinition.js"></script>
+        <!-- classes imported from the map editor -->
+        <script type="text/javascript" src="mapeditor/modal.js"></script>
+        <script type="text/javascript" src="mapeditor/progressbar.js"></script>
+        <!-- map generator -->
         <script type="text/javascript" src="mapgenerator/bootstrap.js"></script>
+        <script type="text/javascript" src="mapgenerator/forms.js"></script>
+        <script type="text/javascript" src="mapgenerator/mapgenerator.js"></script>
+        <script type="text/javascript" src="mapgenerator/mapgeneratorscrollbars.js"></script>
+        <script type="text/javascript" src="mapgenerator/tabs.js"></script>
+        <script type="text/javascript" src="mapgenerator/terraingenerator.js"></script>
     </head>
     <body>
         <div class="body">
