@@ -65,7 +65,7 @@ JsBuilder = function () {
     };
     
     loadFile = function (data, i) {
-        var file;
+        var file, nocache;
         if (i >= files.length) {
             console.log('Files loaded');
             buildFile(data);
@@ -73,7 +73,8 @@ JsBuilder = function () {
         }
         file = files[i];
         console.log('Loading file ' + file);
-        ajax.get('/' + file, function (response) {
+        nocache = (new Date()).getTime();
+        ajax.get('/' + file + '?nocache=' + nocache, function (response) {
             fileContents.push(response);
             loadFile(data, i + 1);
         }, function () {
