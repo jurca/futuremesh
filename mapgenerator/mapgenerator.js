@@ -28,7 +28,7 @@ MapGenerator = function () {
     form = document.getElementsByTagName('form')[0];
     select = form.getElementsByTagName('select')[0];
     for (i = 0; type = TilesDefinition.getType(i); i++) {
-        if (!type.accessible) {
+        if (!type.accessible && (type.resource === null)) {
             option = document.createElement('option');
             option.appendChild(document.createTextNode(i));
             option.value = i;
