@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>FutureMesh Map Generator 0.3</title>
+        <title>FutureMesh Map Generator 0.4</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" href="mapeditor/ui.css" media="all" />
         <link rel="stylesheet" type="text/css" href="mapeditor/uicomponents.css" media="all" />
@@ -37,42 +37,120 @@
                     <div class="active">
                         <form>
                             <fieldset>
-                                <legend>Basic settings</legend>
-                                <label>
-                                    <span class="text">Minimal map width:</span>
-                                    <input name="minWidth" type="range" min="100" max="800" step="1" value="100" />
-                                    <span></span>
-                                </label>
-                                <label>
-                                    <span class="text">Minimal map height:</span>
-                                    <input name="minHeight" type="range" min="250" max="800" step="1" value="250" />
-                                    <span></span>
-                                </label>
-                                <label>
-                                    <span class="text">Maximum map width:</span>
-                                    <input name="maxWidth" type="range" min="100" max="800" step="1" value="270" />
-                                    <span></span>
-                                </label>
-                                <label>
-                                    <span class="text">Maximum map height:</span>
-                                    <input name="maxHeight" type="range" min="250" max="800" step="1" value="500" />
-                                    <span></span>
-                                </label>
+                                <legend>General settings</legend>
                                 <label>
                                     <span class="text">Number of players:</span>
                                     <input name="players" type="range" min="2" max="8" step="1" value="2" />
                                     <span></span>
                                 </label>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Terrain settings</legend>
+                                <fieldset>
+                                    <legend>Basic settings</legend>
+                                    <label>
+                                        <span class="text">Minimal map width:</span>
+                                        <input name="minWidth" type="range" min="60" max="800" step="1" value="100" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Minimal map height:</span>
+                                        <input name="minHeight" type="range" min="100" max="800" step="1" value="250" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Maximum map width:</span>
+                                        <input name="maxWidth" type="range" min="100" max="800" step="1" value="170" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Maximum map height:</span>
+                                        <input name="maxHeight" type="range" min="250" max="800" step="1" value="300" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Basic inaccessible tile type:</span>
+                                        <select name="baseTile"></select>
+                                    </label>
+                                    <label>
+                                        <span class="text">Basic accessible tile type:</span>
+                                        <select name="baseAccessibleTile"></select>
+                                    </label>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Base area settings</legend>
+                                    <label>
+                                        <span class="text">Distance from borders:</span>
+                                        <input name="minDistanceFromBorders" type="range" min="3" max="40" step="1" value="10" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Base area radius:</span>
+                                        <input name="baseAreaRadius" type="range" min="15" max="100" step="1" value="25" />
+                                        <span></span>
+                                    </label>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Map areas</legend>
+                                    <label>
+                                        <span class="text">Create great central area:</span>
+                                        <input type="checkbox" name="createCentralArea" checked="" />
+                                    </label>
+                                    <label>
+                                        <span class="text">Central area size:</span>
+                                        <input name="centralAreaSize" type="range" min="10" max="80" value="20" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Amount of circular passage-areas:</span>
+                                        <input name="circularAreasCount" type="range" min="15" max="100" value="35" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Amount of rectangular passage-areas:</span>
+                                        <input name="rectangularAreasCount" type="range" min="15" max="100" value="35" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Amount of diamon-shaped passage-areas:</span>
+                                        <input name="diamodAreasCount" type="range" min="15" max="100" value="35" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Minimum size of passage-area:</span>
+                                        <input name="passageAreaMinSize" type="range" min="5" max="65" value="14" />
+                                        <span></span>
+                                    </label>
+                                    <label>
+                                        <span class="text">Maximum size of passage-area:</span>
+                                        <input name="passageAreaMaxSize" type="range" min="7" max="85" value="20" />
+                                        <span></span>
+                                    </label>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Passages</legend>
+                                    <label>
+                                        <span class="text">Ensure there is a passage to all areas of the map:</span>
+                                        <input name="generatePassages" type="checkbox" checked="" />
+                                    </label>
+                                </fieldset>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Buildings settings</legend>
                                 <label>
                                     <span class="text">Include player buildings:</span>
                                     <input name="includePlayerBuildings" type="checkbox" />
                                 </label>
-                            </fieldset>
-                            <fieldset>
-                                <legend>Neutral structures</legend>
                                 <label>
                                     <span class="text">Include neutral buildings:</span>
                                     <input name="neutralBuildings" type="checkbox" />
+                                </label>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Units settings</legend>
+                                <label>
+                                    <span class="text">Include player units:</span>
+                                    <input name="includePlayerUnits" type="checkbox" />
                                 </label>
                                 <label>
                                     <span class="text">Include neutral units:</span>
@@ -80,25 +158,7 @@
                                 </label>
                             </fieldset>
                             <fieldset>
-                                <legend>Advanced settings</legend>
-                                <label>
-                                    <span class="text">Base inaccessible tile type:</span>
-                                    <select name="baseTile"></select>
-                                </label>
-                                <label>
-                                    <span class="text">Base accessible tile type:</span>
-                                    <select name="baseAccessibleTile"></select>
-                                </label>
-                                <label>
-                                    <span class="text">Distance from borders:</span>
-                                    <input name="minDistanceFromBorders" type="range" min="3" max="40" step="1" value="10" />
-                                    <span></span>
-                                </label>
-                                <label>
-                                    <span class="text">Base area radius:</span>
-                                    <input name="baseAreaRadius" type="range" min="25" max="100" step="1" value="45" />
-                                    <span></span>
-                                </label>
+                                <legend>Resources settings</legend>
                                 <label>
                                     <span class="text">Resources abundance:</span>
                                     <input name="resourcesAbundance" type="range" min="1" max="100" step="1" value="30" />

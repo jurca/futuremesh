@@ -59,6 +59,7 @@ form input[type='range'] {
 
 fieldset {
     margin: 10px 0;
+    border-radius: 4px;
 }
 
 #viewmap {
