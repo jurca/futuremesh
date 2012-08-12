@@ -7,7 +7,7 @@ require('tile');
  * manipulating the map and extracting useful information.
  */
 Map = function () {
-    var map, buildings, buildingsList, units, unitsList, navigationIndex,
+    var tiles, buildings, buildingsList, units, unitsList, navigationIndex,
             getBuildingPositions, createIndex, createIndexes,
             initNavigationIndex;
 
@@ -17,7 +17,7 @@ Map = function () {
      * used instead of tiles only for legacy reasons and should be changed one
      * day in the future.
      */
-    map = [];
+    tiles = [];
     /**
      * Two-dimensional array matching the tiles of the map. Each item is a null
      * or a reference to the building occupying the tile. If a building is
@@ -81,9 +81,10 @@ Map = function () {
      *
      * @param {Array} newMap The two-dimensional array of map tiles
      *        representing the map.
+     * @deprecated Use setTiles({Array} newTiles) instead.
      */
     this.setMap = function (newMap) {
-        map = newMap;
+        tiles = newMap;
         createIndexes();
     };
 
@@ -92,10 +93,30 @@ Map = function () {
      * tiles.
      *
      * @return {Array} Raw map data.
+     * @deprecated Use getTiles({Array} tiles) instead.
      */
     this.getMap = function () {
-        return map;
+        return tiles;
     }
+    
+    /**
+     * Sets tiles of the map.
+     * 
+     * @param {Array} newTiles Two-dimensional array of map tiles objects.
+     */
+    this.setTiles = function (newTiles) {
+        tiles = newTiles;
+        createIndex();
+    };
+    
+    /**
+     * Retuns the tiles of the map as a two-dimensional array of tile objects.
+     * 
+     * @return {Array} Map's tiles.
+     */
+    this.getTiles = function () {
+        return tiles;
+    };
 
     /**
      * Returns list of all buildings the map contains.
@@ -149,7 +170,7 @@ Map = function () {
      */
     this.getView = function (x, y, width, height) {
         var view, i;
-        view = map.slice(y, y + height);
+        view = tiles.slice(y, y + height);
         width += x;
         for (i = height; i--;) {
             view[i] = view[i].slice(x, width);
@@ -165,13 +186,13 @@ Map = function () {
      */
     this.emptyMap = function (width, height) {
         var i, j, row;
-        map = [];
+        tiles = [];
         for (i = height; i--;) {
             row = [];
             for (j = width; j--;) {
                 row.push(new Tile(0));
             }
-            map.push(row);
+            tiles.push(row);
         }
         createIndexes();
     };
@@ -185,7 +206,7 @@ Map = function () {
      */
     this.randomMap = function (width, height) {
         var i, j, row, tile;
-        map = [];
+        tiles = [];
         for (i = height; i--;) {
             row = [];
             for (j = width; j--;) {
@@ -194,7 +215,7 @@ Map = function () {
                         Math.floor(Math.random() * 5) : 0;
                 row.push(tile);
             }
-            map.push(row);
+            tiles.push(row);
         }
         createIndexes();
     };
@@ -210,8 +231,8 @@ Map = function () {
     this.exportData = function () {
         var i, j, data, mapRow, dataRow, buildingData, unitsData;
         data = [];
-        for (i = map.length; i--;) {
-            mapRow = map[i];
+        for (i = tiles.length; i--;) {
+            mapRow = tiles[i];
             dataRow = [];
             for (j = mapRow.length; j--;) {
                 dataRow.unshift(mapRow[j].exportData());
@@ -241,14 +262,14 @@ Map = function () {
      */
     this.importData = function (data) {
         var i, j, mapRow, dataRow;
-        map = [];
+        tiles = [];
         for (i = data.tiles.length; i--;) {
             mapRow = [];
             dataRow = data.tiles[i];
             for (j = dataRow.length; j--;) {
                 mapRow.unshift(Tile.importData(dataRow[j]));
             }
-            map.unshift(mapRow);
+            tiles.unshift(mapRow);
         }
         buildingsList = [];
         createIndexes();
@@ -288,9 +309,9 @@ Map = function () {
     createIndex = function () {
         var i, j, row, index;
         index = [];
-        for (i = map.length; i--;) {
+        for (i = tiles.length; i--;) {
             row = [];
-            for (j = map[0].length; j--;) {
+            for (j = tiles[0].length; j--;) {
                 row.push(null);
             }
             index.push(row);
@@ -307,8 +328,8 @@ Map = function () {
     
     initNavigationIndex = function () {
         var i, j, row, navigationRow;
-        for (j = map.length; j--;) {
-            row = map[j];
+        for (j = tiles.length; j--;) {
+            row = tiles[j];
             navigationRow = navigationIndex[j];
             for (i = row.length; i--;) {
                 navigationRow[i] = row[i].accessible;
