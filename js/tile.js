@@ -42,7 +42,17 @@ Tile = function (type) {
      * @type String
      */
     this.minimap = definition.minimap;
-    
+
+    /**
+     * The ID of the resource this tile is used to generate. The tile can
+     * generate this resource endlessly and the resource can be collected using
+     * an appropriate collector building placed next to/atop of the tile. This
+     * field is null if the tile does not generate any resource.
+     * 
+     * @type Number
+     */
+    this.resource = definition.resource;
+
     /**
      * Sets the with of the light beam emitting from this tile. Can be set to 0
      * to disable the light beam effect.
