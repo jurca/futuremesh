@@ -59,7 +59,7 @@ MapGenerator = function () {
      * Generates the map using the data provided in the form.
      */
     generateMap = function () {
-        var data, map, playersCount, positions;
+        var data, map, playersCount, positions, areas;
         executeBatch([
             function () { // retrieve the form data
                 data = forms.getFormData(form);
@@ -73,8 +73,30 @@ MapGenerator = function () {
             function () { // create places for players
                 positions = terrainGenerator.generatePlayerSpots(map, data,
                         playersCount);
+                areas = [].concat(positions);
                 terrainGenerator.generatePlayerAreas(map, data, positions);
-                progressbar.setValue(85);
+                progressbar.setValue(20);
+            },
+            function () { // generate central area
+                terrainGenerator.generateCentralArea(map, data, areas);
+                progressbar.setValue(25)
+            },
+            function () { // generate circular passage areas
+                terrainGenerator.generateCircularPassageAreas(map, data, areas);
+                progressbar.setValue(30);
+            },
+            function () { // generate square passage areas
+                terrainGenerator.generateRectangularPassageAreas(map, data,
+                        areas);
+                progressbar.setValue(35);
+            },
+            function () {
+                terrainGenerator.generateDiamondPassageAreas(map, data, areas);
+                progressbar.setValue(40);
+            },
+            function () {
+                terrainGenerator.generatePassages(map, data, areas);
+                progressbar.setValue(45);
             },
             function () { // export the map data
                 document.getElementById('map').value =
