@@ -10,7 +10,8 @@ UnitsDefinition = (function () {
             speed: 3,
             turnSpeed: 1,
             colorify: '#ffffff',
-            colorifyDistance: 240
+            colorifyDistance: 240,
+            resource: 1
         }
     ];
 
