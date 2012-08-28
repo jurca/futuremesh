@@ -2,14 +2,16 @@
 var MapGenerator;
 require('mapgenerator.tabs', 'mapgenerator.forms', 'mapeditor.modal',
         'mapeditor.progressbar', 'mainview', 'mapgenerator.terraingenerator',
-        'mapcompressor', 'mapgenerator.mapgeneratorscrollbars');
+        'mapcompressor', 'mapgenerator.mapgeneratorscrollbars',
+        'mapgenerator.resourcegenerator');
 
 /**
  * Map Generator main class. This class controlls the UI and map generation.
  */
 MapGenerator = function () {
     var tabs, form, select, option, i, type, forms, modal, progressbar, view,
-            terrainGenerator, compressor, executeBatch, generateMap, getById;
+            terrainGenerator, compressor, executeBatch, generateMap, getById,
+            resourceGenerator;
     
     modal = new Modal('Initializing...');
     progressbar = new Progressbar(50);
@@ -25,6 +27,7 @@ MapGenerator = function () {
             document.getElementById('units'), document.getElementById('sfx'));
     new MapGeneratorScrollbars(view);
     terrainGenerator = new TerrainGenerator();
+    resourceGenerator = new ResourceGenerator();
     form = document.getElementsByTagName('form')[0];
     select = form.getElementsByTagName('select')[0];
     for (i = 0; type = TilesDefinition.getType(i); i++) {
@@ -97,6 +100,10 @@ MapGenerator = function () {
             function () {
                 terrainGenerator.generatePassages(map, data, areas);
                 progressbar.setValue(45);
+            },
+            function () {
+                resourceGenerator.generateTileResources(map, data, positions);
+                progressbar.setValue(50);
             },
             function () { // export the map data
                 document.getElementById('map').value =
