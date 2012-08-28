@@ -3,10 +3,12 @@
     "buildings": {
         "start": 48,
         "ends": [
-            85
+            86,
+            29
         ],
         "heights": [
-            70
+            70,
+            24
         ]
     }
 }

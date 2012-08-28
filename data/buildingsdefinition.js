@@ -13,7 +13,22 @@ BuildingsDefinition = (function () {
             height: 3,
             passable: false,
             colorify: '#ffffff',
-            colorifyDistance: 440
+            colorifyDistance: 440,
+            prerequisities: [],
+            resource: null
+        },
+        {
+            type: 0,
+            image: 'data/images/buildings/ore.png',
+            imageWidth: undefined,
+            imageHeight: undefined,
+            width: 1,
+            height: 1,
+            passable: true,
+            colorify: '#000000',
+            colorifyDistance: 0,
+            prerequisities: [],
+            resource: 1
         }
     ];
 
