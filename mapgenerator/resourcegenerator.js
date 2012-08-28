@@ -18,7 +18,7 @@ ResourceGenerator = function () {
      */
     this.generateBuildingResources = function (map, data, areas) {
         var type, tiles, width, height, distX, distY, dist, i, degree, centerX,
-                centerY, size, x, y, building, shift;
+                centerY, size, x, y, building, shift, xPos, yPos;
         for (type = 0; BuildingsDefinition.getType(type); type++) {
             if (BuildingsDefinition.getType(type).resource !== null) {
                 break;
@@ -58,8 +58,10 @@ ResourceGenerator = function () {
                     if (Math.sqrt(distX * distX + distY * distY) > shift) {
                         continue;
                     }
-                    if (!tiles[y - shift + centerY][x - shift + centerX].
-                            accessible) {
+                    xPos = x - shift + centerX;
+                    yPos = y - shift + centerY;
+                    if (!tiles[yPos] || !tiles[yPos][xPos] ||
+                            !tiles[yPos][xPos].accessible) {
                         continue;
                     }
                     building = new Building(x - shift + centerX,
