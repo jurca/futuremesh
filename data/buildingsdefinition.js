@@ -18,7 +18,7 @@ BuildingsDefinition = (function () {
             resource: null
         },
         {
-            type: 0,
+            type: 1,
             image: 'data/images/buildings/ore.png',
             imageWidth: undefined,
             imageHeight: undefined,
