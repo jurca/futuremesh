@@ -105,6 +105,11 @@ MapGenerator = function () {
                 resourceGenerator.generateTileResources(map, data, positions);
                 progressbar.setValue(50);
             },
+            function () {
+                resourceGenerator.generateBuildingResources(map, data,
+                        positions);
+                progressbar.setValue(55);
+            },
             function () { // export the map data
                 document.getElementById('map').value =
                         compressor.compress(map.exportData(), 3);
