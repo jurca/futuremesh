@@ -208,7 +208,7 @@ ImageLoader = function () {
     };
 
     /**
-     * Transforms raw building's image by rotating it by 25 degrees clockwise.
+     * Transforms raw building's image by rotating it by 45 degrees clockwise.
      *
      * @param {Image} source The raw image to transform.
      * @param {Number} width The width of the building in tiles.
@@ -216,15 +216,18 @@ ImageLoader = function () {
      * @return {Image} A transformed image.
      */
     transformBuildingImage = function (source, width, height) {
-        var canvas, context, data;
+        var canvas, context, data, offset;
         canvas = document.createElement('canvas');
-        canvas.width = 14 + Math.ceil(Settings.tileWidth * width);
-        canvas.height = 50 + Math.ceil(Settings.tileHeight * height);
+        canvas.width = 140 + Math.ceil(Settings.tileWidth * width);
+        canvas.height = 500 + Math.ceil(Settings.tileHeight * height);
         context = canvas.getContext('2d');
         context.scale(1, Settings.heightScale);
         context.rotate(45 * Math.PI / 180);
-        context.drawImage(source, 10 + Settings.tileSize * width, 0);
-        data = context.getImageData(7, 48 * Settings.heightScale,
+        context.drawImage(source, 7 * Settings.tileSize, 0);
+        // don't ask... untransformed images shouldn't be used anyways
+        offset = (Math.SQRT2 / 2) *
+                (Math.ceil((width - 1) / 2) * (Settings.tileWidth + 10));
+        data = context.getImageData(84 - offset, 99 * Settings.heightScale,
                 Settings.tileWidth * width, Settings.tileHeight * height);
         canvas = document.createElement('canvas');
         canvas.width = data.width;
