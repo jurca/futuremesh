@@ -11,7 +11,7 @@ require('mapgenerator.tabs', 'mapgenerator.forms', 'mapeditor.modal',
 MapGenerator = function () {
     var tabs, form, select, option, i, type, forms, modal, progressbar, view,
             terrainGenerator, compressor, executeBatch, generateMap, getById,
-            resourceGenerator;
+            resourceGenerator, baseGenerator;
     
     modal = new Modal('Initializing...');
     progressbar = new Progressbar(50);
@@ -28,6 +28,7 @@ MapGenerator = function () {
     new MapGeneratorScrollbars(view);
     terrainGenerator = new TerrainGenerator();
     resourceGenerator = new ResourceGenerator();
+    baseGenerator = new BaseGenerator();
     form = document.getElementsByTagName('form')[0];
     select = form.getElementsByTagName('select')[0];
     for (i = 0; type = TilesDefinition.getType(i); i++) {
@@ -110,10 +111,14 @@ MapGenerator = function () {
                         positions);
                 progressbar.setValue(55);
             },
+            function () {
+                baseGenerator.generateBases(map, data, positions);
+                progressbar.setValue(60);
+            },
             function () { // export the map data
                 document.getElementById('map').value =
                         compressor.compress(map.exportData(), 3);
-                progressbar.setValue(90);
+                progressbar.setValue(70);
             },
             function () { // generate the global overview of the map
                 var size;
@@ -131,7 +136,7 @@ MapGenerator = function () {
                 getById('global-sfx').width = size.width;
                 getById('global-sfx').height = size.height;
                 view.display(0, 0);
-                progressbar.setValue(95);
+                progressbar.setValue(85);
             },
             function () { // display the map
                 view.setCanvases(getById('terrain'), getById('buildings'),
