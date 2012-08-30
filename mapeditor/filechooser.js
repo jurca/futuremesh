@@ -96,7 +96,9 @@ FileChooser = function (location, files, single, callback) {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
     }, false);
+    form.appendChild(document.createTextNode('Filename: '));
     input = document.createElement('input');
+    input.className = 'filename';
     input.type = 'text';
     form.appendChild(input);
     modal.appendChild(form);

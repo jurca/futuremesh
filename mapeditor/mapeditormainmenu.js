@@ -57,6 +57,51 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         modal.appendChild(form);
         modal.center();
     }, false);
+    
+    $('menu-load').addEventListener('click', function () {
+        var modal, loadingMessage, url;
+        modal = new Modal('Load map', false);
+        loadingMessage = document.createElement('p');
+        loadingMessage.appendChild(
+                document.createTextNode('Loading files...'));
+        modal.appendChild(loadingMessage);
+        modal.center();
+        url = 'cgi-bin/listdir.py?dir=' + encodeURIComponent('data/maps');
+        Ajax.get(url, function (files) {
+                var chooser;
+                modal.close();
+                chooser = new new FileChooser('maps/', JSON.parse(files), true,
+                        function (file) {
+                    if (file) {
+                        loadingMessage.firstChild.nodeValue = 'Loading...';
+                        modal = new Modal('Loading map...', false);
+                        modal.appendChild(loadingMessage);
+                        modal.center();
+                        setTimeout(function () {
+                            Ajax.get('data/maps/' + file,
+                            function (data) {
+                                var map;
+                                map = new Map();
+                                map.importData(compressor.decompress(data, 3));
+                                mapEditor.setMap(map);
+                                modal.close();
+                            },
+                            function () {
+                                alert('Cannot load file ' + file);
+                                modal.close()
+                            });
+                        }, 25);
+                    }
+                });
+            },
+            function () {
+                loadingMessage.firstChild.nodeValue = 'Cannot load files';
+                setInterval(function () {
+                    modal.close()
+                }, 700);
+            }
+        );
+    }, false);
 
     $('menu-export').addEventListener('click', function () {
         var modal, textarea;

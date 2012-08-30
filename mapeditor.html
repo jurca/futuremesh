@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>FutureMesh Map Editor 0.7</title>
+        <title>FutureMesh Map Editor 0.8</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" type="text/css" href="mapeditor/ui.css" media="all" />
         <link rel="stylesheet" type="text/css" href="mapeditor/uicomponents.css" media="all" />
@@ -14,6 +14,7 @@
         <script type="text/javascript" src="data/tilesdefinition.js"></script>
         <script type="text/javascript" src="data/unitsdefinition.js"></script>
         <!-- mapeditor application -->
+        <script type="text/javascript" src="mapeditor/ajax.js"></script>
         <script type="text/javascript" src="mapeditor/alert.js"></script>
         <script type="text/javascript" src="mapeditor/confirm.js"></script>
         <script type="text/javascript" src="mapeditor/filechooser.js"></script>
@@ -35,7 +36,7 @@
                 <li id="menu-newmap">New map</li>
                 <li class="disabled">Save map</li>
                 <li class="disabled">Save map as...</li>
-                <li class="disabled">Load map</li>
+                <li id="menu-load">Load map</li>
                 <li id="menu-import">Import map</li>
                 <li id="menu-export">Export map</li>
             </ul>
