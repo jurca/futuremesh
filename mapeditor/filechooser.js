@@ -18,11 +18,17 @@ var FileChooser;
  *        of length 1.
  */
 FileChooser = function (location, files, single, callback) {
-    var modal, select, input, button, form, lastSelected;
+    var modal, select, input, button, form, lastSelected, fileSaveMode;
     modal = new Modal('File chooser', true);
     files = files || [];
     lastSelected = null;
+    fileSaveMode = false;
     
+    /**
+     * Sets new files to be chosen from.
+     * 
+     * @param {Array} newFiles new files to choose from.
+     */
     this.setFiles = function (newFiles) {
         var option, i;
         files = newFiles;
@@ -35,6 +41,15 @@ FileChooser = function (location, files, single, callback) {
             option.appendChild(document.createTextNode(files[i]));
             select.appendChild(option);
         }
+    };
+    
+    /**
+     * Sets this file chooser to the file save mode - user may enter a new file
+     * name in the input box.
+     */
+    this.setFileSaveMode = function () {
+        fileSaveMode = true;
+        single = true;
     };
     
     form = document.createElement('form');
@@ -60,7 +75,6 @@ FileChooser = function (location, files, single, callback) {
     this.setFiles(files);
     select.addEventListener('change', function (e) {
         var option, files;
-        console.log(select.value);
         files = [];
         if (single) {
             option = select.firstChild;
@@ -126,6 +140,10 @@ FileChooser = function (location, files, single, callback) {
         modal.close();
         if (callback) {
             if (single) {
+                if (fileSaveMode) {
+                    callback(input.value);
+                    return;
+                }
                 option = select.firstChild;
                 while (option) {
                     if (option.selected) {

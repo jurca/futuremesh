@@ -31,5 +31,35 @@ Ajax = {
         };
         xhr.open('GET', url, true);
         xhr.send(null);
+    },
+    
+    /**
+     * Performs a POST request to the specified URL.
+     * 
+     * @param {String} url URL to load.
+     * @param {String} data URL-encoded POST data.
+     * @param {Function} success Callback function to execute in the case of
+     *        success. The callback function will receive single parameter -
+     *        the response body.
+     * @param {Function} failure Callback function to execute in the case of
+     *        failure. The callback function will receive single parameter -
+     *        the response body.
+     */
+    post: function (url, data, success, failure) {
+        var xhr;
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    success && success(xhr.responseText);
+                } else {
+                    failure && failure(xhr.responseText);
+                }
+            }
+        };
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-type',
+                'application/x-www-form-urlencoded');
+        xhr.send(data);
     }
 };
