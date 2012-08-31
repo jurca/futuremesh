@@ -129,7 +129,9 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                         modal.appendChild(loadingMessage);
                         modal.center();
                         setTimeout(function () {
-                            Ajax.get('data/maps/' + file,
+                            var time;
+                            time = (new Date()).getTime();
+                            Ajax.get('data/maps/' + file + '?time=' + time,
                             function (data) {
                                 var map;
                                 map = new Map();
