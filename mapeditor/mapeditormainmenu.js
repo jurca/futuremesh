@@ -58,6 +58,57 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         modal.center();
     }, false);
     
+    $('menu-save-as').addEventListener('click', function () {
+        var modal, loadingMessage, url;
+        modal = new Modal('Save map as...', false);
+        loadingMessage = document.createElement('p');
+        loadingMessage.appendChild(
+                document.createTextNode('Loading files...'));
+        modal.appendChild(loadingMessage);
+        modal.center();
+        url = 'cgi-bin/listdir.py?dir=' + encodeURIComponent('data/maps');
+        Ajax.get(url,
+            function (files) {
+                var chooser;
+                modal.close();
+                chooser = new FileChooser('maps/', JSON.parse(files), true,
+                        function (file) {
+                    if (!file) {
+                        return;
+                    }
+                    if (files.indexOf(file) > -1 && !confirm('Overwrite?')) {
+                        return;
+                    }
+                    loadingMessage.firstChild.nodeValue = 'Saving...';
+                    modal = new Modal('Saving map...', false);
+                    modal.appendChild(loadingMessage);
+                    modal.center();
+                    setTimeout(function () {
+                        var data, url;
+                        data = 'name=' + file + '&data=' +
+                                encodeURIComponent(compressor.compress(
+                                mapEditor.getMap().exportData(), 3));
+                        url = 'cgi-bin/savemap.py';
+                        Ajax.post(url, data, function () {
+                            modal.close();
+                            new Alert('Saved!');
+                        }, function () {
+                            modal.close();
+                            new Alert('Save failed.');
+                        });
+                    }, 25);
+                });
+                chooser.setFileSaveMode();
+            },
+            function () {
+                loadingMessage.firstChild.nodeValue = 'Cannot load files';
+                setInterval(function () {
+                    modal.close()
+                }, 700);
+            }
+        );
+    }, false);
+    
     $('menu-load').addEventListener('click', function () {
         var modal, loadingMessage, url;
         modal = new Modal('Load map', false);
@@ -70,7 +121,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         Ajax.get(url, function (files) {
                 var chooser;
                 modal.close();
-                chooser = new new FileChooser('maps/', JSON.parse(files), true,
+                chooser = new FileChooser('maps/', JSON.parse(files), true,
                         function (file) {
                     if (file) {
                         loadingMessage.firstChild.nodeValue = 'Loading...';
@@ -87,8 +138,8 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                                 modal.close();
                             },
                             function () {
-                                alert('Cannot load file ' + file);
-                                modal.close()
+                                modal.close();
+                                new Alert('Cannot load file ' + file);
                             });
                         }, 25);
                     }

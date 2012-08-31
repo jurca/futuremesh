@@ -3,13 +3,14 @@
 import cgi
 import os
 import json
+import sys
 
 print "Content-Type: text/html; charset=UTF-8\n"
 
 form = cgi.FieldStorage()
 if "dir" not in form:
     print '{error:"Please specify the dir parameter"}'
-    exit
+    sys.exit()
 
 root = os.getcwd()
 dir = root + "/" + form.getlist("dir")[0]
