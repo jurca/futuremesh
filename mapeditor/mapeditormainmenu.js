@@ -7,9 +7,10 @@ var MapEditorMainMenu;
  * Class handling the main menu of the Map Editor.
  */
 MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
-    var $, compressor;
+    var $, compressor, fileName;
 
     compressor = new MapCompressor();
+    fileName = null; // the name of the file the map was loaded from/saved to
 
     $ = function (selector) {
         return document.getElementById(selector);
@@ -53,9 +54,36 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                 map.emptyMap(data.width, data.height);
             }
             mapEditor.setMap(map);
+            fileName = null;
+            $('menu-save').className = 'disabled';
         });
         modal.appendChild(form);
         modal.center();
+    }, false);
+    
+    $('menu-save').addEventListener('click', function () {
+        var modal, message;
+        if (!fileName) {
+            return;
+        }
+        message = document.createElement('p');
+        message.appendChild(document.createTextNode('Saving...'));
+        modal = new Modal('Saving map...', false);
+        modal.appendChild(message);
+        modal.center();
+        setTimeout(function () {
+            var data, url;
+            data = 'name=' + fileName + '&data=' + encodeURIComponent(
+                    compressor.compress(mapEditor.getMap().exportData(), 3));
+            url = 'cgi-bin/savemap.py';
+            Ajax.post(url, data, function () {
+                modal.close();
+                new Alert('Saved!');
+            }, function () {
+                modal.close();
+                new Alert('Save failed.');
+            });
+        }, 25);
     }, false);
     
     $('menu-save-as').addEventListener('click', function () {
@@ -92,6 +120,8 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                         Ajax.post(url, data, function () {
                             modal.close();
                             new Alert('Saved!');
+                            fileName = file;
+                            $('menu-save').className = '';
                         }, function () {
                             modal.close();
                             new Alert('Save failed.');
@@ -137,6 +167,8 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                                 map = new Map();
                                 map.importData(compressor.decompress(data, 3));
                                 mapEditor.setMap(map);
+                                fileName = file;
+                                $('menu-save').className = '';
                                 modal.close();
                             },
                             function () {
