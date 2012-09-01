@@ -1,7 +1,4 @@
 "use strict";
-require('mapgenerator.mapgenerator', 'player', 'spriteloader',
-        'mapeditor.modal', 'mapeditor.progressbar', 'data.tilesdefinition',
-        'data.buildingsdefinition', 'data.unitsdefinition');
 
 window.onerror = function (message, url, line) {
     var modal, p;

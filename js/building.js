@@ -1,6 +1,5 @@
 "use strict";
 var Building;
-require('data.buildingsdefinition', 'player');
 
 (function () {
     var id, buldings;

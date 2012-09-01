@@ -1,9 +1,5 @@
 "use strict";
 var MapGenerator;
-require('mapgenerator.tabs', 'mapgenerator.forms', 'mapeditor.modal',
-        'mapeditor.progressbar', 'mainview', 'mapgenerator.terraingenerator',
-        'mapcompressor', 'mapgenerator.mapgeneratorscrollbars',
-        'mapgenerator.resourcegenerator');
 
 /**
  * Map Generator main class. This class controlls the UI and map generation.

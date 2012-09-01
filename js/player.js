@@ -1,5 +1,4 @@
 "use strict";
-require('data.playersdefinition');
 var Player;
 
 (function () {

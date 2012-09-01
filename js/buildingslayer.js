@@ -1,6 +1,5 @@
 "use strict";
 var BuildingsLayer;
-require('data.tilesdefinition', 'data.buildingsdefinition');
 
 /**
  * Renderer of buildings in the UI.

@@ -1,9 +1,6 @@
 "use strict";
 var SpriteLoader;
 
-require('data.tilesdefinition', 'data.buildingsdefinition',
-        'data.unitsdefinition', 'settings', 'colorifier');
-
 /**
  * The SpriteLoader is a highly-efficient alternative to the ImageLoader class.
  * The SpriteLoader loads all images using two HTTP requests:

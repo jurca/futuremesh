@@ -1,9 +1,4 @@
 "use strict";
-require('spriteloader', 'mapeditor.modal', 'mapeditor.progressbar',
-        'mapeditor.mapeditorviewui', 'mapeditor.mapeditormainmenu',
-        'mapeditor.mapeditorpallets', 'mapeditor.mapeditormouse',
-        'mapeditor.mapeditorbrush', 'player');
-
 var MapEditor;
 
 /**

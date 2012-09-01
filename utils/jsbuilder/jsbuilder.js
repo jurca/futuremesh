@@ -86,9 +86,6 @@ JsBuilder = function () {
         var content, size;
         console.log('Building file...');
         content = fileContents.join('\n');
-        if (data.dummyRequire) {
-            content = 'var require; require = function () {};\n' + content;
-        }
         if (data.useClosure) {
             content = '(function () {\n' + content + '\n}());';
         }

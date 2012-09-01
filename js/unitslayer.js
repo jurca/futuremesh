@@ -1,7 +1,5 @@
 "use strict";
 var UnitsLayer;
-require('settings', 'data.settings', 'data.unitsdefinition',
-        'data.tilesdefinition');
 
 /**
  * Renderer of the units layer in the UI main View.

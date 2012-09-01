@@ -1,8 +1,6 @@
 "use strict";
 var MapEditorMouse;
 
-require('mouse');
-
 MapEditorMouse = function () {
     var $, mouse, status, inCanvas;
     

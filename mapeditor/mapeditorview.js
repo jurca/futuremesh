@@ -1,7 +1,5 @@
 "use strict";
 var MapEditorView;
-require('terrainlayer', 'buildingslayer', 'unitslayer', 'tile', 'building',
-        'unit', 'map', 'sfx');
 
 /**
  * Unifying class handling the rendering of terrain, buildings and units
