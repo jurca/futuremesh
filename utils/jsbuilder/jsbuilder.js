@@ -34,6 +34,7 @@ JsBuilder = function () {
         }
         dir = data.dirs[i];
         console.log('Loading contents of directory ' + dir);
+        dir = encodeURIComponent(dir);
         ajax.get('/cgi-bin/listdir.py?dir=' + dir, function (response) {
             var files, j;
             files = JSON.parse(response);
