@@ -18,6 +18,7 @@ Map = function () {
      * day in the future.
      */
     tiles = [];
+    
     /**
      * Two-dimensional array matching the tiles of the map. Each item is a null
      * or a reference to the building occupying the tile. If a building is
@@ -26,20 +27,24 @@ Map = function () {
      * The structure of the index is: [verical axis (y)][horizontal axis (x)]
      */
     buildings = [];
+    
     /**
      * List of all buildings instances present on the map.
      */
     buildingsList = [];
+    
     /**
      * Tow-dimensional array matching the tiles of the map. Each item is a null
      * or a reference to the unit occupying the tile. The structure of the index
      * is: [vertical axis(y)][horizontal axis (x)]
      */
     units = [];
+    
     /**
      * List of all units instances present on the map.
      */
     unitsList = [];
+    
     /**
      * Two-dimensional array matching the tiles of the map. Each item is a
      * boolean value representing whether the tile is occupied or empty. The
@@ -49,7 +54,8 @@ Map = function () {
     navigationIndex = [];
 
     /**
-     * Updates the building's status on the map (e.g. adding to the map).
+     * Updates the building's status on the map (e.g. adding to the map or
+     * editing it).
      * 
      * @param {Building} building The building that has been updated on the map.
      */
@@ -66,14 +72,63 @@ Map = function () {
     };
     
     /**
+     * Removes the building from the map.
+     * 
+     * @param {Building} building The building to remove from the map.
+     */
+    this.removeBuilding = function (building) {
+        var positions, position, i;
+        for (i = buildingsList.length; i--;) {
+            if (buildingsList[i].id == building.id) {
+                buildingsList.splice(i, 1);
+                break;
+            }
+        }
+        positions = getBuildingPositions(building);
+        for (i = positions.length; i--;) {
+            position = positions[i];
+            buildings[position.y][position.x] = null;
+            (!building.passable) &&
+                    (navigationIndex[position.y][position.x] = true);
+        }
+    };
+    
+    /**
      * Updates the unit's status on the map (e.g. adding to the map).
      * 
      * @param {Unit} unit The unit that has been updated on the map.
      */
     this.updateUnit = function (unit) {
-        unitsList.push(unit);
-        units[unit.y][unit.x] = unit;
-        navigationIndex[unit.y][unit.x] = false;
+        var i;
+        switch (unit.action) {
+            case 0: // created
+                unitsList.push(unit);
+                units[unit.y][unit.x] = unit;
+                navigationIndex[unit.y][unit.x] = false;
+                break;
+            case 1: // destroyed
+                for (i = unitsList.length; i--;) {
+                    if (unitsList[i].id == unit.id) {
+                        unitsList.splice(i, 1);
+                        break;
+                    }
+                }
+                if (units[unit.y][unit.x] &&
+                        (units[unit.y][unit.x].id == unit.id)) {
+                    units[unit.y][unit.x] = null;
+                    navigationIndex[unit.y][unit.x] = true;
+                }
+                break;
+            case 2: // moved
+                if (units[unit.lastY][unit.lastX] &&
+                        (units[unit.lastX][unit.lastX].id == unit.id)) {
+                    units[unit.lastY][unit.lastX] = null;
+                    navigationIndex[unit.lastY][unit.lastX] = true;
+                }
+                units[unit.y][unit.x] = unit;
+                navigationIndex[unit.y][unit.x] = false;
+                break;
+        }
     };
 
     /**
@@ -98,6 +153,21 @@ Map = function () {
     this.getMap = function () {
         return tiles;
     }
+    
+    /**
+     * Returns the object (building/unit) at the specified coordinates. If the
+     * specified tile contains both building and unit, the method returns the
+     * unit.
+     * 
+     * @param {Number} x The x-coordinate.
+     * @param {Number} y The y-coordinate.
+     */
+    this.getObjectAt = function (x, y) {
+        if (units[y][x]) {
+            return units[y][x];
+        }
+        return buildings[y][x];
+    };
     
     /**
      * Sets tiles of the map.

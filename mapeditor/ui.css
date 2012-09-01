@@ -87,11 +87,55 @@ body {
     height: 8px;
 }
 
+#tool-modes {
+    border: 1px solid black;
+    border-radius: 4px;
+    width: 155px;
+    height: 42px;
+    padding: 5px;
+    background: white;
+    float: left;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+#tool-modes span {
+    width: 39px;
+    height: 31px;
+    display: block;
+    float: left;
+    margin: 5px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#tool-modes span:last-child {
+    margin-right: 0;
+}
+
+#tool-mode-add {
+    background-image: url(mode-add.png);
+}
+
+#tool-mode-edit {
+    background-image: url(mode-edit.png);
+}
+
+#tool-mode-delete {
+    background-image: url(mode-delete.png);
+}
+
+#tool-modes span.selected {
+    border-color: black;
+}
+
 #palette {
     float: left;
     margin-left: 5px;
     width: 165px;
-    height: 630px;
+    height: 571px;
     border: 1px solid black;
     background: white;
     border-radius: 4px;
@@ -102,7 +146,7 @@ body {
 }
 
 #menu li {
-    width: 150px;
+    width: 152px;
     height: 20px;
     padding: 5px;
     margin: 2px;
@@ -112,6 +156,10 @@ body {
     float: left;
     cursor: default;
     background: #fafafa;
+}
+
+#menu li:first-child {
+    margin-left: 0;
 }
 
 #menu .disabled {
@@ -137,7 +185,7 @@ body {
 #palette input + span {
     border: none;
     background: none;
-    height: 534px;
+    height: 475px;
     width: 165px;
     display: none;
 }

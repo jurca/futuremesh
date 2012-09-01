@@ -121,6 +121,21 @@ MapEditorViewUI = function (mouse) {
         view.display(viewX, viewY);
     };
     
+    /**
+     * Removes the provided building from the buildings layer.
+     * 
+     * @param {Building} building The building to remove.
+     */
+    this.removeBuilding = function (building) {
+        view.removeBuilding(building);
+        view.display(viewX, viewY);
+    };
+    
+    /**
+     * Updates the units layer with the provided unit.
+     * 
+     * @param {Unit} unit The unit that was updated.
+     */
     this.updateUnit = function (unit) {
         view.onUnitChange(unit);
         view.display(viewX, viewY);

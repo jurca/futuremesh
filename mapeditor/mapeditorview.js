@@ -41,6 +41,15 @@ MapEditorView = function () {
     };
 
     /**
+     * Removes the provided building from the buildings layer.
+     * 
+     * @param {Building} building The building to remove.
+     */
+    this.removeBuilding = function (building) {
+        buildingsLayer.onBuildingRemoved(building);
+    };
+
+    /**
      * Toggles displaying of the terrain layer.
      */
     this.toggleTerrain = function () {
