@@ -1,6 +1,5 @@
 "use strict";
 var Map;
-require('tile');
 
 /**
  * Map container and utility. Contains raw map data and utility methods for

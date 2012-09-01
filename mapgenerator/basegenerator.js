@@ -1,6 +1,5 @@
 "use strict";
 var BaseGenerator;
-require('map');
 
 /**
  * Utility for generating bases on the map. That is currently a main building

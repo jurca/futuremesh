@@ -1,6 +1,5 @@
 "use strict";
 var View;
-require('mainview', 'minimap');
 
 /**
  * Unifying class encapsulating both minimap and view renderers.

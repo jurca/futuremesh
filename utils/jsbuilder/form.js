@@ -48,7 +48,6 @@ Form = function () {
             inputs[i].value = this.trim(inputs[i].value);
             inputs[i].value && (data.exclude.push(inputs[i].value));
         }
-        data.dummyRequire = $('input[name="dummyRequire"]')[0].checked;
         data.useClosure = $('input[name="useClosure"]')[0].checked;
         data.useJSMin = $('input[name="useJSMin"]')[0].checked;
         data.jsMinLevel = $('select[name="level"]')[0].value;

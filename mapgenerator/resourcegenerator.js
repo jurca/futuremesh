@@ -1,6 +1,5 @@
 "use strict";
 var ResourceGenerator;
-require('map');
 
 /**
  * Utility used by the Map Generator for generating resources in players'

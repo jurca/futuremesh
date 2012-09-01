@@ -1,5 +1,4 @@
 "use strict";
-require('mapeditor.modal', 'player', 'building');
 var MapEditorBrush;
 
 MapEditorBrush = function (mapEditor, mouse, canvas) {

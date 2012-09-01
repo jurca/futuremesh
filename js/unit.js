@@ -1,7 +1,5 @@
 "use strict";
 var Unit;
-require('data.unitsdefinition', 'player');
-
 
 (function () {
     var id, units;

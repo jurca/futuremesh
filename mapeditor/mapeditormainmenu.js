@@ -1,6 +1,4 @@
 "use strict";
-require('mapeditor.modal', 'mapeditor.formbuilder', 'mapcompressor');
-
 var MapEditorMainMenu;
 
 /**

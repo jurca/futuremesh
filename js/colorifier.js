@@ -1,5 +1,4 @@
 "use strict";
-require('player', 'data.playersdefinition');
 var Colorifier;
 
 /**

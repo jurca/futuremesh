@@ -1,6 +1,5 @@
 "use strict";
 var MiniMap;
-require('map', 'tile', 'building', 'unit');
 
 /**
  * The minimap renderer. Uses passive rendering - renderes only changes from

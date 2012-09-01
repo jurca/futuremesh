@@ -1,8 +1,6 @@
 "use strict";
 var Music;
 
-require('audio');
-
 /**
  * Music API - extends the Audio API with playlist and related functions
  * including fading between two songs.

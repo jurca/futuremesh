@@ -1,6 +1,5 @@
 "use strict";
 var TerrainGenerator;
-require('map');
 
 /**
  * Utility used by the Map Generator to generate the terrain of the map.

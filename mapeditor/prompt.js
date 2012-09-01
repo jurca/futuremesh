@@ -1,5 +1,4 @@
 "use strict";
-require('mapeditor.modal');
 var Prompt;
 
 /**
