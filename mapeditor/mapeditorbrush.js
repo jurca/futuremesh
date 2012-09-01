@@ -21,9 +21,9 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
         return brush;
     };
     
-    displayBuildingForm = function (x, y, type) {
+    displayBuildingForm = function (x, y, type, building) {
         var modal, form, select, button, option, i, player;
-        modal = new Modal('Add building', true);
+        modal = new Modal(building ? 'Edit building' : 'Add building', true);
         form = document.createElement('form');
         select = document.createElement('select');
         for (i = 0; player = Player.getPlayer(i); i++) {
@@ -31,6 +31,7 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
             option.style.color = player.color;
             option.value = i;
             option.appendChild(document.createTextNode(player.name));
+            option.selected = building && (option.value == building.player);
             select.appendChild(option);
         }
         form.appendChild(select);
@@ -40,16 +41,22 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
         form.appendChild(button);
         modal.appendChild(form);
         form.addEventListener('submit', function (e) {
-            var building;
             e.preventDefault();
             modal.close();
-            building = new Building(x, y, type, parseInt(select.value, 10));
-            mapEditor.updateBuilding(building);
+            if (building) {
+                mapEditor.removeBuilding(building); // just in case
+                building.player = parseInt(select.value, 10);
+                mapEditor.updateBuilding(building);
+            } else {
+                building = new Building(x, y, type,
+                        parseInt(select.value, 10));
+                mapEditor.updateBuilding(building);
+            }
         }, false);
         modal.center();
     };
     
-    displayUnitForm = function (x, y, type) {
+    displayUnitForm = function (x, y, type, unit) {
         var modal, form, player, option, playerType, direction, button, i,
                 directions;
         modal = new Modal('Add unit', true);
@@ -60,6 +67,7 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
             option.style.color = playerType.color;
             option.value = i;
             option.appendChild(document.createTextNode(playerType.name));
+            option.selected = unit && (unit.player == i);
             player.appendChild(option);
         }
         form.appendChild(player);
@@ -69,6 +77,7 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
             option = document.createElement('option');
             option.value = i;
             option.appendChild(document.createTextNode(directions[i]));
+            option.selected = unit && (unit.direction == i);
             direction.appendChild(option);
         }
         form.appendChild(direction);
@@ -80,8 +89,16 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             modal.close();
-            mapEditor.updateUnit(new Unit(x, y, parseInt(direction.value, 10),
-                    type, parseInt(player.value, 10)));
+            if (unit) {
+                unit.player = parseInt(player.value, 10);
+                unit.direction = parseInt(direction.value, 10);
+                unit.action = 2;
+                mapEditor.updateUnit(unit);
+            } else {
+                mapEditor.updateUnit(new Unit(x, y,
+                        parseInt(direction.value, 10), type,
+                        parseInt(player.value, 10)));
+            }
         }, false);
         modal.center();
     };
@@ -112,7 +129,7 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
     };
     
     canvas.addEventListener('click', function () {
-        var x, y, mapData;
+        var x, y, mapData, building, unit;
         mapData = map.getMap();
         x = mouse.getX();
         y = mouse.getY();
@@ -125,12 +142,46 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
                 break;
             case 'buildings':
                 if (mapData[y] && mapData[y][x]) {
-                    displayBuildingForm(x, y, brush.type);
+                    switch (mapEditor.getBrushMode()) {
+                        case 0:
+                            displayBuildingForm(x, y, brush.type);
+                            break;
+                        case 1:
+                            building = mapEditor.getMap().getObjectAt(x, y);
+                            if (building) {
+                                displayBuildingForm(x, y, brush.type,
+                                        building);
+                            }
+                            break;
+                        case 2:
+                            building = mapEditor.getMap().getObjectAt(x, y);
+                            if (building) {
+                                mapEditor.removeBuilding(building);
+                            }
+                            break;
+                    }
                 }
                 break;
             case 'units':
                 if (mapData[y] && mapData[y][x]) {
-                    displayUnitForm(x, y, brush.type);
+                    switch (mapEditor.getBrushMode()) {
+                        case 0:
+                            displayUnitForm(x, y, brush.type);
+                            break;
+                        case 1:
+                            unit = mapEditor.getMap().getObjectAt(x, y);
+                            if (unit) {
+                                displayUnitForm(x, y, brush.type, unit);
+                            }
+                            break;
+                        case 2:
+                            unit = mapEditor.getMap().getObjectAt(x, y);
+                            if (unit) {
+                                unit.action = 1;
+                                mapEditor.updateUnit(unit);
+                            }
+                            break;
+                    }
                 }
                 break
             case 'sfx':
@@ -163,4 +214,21 @@ MapEditorBrush = function (mapEditor, mouse, canvas) {
             mapEditor.updateTerrain(x, y);
         }
     }, false);
+    
+    // init brush mode buttons
+    (function () {
+        var buttons, i;
+        buttons = document.getElementById('tool-modes').
+                getElementsByTagName('span');
+        for (i = buttons.length; i--;) {
+            (function () {
+                var index = i;
+                buttons[i].addEventListener('click', function () {
+                    buttons[mapEditor.getBrushMode()].className = '';
+                    buttons[index].className = 'selected';
+                    mapEditor.setBrushMode(index);
+                }, false);
+            }());
+        }
+    }());
 };
