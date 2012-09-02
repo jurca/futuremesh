@@ -7,5 +7,8 @@ Settings.load({
     sfxBuildLayerColor: '#ff0000',
     sfxAccessibleTileColor: '#00a000',
     sfxInaccessibleTileColor: '#a00000',
-    mouseWheelSpeed: 0.4
+    mouseWheelSpeed: 0.4,
+    loadingMusic: ['data/music/loading.mp3', 'data/music/loading.ogg'],
+    loadingMusicVolume: 0.4,
+    loadingMusicLength: 15.6745
 });
