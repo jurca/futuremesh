@@ -11,6 +11,7 @@ Settings = {
      * @type Number
      */
     tileSize: undefined,
+    
     /**
      * Vertical scaling of the graphics in the battlefield view. Represented as
      * a number from interval [0,1]
@@ -24,6 +25,7 @@ Settings = {
      * @type Number
      */
     tileWidth: undefined,
+    
     /**
      * Height of the rotated and skewed tile in pixels.
      *
@@ -38,6 +40,7 @@ Settings = {
      * @type Number
      */
     gridIndexGranularity: undefined,
+    
     /**
      * Set to true if the images of tiles has been already transformed. If set
      * to false the engine will rotate and skew the tile images.
@@ -45,6 +48,7 @@ Settings = {
      * @type Boolean
      */
     tileImagesTransformed: false,
+    
     /**
      * Set to true if the images of buildings has been already transformed. If
      * set to false the engine will rotate and skew the building images.
@@ -52,6 +56,7 @@ Settings = {
      * @type Boolean
      */
     buildingImagesTransformed: false,
+    
     /**
      * Set to true if the images of units has been already transformed. If set
      * to false the engine will rotate and skew the unit images.
@@ -104,6 +109,30 @@ Settings = {
      * @type Number
      */
     mouseWheelSpeed: undefined,
+    
+    /**
+     * Audio files (MP3 or OGG) containing music played during the game loading
+     * screen.
+     *
+     * @type Array
+     */
+    loadingMusic: [],
+    
+    /**
+     * The volume of the music played during the game loading screen. The value
+     * must be between 0 and 1 inclusive.
+     * 
+     * @type Number
+     */
+    loadingMusicVolume: 1,
+    
+    /**
+     * Length of the music played during the game loading screen. The value is
+     * in seconds with milliseconds as fraction.
+     * 
+     * @type Number
+     */
+    loadingMusicLength: undefined,
 
     /**
      * Sets and loads the settings. Some properties will be calculated
@@ -140,6 +169,14 @@ Settings = {
      *          <li>mouseWheelSpeed - Sets the speed how fast the map can be
      *              scrolled using the mouse wheel. Recommended value is
      *              0.4.</li>
+     *          <li>loadingMusic - Sets the music played during the loading
+     *              screen. The value must be an array containing links to an
+     *              MP3 and OGG file.</li>
+     *          <li>loadingMusicVolume - Sets the volume of the music played
+     *              during the loading screen. The value must be a number
+     *              between 0 and 1 inclusive.</li>
+     *          <li>loadingMusicLength - Sets the duration of the music played
+     *              during the loading screen.</li>
      *        </ul>
      *        If any of these properties will be ommited, default value will be
      *        used (if exists).
@@ -167,5 +204,8 @@ Settings = {
         this.sfxAccessibleTileColor = settings.sfxAccessibleTileColor;
         this.sfxInaccessibleTileColor = settings.sfxInaccessibleTileColor;
         this.mouseWheelSpeed = settings.mouseWheelSpeed;
+        this.loadingMusic = settings.loadingMusic;
+        this.loadingMusicVolume = settings.loadingMusicVolume;
+        this.loadingMusicLength = settings.loadingMusicLength;
     }
 };
