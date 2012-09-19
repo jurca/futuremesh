@@ -10,7 +10,7 @@ body {
     border-radius: 10px;
     overflow: hidden;
     width: 1000px;
-    height: 700px;
+    height: 615px;
     margin: 10px auto;
 }
 
@@ -49,4 +49,119 @@ body {
 
 #gameplay-screen {
     display: none;
+    background: #666;
+}
+
+#view {
+    width: 800px;
+    height: 600px;
+    float: left;
+    background: red;
+}
+
+.canvas-container {
+    height: 0;
+}
+
+.top-right-shade {
+    width: 200px;
+    height: 15px;
+    float: left;
+    background: linear-gradient(#d9d9d9, #999);
+    background: -webkit-linear-gradient(#d9d9d9, #999);
+}
+
+#minimap {
+    width: 200px;
+    height: 200px;
+    float: left;
+    background: green;
+}
+
+.middle-right-shade {
+    width: 200px;
+    height: 15px;
+    float: left;
+    background: linear-gradient(#d9d9d9, #999, #d9d9d9);
+    background: -webkit-linear-gradient(#d9d9d9, #999, #d9d9d9);
+}
+
+#button-repair, #button-sell {
+    width: 100px;
+    height: 50px;
+    float: left;
+    background: url('ui-images/background-button-sell-repair.png');
+}
+
+#button-repair div, #button-sell div {
+    width: 100px;
+    height: 50px;
+}
+
+#button-repair div {
+    background: center center no-repeat url('ui-images/button-repair.png');
+}
+
+#button-sell div {
+    background: center center no-repeat url('ui-images/button-sell.png');
+}
+
+#power-level {
+    width: 20px;
+    height: 305px;
+    float: left;
+    background: wheat;
+}
+
+.construction-buttons {
+    width: 90px;
+    height: 305px;
+    float: left;
+}
+
+.construction-buttons-scrolling {
+    width: 90px;
+    height: 20px;
+    background: url('ui-images/background-button-scroll.png');
+}
+
+.button-scroll-up, .button-scroll-down {
+    width: 45px;
+    height: 20px;
+    float: left;
+}
+
+.button-scroll-up {
+    background: url('ui-images/button-scroll-up.png');
+}
+
+.button-scroll-down {
+    background: url('ui-images/button-scroll-down.png');
+}
+
+.construction-buttons-content {
+    width: 80px;
+    height: 275px;
+    margin: 5px;
+    background: url('ui-images/background-construct-buttons.png');
+    overflow: hidden;
+}
+
+.construction-button {
+    width: 80px;
+    height: 45px;
+    background: url('ui-images/background-construct-button.png');
+    margin-bottom: 5px;
+}
+
+.construction-button:first-child {
+    margin-top: 0;
+}
+
+.bottom-shade {
+    width: 1000px;
+    height: 15px;
+    float: left;
+    background: linear-gradient(#999, #d9d9d9);
+    background: -webkit-linear-gradient(#999, #d9d9d9);
 }
