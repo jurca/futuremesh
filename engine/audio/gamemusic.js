@@ -258,6 +258,7 @@ GameMusic = function () {
         if (!playing) {
             throw new Error('GameMusic: The music is not playing');
         }
+        crossFadeTimeout && clearTimeout(crossFadeTimeout);
         startTime = (new Date()).getTime();
         interval = setInterval(function () {
             var now;
@@ -279,6 +280,7 @@ GameMusic = function () {
                     'GameMusic: The intensity must be within range [0, 1]');
         }
         newIntensity = findIntensity(newIntensity);
+        console.log('new intensity: ' + newIntensity);
         if (newIntensity == intensity) {
             return;
         }
