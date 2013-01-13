@@ -133,6 +133,53 @@ Settings = {
      * @type Number
      */
     loadingMusicLength: undefined,
+    
+    /**
+     * Configuration of the GameMusic daemon.
+     *
+     * @type Object
+     */
+    gameMusic: {
+        /**
+         * Song playlists for the music daemon. Each entry name is a gameplay
+         * intensity index, a number from range [0, 1].
+         * 
+         * <p>A playlist is an array of objects, where each objects contains
+         * information about a single song. The object has to have the
+         * following properties:</p>
+         * 
+         * <ul>
+         *     <li><code>src</code> - array of strings. Each string is a URL
+         *         to the music sound file. Each file is the same song but a
+         *         differenf file format - this is used to provide alternatives
+         *         to the browser which may in turn choose the best supported
+         *         alternative.</li>
+         *     <li><code>duration</code> - duration of the song in seconds.
+         *         Milliseconds of the duration are specified as the floating
+         *         point part.</li>
+         * </ul>
+         * 
+         * @type Object
+         */
+        playlists: {
+            0: []
+        },
+        
+        /**
+         * The duration of the song cross-fade effect in milliseconds.
+         *
+         * @type Number
+         */
+        fadeDuration: 3500,
+        
+        /**
+         * Volume of the music played by the game music daemon. The volume is
+         * specified as a number within the range [0, 1].
+         *
+         * @type Number
+         */
+        volume: 0.7
+    },
 
     /**
      * Sets and loads the settings. Some properties will be calculated
@@ -177,6 +224,7 @@ Settings = {
      *              between 0 and 1 inclusive.</li>
      *          <li>loadingMusicLength - Sets the duration of the music played
      *              during the loading screen.</li>
+     *          <li>gameMusic - Configuration of the GameMusic daemon.</li>
      *        </ul>
      *        If any of these properties will be ommited, default value will be
      *        used (if exists).
@@ -207,5 +255,6 @@ Settings = {
         this.loadingMusic = settings.loadingMusic;
         this.loadingMusicVolume = settings.loadingMusicVolume;
         this.loadingMusicLength = settings.loadingMusicLength;
+        this.gameMusic = settings.gameMusic;
     }
 };
