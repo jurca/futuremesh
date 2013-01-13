@@ -219,8 +219,9 @@ GameMusic = function () {
                             true);
                 }
             }, 10);
-        }, now ? 1 : (songDurations[intensity][song] -
-            (continious ? (2 * fadeDuration) : fadeDuration)));
+            crossFadeTimeout = null; // the callback has been executed
+        }, now ? 1 : (songDurations[intensity][song] * 1000 -
+            (continious ? 2 * fadeDuration : fadeDuration)));
     }
     
     // ----------------------------- public API -------------------------------
@@ -248,8 +249,8 @@ GameMusic = function () {
             }
         }, 10);
         playing = true;
-        //prepareSongCrossFade(intensity,
-        //        (song + 1) % playlists[intensity].length, false, false);
+        prepareSongCrossFade(intensity,
+                (song + 1) % playlists[intensity].length, false, false);
     };
     
     this.stop = function () {
