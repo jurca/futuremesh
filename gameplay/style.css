@@ -110,7 +110,16 @@ body {
     width: 20px;
     height: 305px;
     float: left;
-    background: wheat;
+    background: linear-gradient(left, #450000, #a90000, #450000);
+    background: -webkit-linear-gradient(left, #450000, #a90000, #450000);
+}
+
+#power-level-overlay {
+    width: 20px;
+    height: 20%;
+    float: left;
+    background: linear-gradient(left, #777777, #bbbbbb, #777777);
+    background: -webkit-linear-gradient(left, #777777, #bbbbbb, #777777);
 }
 
 .construction-buttons {
