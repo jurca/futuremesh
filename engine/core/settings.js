@@ -180,6 +180,26 @@ Settings = {
          */
         volume: 0.7
     },
+    
+    /**
+     * Duration of a GamePlay's background thread's tick in milliseconds. It
+     * should be large enough for all gameplay plugins to execute. The user
+     * will experience low FPS if the number is too high, on the other hand the
+     * game may run slow (well, as fast as possible) if the number is too low.
+     * 
+     * @type Number
+     */
+    tickDuration: 30,
+    
+    /**
+     * Maximum number of ticks executed in batch in the GamePlay's background
+     * thread. This happens if the thread is unable to execute all plugins in
+     * time, i.e. the tick duration is too short. This number should be small,
+     * otherwise the user will experience glitches.
+     *
+     * @type Number
+     */
+    maxTicks: 3,
 
     /**
      * Sets and loads the settings. Some properties will be calculated
@@ -225,6 +245,17 @@ Settings = {
      *          <li>loadingMusicLength - Sets the duration of the music played
      *              during the loading screen.</li>
      *          <li>gameMusic - Configuration of the GameMusic daemon.</li>
+     *          <li>tickDuration - duration of a GamePlay's background thread's
+     *              tick in milliseconds. It should be large enough for all
+     *              gameplay plugins to execute. The user will experience low
+     *              FPS if the number is too high, on the other hand the game
+     *              may run slow (well, as fast as possible) if the number is
+     *              too low.</li>
+     *          <li>maxTicks - Maximum number of ticks executed in batch in the
+     *              GamePlay's background thread. This happens if the thread
+     *              is unable to execute all plugins in time, i.e. the tick
+     *              duration is too short. This number should be small,
+     *              otherwise the user will experience glitches.</li>
      *        </ul>
      *        If any of these properties will be ommited, default value will be
      *        used (if exists).

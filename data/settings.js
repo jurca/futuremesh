@@ -46,5 +46,7 @@ Settings.load({
         },
         fadeDuration: 3500,
         volume: 0.7
-    }
+    },
+    tickDuration: 20,
+    maxTicks: 2
 });
