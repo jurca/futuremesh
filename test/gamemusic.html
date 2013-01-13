@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GameMusic test</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../engine/core/settings.js"></script>
+        <script type="text/javascript" src="../engine/audio/audio.js"></script>
+        <script type="text/javascript" src="../engine/audio/gamemusic.js"></script>
+        <script type="text/javascript" src="../data/settings.js"></script>
+        <script type="text/javascript">
+(function () {
+    var init, $, gameMusic, i, playlist, j, k;
+    
+    for (i in Settings.gameMusic.playlists) { // intensity
+        if (Settings.gameMusic.playlists.hasOwnProperty(i)) {
+            playlist = Settings.gameMusic.playlists[i];
+            for (j = playlist.length; j--;) { // song
+                for (k = playlist[j].src.length; k--;) { // file url
+                    playlist[j].src[k] = '../' + playlist[j].src[k];
+                }
+            }
+        }
+    }
+    
+    $ = function (selector) {
+        return document.querySelectorAll(selector);
+    };
+    
+    init = function () {
+        gameMusic = new GameMusic();
+        gameMusic.registerLoadingObserver(function (progress) {
+            $('#loading-progress')[0].innerHTML = (progress * 100) + ' %';
+        });
+        gameMusic.setIntensity(0.0);
+        
+        $('#intensity')[0].addEventListener('change', function () {
+            $('#intensity-value')[0].innerHTML = this.value;
+            gameMusic.setIntensity(parseFloat(this.value));
+        }, false);
+        
+        $('#stop')[0].addEventListener('click', function () {
+            gameMusic.stop();
+        }, false);
+        
+        $('#play')[0].addEventListener('click', function () {
+            gameMusic.play();
+        }, false);
+    };
+    
+    addEventListener('load', init, false);
+}());
+        </script>
+    </head>
+    <body>
+        <p>
+            <button id="stop">&Square;</button>
+            <button id="play">&triangleright;</button>
+        </p>
+        <p>
+            <input id="intensity" type="range" min="0.0" max="1.0" step="0.1" value="0.0"/>
+            <span id="intensity-value">0</span>
+        </p>
+        <p>Loading progress: <span id="loading-progress">0 %</span></p>
+        <p>Music was provided by Kevin MacLeod (<a href="http://www.incompetech.com/">http://www.incompetech.com/</a>)</p>
+    </body>
+</html>
