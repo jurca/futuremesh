@@ -145,7 +145,7 @@ GameMusic = function () {
         var playlistIntensity, bestIntensity;
         bestIntensity = 0;
         for (playlistIntensity in playlists) {
-            if (playlists.hasOwnProperty(playlistIntensity)) {
+            if (!playlists.hasOwnProperty(playlistIntensity)) {
                 continue;
             }
             if (Math.abs(wantedIntensity - playlistIntensity) <
@@ -280,7 +280,6 @@ GameMusic = function () {
                     'GameMusic: The intensity must be within range [0, 1]');
         }
         newIntensity = findIntensity(newIntensity);
-        console.log('new intensity: ' + newIntensity);
         if (newIntensity == intensity) {
             return;
         }
@@ -288,6 +287,8 @@ GameMusic = function () {
             prepareSongCrossFade(newIntensity, Math.floor(
                     Math.random() * playlists[newIntensity].length), true,
                     false);
+        } else { // we're not playing music right now, so set the intensity now
+            intensity = newIntensity;
         }
     };
     
