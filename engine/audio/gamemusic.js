@@ -228,7 +228,7 @@ GameMusic = function () {
     this.play = function () {
         var interval, startTime;
         if (playing) {
-            throw new Error('Already playing music');
+            throw new Error('GameMusic: Already playing music');
         }
         // select random song
         song = Math.floor(Math.random() * playlists[intensity].length);
@@ -247,15 +247,29 @@ GameMusic = function () {
                 clearInterval(interval);
             }
         }, 10);
-        prepareSongCrossFade(intensity,
-                (song + 1) % playlists[intensity].length, false, false);
+        playing = true;
+        //prepareSongCrossFade(intensity,
+        //        (song + 1) % playlists[intensity].length, false, false);
     };
     
     this.stop = function () {
+        var interval, startTime;
         if (!playing) {
-            throw new Error('The music is not playing');
+            throw new Error('GameMusic: The music is not playing');
         }
-        // TODO
+        startTime = (new Date()).getTime();
+        interval = setInterval(function () {
+            var now;
+            now = (new Date()).getTime();
+            if (now - startTime < fadeDuration) {
+                playlists[intensity][song].setVolume(
+                        (1 - (now - startTime) / fadeDuration) * volume);
+            } else {
+                playlists[intensity][song].stop();
+                clearInterval(interval);
+                playing = false;
+            }
+        }, 10);
     };
     
     this.setIntensity = function (newIntensity) {
