@@ -186,6 +186,7 @@ Settings = {
      * should be large enough for all gameplay plugins to execute. The user
      * will experience low FPS if the number is too high, on the other hand the
      * game may run slow (well, as fast as possible) if the number is too low.
+     * The default settings is for 33 FPS.
      * 
      * @type Number
      */
