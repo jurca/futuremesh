@@ -78,14 +78,18 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             spriteloader.load();
         },
         function () { // music
+            var movedToNextStep;
+            movedToNextStep = false;
+            
             gameMusic = new GameMusic();
             gameMusic.registerLoadingObserver(function (progress) {
                 if (progress < 0) {
                     throw new Error('Cannot load music');
                 }
                 setProgress(progress);
-                if (progress == 1) {
+                if ((progress == 1) && !movedToNextStep) {
                     performNextStep();
+                    movedToNextStep = true;
                 }
             });
         },
@@ -130,6 +134,8 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             gamePlay.sendEvent("gameMapInitialization", map);
             
             gamePlay.start();
+            
+            performNextStep();
         },
         function () { // hide loading page and display gameplay page
             var i, interval, total;
