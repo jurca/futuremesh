@@ -30,7 +30,8 @@ var GamePlay;
  */
 GamePlay = function (plugins, settings) {
     var thread, threadInterval, scheduledPlugins, lastTick, tickOverflow,
-            eventDeliveryPlugin;
+            eventDeliveryPlugin, eventDrivenPlugins, eventQueue,
+            singleTickScheduledPlugins;
     
     // --------------------- background thread logic --------------------------
     
@@ -39,11 +40,15 @@ GamePlay = function (plugins, settings) {
         now = (new Date()).getTime();
         tickCount = (now - lastTick) / settings.tickDuration + tickOverflow;
         tickOverflow = tickCount - Math.floor(tickCount);
+        tickCount = Math.floor(tickCount);
         lastTick = now;
         for (i = Math.min(tickCount, settings.maxTicks); i--;) {
             for (j = scheduledPlugins.length; j--;) {
                 scheduledPlugins[j].handleTick();
             }
+        }
+        for (i = singleTickScheduledPlugins.length; i--;) {
+            singleTickScheduledPlugins[i].handleTick();
         }
     };
     
@@ -52,9 +57,32 @@ GamePlay = function (plugins, settings) {
     (function () {
         var PluginConstructor;
         
+        /**
+         * Constructor for the event delivery plugin.
+         */
         PluginConstructor = function () {
             this.handleTick = function () {
-                // TODO
+                var currentEvents, i, eventListeningPlugins, j, currentEvent;
+                // We create a new queue for events registered during the
+                // delivery of the events in the current queue. This prevents
+                // us from getting stuck in a possibly infinite loop.
+                currentEvents = eventQueue;
+                eventQueue = [];
+                
+                // deliver the events
+                for (i = currentEvents.length; i--;) {
+                    currentEvent = currentEvents[i];
+                    eventListeningPlugins =
+                            eventDrivenPlugins[currentEvent.name];
+                    if (eventListeningPlugins) {
+                        for (j = eventListeningPlugins.length; j--;) {
+                            eventListeningPlugins[j].handleEvent(
+                                currentEvent.name,
+                                currentEvent.data
+                            );
+                        }
+                    }
+                }
             };
         };
         PluginConstructor.prototype = new ScheduledPlugin();
@@ -64,22 +92,92 @@ GamePlay = function (plugins, settings) {
     
     // -------------------------- public API ----------------------------------
     
+    /**
+     * Sends an event to plugins listening for events of the specified name.
+     * 
+     * @param {String} eventName Name of the event to send.
+     * @param {Object} eventData Any data to send with the event. Can be of any
+     *        type.
+     */
     this.sendEvent = function (eventName, eventData) {
-        // TODO
+        eventQueue.push({
+            name: eventName,
+            data: eventData
+        });
     };
     
+    /**
+     * Starts the GamePlay daemon, its background thread, scheduled plugins and
+     * event delivery. All event-driven plugins will receive the "start" event
+     * with <code>null</code> as event data.
+     */
     this.start = function () {
         lastTick = (new Date()).getTime();
         tickOverflow = 0;
-        // TODO: start
+        threadInterval = setInterval(thread, settings.tickDuration);
+        this.sendEvent("start", null);
+        eventDeliveryPlugin.handleTick(); // deliver the event right now
     };
     
+    /**
+     * Stops the GamePlay daemon, stopping the background thread, scheduled
+     * plugins and event delivery. All event-driven plugins receive the "stop"
+     * event with <code>null</code> as event data right before the event
+     * delivery is terminated.
+     */
     this.stop = function () {
-        // TODO: stop
+        clearInterval(threadInterval);
+        this.sendEvent("stop", null);
+        eventDeliveryPlugin.handleTick(); // deliver the event right now
     };
     
     // -------------------------- constructor ---------------------------------
     
-    scheduledPlugins = []; // TODO: initialize
-    scheduledPlugins.push(eventDeliveryPlugin);
+    (function () {
+        var i, plugin, registerEventDrivenPlugin;
+        eventQueue = [];
+        scheduledPlugins = [];
+        singleTickScheduledPlugins = [];
+        eventDrivenPlugins = {};
+        
+        /**
+         * Retrieves the list of observed events from the plugin and registers
+         * the plugin as a listener of all the event specified by the plugin.
+         * 
+         * @param {EventDrivenPlugin|MixedPlugin} plugin The plugin to
+         *        register as event listener.
+         */
+        registerEventDrivenPlugin = function (plugin) {
+            var observedEvents, i, eventName;
+            observedEvents = plugin.getObservedEvents();
+            for (i = observedEvents.length; i--;) {
+                eventName = observedEvents[i];
+                if (!eventDrivenPlugins[eventName]) {
+                    eventDrivenPlugins[eventName] = [];
+                }
+                eventDrivenPlugins[eventName].push(plugin);
+            }
+        };
+        
+        for (i = plugins.length; i--;) {
+            plugin = plugins[i];
+            if (plugin instanceof ScheduledPlugin) {
+                if (plugin.ignoresExtraTicks()) {
+                    singleTickScheduledPlugins.push(plugin);
+                } else {
+                    scheduledPlugins.push(plugin);
+                }
+                if (plugin instanceof MixedPlugin) {
+                    registerEventDrivenPlugin(plugin);
+                }
+            } else if (plugin instanceof EventDrivenPlugin) {
+                registerEventDrivenPlugin(plugin);
+            } else {
+                throw new Error('The provided object ' + plugin +
+                        ' is not a valid plugin');
+            }
+        }
+        
+        scheduledPlugins.push(eventDeliveryPlugin);
+    }());
 };
