@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GamePlay Daemon test</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- engine -->
+        <script type="text/javascript" src="../engine/core/settings.js"></script>
+        <script type="text/javascript" src="../engine/core/gameplay.js"></script>
+        <script type="text/javascript" src="../engine/gameplay-plugins/scheduledplugin.js"></script>
+        <script type="text/javascript" src="../engine/gameplay-plugins/eventdrivenplugin.js"></script>
+        <script type="text/javascript" src="../engine/gameplay-plugins/mixedplugin.js"></script>
+        <script type="text/javascript" src="../engine/gameplay-plugins/advancedeventdrivenplugin.js"></script>
+        <!-- settings -->
+        <script type="text/javascript" src="../data/settings.js"></script>
+        <!-- custom -->
+        <script type="text/javascript">
+var Ticker, StartStopWatcher, log, getTimestamp, MixedPluginExample;
+
+getTimestamp = function () {
+    var date, h, m, s;
+    date = new Date();
+    h = date.getHours() + '';
+    m = date.getMinutes() + '';
+    s = date.getSeconds() + '';
+    return (h.length > 1 ? h : '0' + h) + ':' + (m.length > 1 ? m : '0' + m) +
+            ':' + (s.length > 1 ? s : '0' + s);
+};
+
+log = function (msg) {
+    var logContainer, timestamp;
+    logContainer = document.getElementById('event-log');
+    timestamp = getTimestamp();
+    logContainer.innerHTML = timestamp + ' &raquo; ' + msg + '\n' +
+            logContainer.innerHTML;
+};
+
+Ticker = function () {
+    this.count = 0;
+    
+    this.handleTick = function () {
+        document.getElementById('tick-count').innerHTML = ++this.count;
+    };
+};
+Ticker.prototype = new ScheduledPlugin();
+
+StartStopWatcher = function () {
+    this.onStart = function (data) {
+        log('Received start event, data: ' + data);
+    };
+    
+    this.onStop = function (data) {
+        log('Received stop event, data: ' + data);
+    };
+};
+StartStopWatcher.prototype = new AdvancedEventDrivenPlugin();
+
+MixedPluginExample = function () {
+    var rolls, roll;
+    
+    rolls = ['|', '/', '&dash;', '\\'];
+    roll = 0;
+    
+    this.handleTick = function () {
+        document.getElementById('roller').innerHTML =
+                rolls[roll = (roll + 1) % rolls.length];
+    };
+    
+    this.handleEvent = function (name, data) {
+        log('Mixed Plugin: received event ' + name + ' with data: ' + data);
+    };
+    
+    this.getObservedEvents = function () {
+        return ['start', 'stop', 'test', 'custom'];
+    };
+};
+MixedPluginExample.prototype = new MixedPlugin();
+
+(function () {
+    var init, gamePlay;
+    
+    init = function () {
+        var plugins;
+        plugins = [
+            new Ticker(),
+            new StartStopWatcher(),
+            new MixedPluginExample()
+        ];
+        gamePlay = new GamePlay(plugins, Settings);
+        
+        document.getElementById('start').addEventListener('click', function () {
+            gamePlay.start();
+        }, false);
+        document.getElementById('stop').addEventListener('click', function () {
+            gamePlay.stop();
+        }, false);
+        document.getElementById('send-event').addEventListener('click',
+            function () {
+                var name, data;
+                name = document.getElementById('event-name').value;
+                data = document.getElementById('event-data').value;
+                gamePlay.sendEvent(name, data);
+            }, false);
+    };
+    
+    addEventListener('load', init, false);
+}());
+        </script>
+    </head>
+    <body>
+        <p>
+            <button id="start">start</button>
+            <button id="stop">stop</button>
+        </p>
+        <p>
+            Send event:
+            <select id="event-name">
+                <option value="test">test</option>
+                <option value="custom">custom</option>
+                <option value="start">start (does not affect the daemon)</option>
+                <option value="stop">stop (does not affect the daemon)</option>
+            </select>
+            <input id="event-data" placeholder="event data..."/>
+            <button id="send-event">send</button>
+        </p>
+        <p>Tick counter: <span id="tick-count"><em> - not started yet - </em></span></p>
+        <p>Roller (handled by a mixed plugin): <span id="roller" style="font-family: monospace;">|</span></p>
+        <p>Event log:</p>
+        <pre id="event-log"></pre>
+    </body>
+</html>

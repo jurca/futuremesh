@@ -112,6 +112,9 @@ GamePlay = function (plugins, settings) {
      * with <code>null</code> as event data.
      */
     this.start = function () {
+        if (threadInterval) {
+            throw new Error('GamePlay daemon is already running');
+        }
         lastTick = (new Date()).getTime();
         tickOverflow = 0;
         threadInterval = setInterval(thread, settings.tickDuration);
@@ -126,9 +129,13 @@ GamePlay = function (plugins, settings) {
      * delivery is terminated.
      */
     this.stop = function () {
+        if (!threadInterval) {
+            throw new Error('GamePlay daemon is not running');
+        }
         clearInterval(threadInterval);
         this.sendEvent("stop", null);
         eventDeliveryPlugin.handleTick(); // deliver the event right now
+        threadInterval = null;
     };
     
     // -------------------------- constructor ---------------------------------
