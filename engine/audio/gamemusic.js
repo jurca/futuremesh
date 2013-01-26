@@ -129,7 +129,17 @@ GameMusic = function () {
      *
      * @type Boolean
      */
-    crossFading;
+    crossFading,
+    
+    /**
+     * A queue of music crossfadings. The daemon adds new elements to this
+     * queue when a crossfade is requested while another crossfade is active.
+     * The daemon executes the crossfades in this queue once the currect
+     * crossfade has finished.
+     *
+     * @type Array
+     */
+    crossFadeQueue;
     
     // -------------------------- private methods -----------------------------
     
@@ -172,17 +182,17 @@ GameMusic = function () {
      *        this parameter to true.
      */
     function prepareSongCrossFade(nextIntensity, nextSong, now, continious) {
-        var interval;
+        var interval, i;
         // aren't we already cross-fading to another song?
         if (crossFading) {
-            // wait for the current cross-fading to finish
-            interval = setInterval(function () {
-                if (crossFading) {
-                    return;
-                }
-                prepareSongCrossFade(nextIntensity, nextSong, now, continious);
-                clearInterval(interval);
-            }, 17); // prime number - to prevent timing collisions
+            // wait for the current cross-fading to finish, put the request in
+            // the queue.
+            crossFadeQueue.push({
+                intensity:  nextIntensity,
+                song:       nextSong,
+                now:        true, // execute the cross-fade as soon as possible
+                continious: continious
+            });
             return; // we will return here later
         }
         
@@ -191,7 +201,7 @@ GameMusic = function () {
         
         // set up cross-fading
         crossFadeTimeout = setTimeout(function () {
-            var start;
+            var start, nextFade;
             crossFading = true; // think of this as of synchronization lock
             start = (new Date()).getTime();
             playlists[nextIntensity][nextSong].setVolume(0);
@@ -214,9 +224,17 @@ GameMusic = function () {
                     crossFading = false; // release the lock
                     
                     // prepare fade to next song
-                    prepareSongCrossFade(intensity,
-                            (song + 1) % playlists[intensity].length, false,
-                            true);
+                    crossFadeQueue.push({
+                        intensity:  intensity,
+                        song:       (song + 1) % playlists[intensity].length,
+                        now:        false,
+                        continious: true
+                    });
+                    
+                    // prepare the next queued cross-fade
+                    nextFade = crossFadeQueue.shift();
+                    prepareSongCrossFade(nextFade.intensity, nextFade.song,
+                            nextFade.now, nextFade.continious);
                 }
             }, 10);
             crossFadeTimeout = null; // the callback has been executed
@@ -275,6 +293,7 @@ GameMusic = function () {
     };
     
     this.setIntensity = function (newIntensity) {
+        var i;
         if ((newIntensity < 0) || (newIntensity > 1)) {
             throw new Error(
                     'GameMusic: The intensity must be within range [0, 1]');
@@ -284,6 +303,9 @@ GameMusic = function () {
             return;
         }
         if (playing) {
+            // cancel all cross-fadings
+            crossFadeQueue = [];
+            
             prepareSongCrossFade(newIntensity, Math.floor(
                     Math.random() * playlists[newIntensity].length), true,
                     false);
@@ -325,6 +347,7 @@ GameMusic = function () {
     loaded           = false;
     loadingObservers = [];
     playing          = false;
+    crossFadeQueue   = [];
     
     // Constructor body. The constructor is within a closure so that the
     // instance will not contain any unneccessary fields.
