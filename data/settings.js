@@ -49,5 +49,5 @@ Settings.load({
     },
     tickDuration: 30, // 33 FPS
     maxTicks: 2,
-    gamePlayPlugins: []
+    gamePlayPlugins: ['GameMusicPlugin']
 });
