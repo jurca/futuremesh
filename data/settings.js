@@ -47,6 +47,6 @@ Settings.load({
         fadeDuration: 3500,
         volume: 0.7
     },
-    tickDuration: 20,
+    tickDuration: 30, // 33 FPS
     maxTicks: 2
 });
