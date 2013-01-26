@@ -201,6 +201,14 @@ Settings = {
      * @type Number
      */
     maxTicks: 3,
+    
+    /**
+     * Array of plugin names for the GamePlay daemon. These plugins are located
+     * in the sub-packages of the <code>engine.gameplay-plugins</code> package.
+     * 
+     * @type String
+     */
+    gamePlayPlugins: [],
 
     /**
      * Sets and loads the settings. Some properties will be calculated
@@ -257,6 +265,8 @@ Settings = {
      *              is unable to execute all plugins in time, i.e. the tick
      *              duration is too short. This number should be small,
      *              otherwise the user will experience glitches.</li>
+     *          <li>gamePlayPlugins - Array of names of plugins for the
+     *              GamePlay daemon.</li>
      *        </ul>
      *        If any of these properties will be ommited, default value will be
      *        used (if exists).
@@ -288,5 +298,6 @@ Settings = {
         this.loadingMusicVolume = settings.loadingMusicVolume;
         this.loadingMusicLength = settings.loadingMusicLength;
         this.gameMusic = settings.gameMusic;
+        this.gamePlayPlugins = settings.gamePlayPlugins;
     }
 };

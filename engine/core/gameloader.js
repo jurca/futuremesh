@@ -6,6 +6,40 @@ var GameLoader;
  * itself. The loader only initializes itself within the constructor. The
  * loading process is started using the load() method.
  * 
+ * <p>The loading and initialization process in performed in several steps:</p>
+ * 
+ * <ol>
+ *     <li>loading of loading screen background music - The GameLoader loads
+ *         the background music played during loading of in-game files and game
+ *         initialization. The music playback is started immidiately once the
+ *         music file is loaded.</li>
+ *     <li>loading of images - The GameLoader initializes a SpriteLoader
+ *         instance and uses it to load all in-game images from a single sprite
+ *         file.</li>
+ *     <li>loading of music - The GameLoader initializes a GameMusic instance
+ *         and lets it load all in-game music files.</li>
+ *     <li>map loading - The GameLoader loads the map file, decompresses it and
+ *         load it into a Map instance.</li>
+ *     <li>initialization of GamePlay daemon's plugins - The loader creates
+ *         instances of all GamePlay daemon's plugins that are specified in the
+ *         <code>Settings</code> global configuration object.</li>
+ *     <li>GamePlay daemon's start - the loader starts the GamePlay daemon and
+ *         sends the following events to the daemon's plugins:
+ *         <ul>
+ *             <li><code>gameMusicInitialization</code> - The event has the
+ *                 initialized and loaded GameMusic daemon instance as its
+ *                 data. Any plugin managing or affecting the in-game music
+ *                 should observe this event.</li>
+ *             <li><code>gameMapInitialization</code> - The event has the
+ *                 Map instance containing the loaded map as its data. This
+ *                 event should be observed by any plugin using the game map,
+ *                 e.g. renderers and unit navigators (path finders).</li>
+ *         </ul>
+ *         </li>
+ *     <li>switch to in-game UI - the loader fades-out the loading music, hides
+ *         the loading UI and displays the in-game UI.</li>
+ * </ol>
+ * 
  * @param {HTMLElement} progressbarAll An HTML element containing a single HTML
  *        DIV element. This element represents a progressbar for the overall
  *        progress of the loading process.
@@ -26,7 +60,7 @@ var GameLoader;
 GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         loadingScreen, gameplayScreen, mapFileUrl) {
     var spriteloader, steps, stepMessages, currentStep, performNextStep,
-            setProgress, backgroundMusic, map;
+            setProgress, backgroundMusic, map, gamePlay, gameMusic, plugins;
     
     spriteloader = new SpriteLoader();
     
@@ -44,7 +78,16 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             spriteloader.load();
         },
         function () { // music
-            performNextStep();
+            gameMusic = new GameMusic();
+            gameMusic.registerLoadingObserver(function (progress) {
+                if (progress < 0) {
+                    throw new Error('Cannot load music');
+                }
+                setProgress(progress);
+                if (progress == 1) {
+                    performNextStep();
+                }
+            });
         },
         function () { // map
             var xhr;
@@ -64,13 +107,31 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
                 }
             };
             xhr.open('GET', mapFileUrl + '?time=' + (new Date()).getTime(),
-                    true);
+                    true); // add timestamp to avoid the browser's cache
             xhr.send(null);
         },
-        function () { // initialize UI
+        function () { // initialize GamePlay daemon's plugins
+            var i, pluginName;
+            plugins = [];
+            
+            for (i = Settings.gamePlayPlugins.length; i--;) {
+                pluginName = Settings.gamePlayPlugins[i];
+                plugins.push(eval('new ' + pluginName + '()'));
+                setProgress(i / Settings.gamePlayPlugins.length);
+            }
+            
             performNextStep();
         },
-        function () { // hide loading page, display gameplay page, start engine
+        function () { // start game engine (the GamePlay daemon)
+            gamePlay = new GamePlay(plugins, Settings);
+            
+            // enqueue plugin initialization events
+            gamePlay.sendEvent("gameMusicInitialization", gameMusic);
+            gamePlay.sendEvent("gameMapInitialization", map);
+            
+            gamePlay.start();
+        },
+        function () { // hide loading page and display gameplay page
             var i, interval, total;
             i = 0;
             total = 75;
@@ -95,7 +156,8 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         "Loading images...",
         "Loading music...",
         "Loading map...",
-        "Initializing battle interface...",
+        "Initializing the battle interface...",
+        "Starting command relays...",
         "Done"
     ];
     currentStep = -1;
