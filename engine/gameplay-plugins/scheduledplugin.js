@@ -30,6 +30,27 @@ ScheduledPlugin = function () {
     };
     
     /**
+     * Returns <code>true</code> if this plugin should not be executed more
+     * than once even if there are multiple ticks to handle. This is useful
+     * for example for rendering plugins, because rendering is resource-costly
+     * and re-rendering the screen multiple times would not have any added
+     * value for the user.
+     * 
+     * <p>Plugins that return <code>true</code> from this method have their
+     * <code>handleTick()</code> method executed after all other plugins have
+     * handled all ticks to execute.</p>
+     * 
+     * <p>This method returns <code>false</code> by default and has to be
+     * overriden to return anything else.</p>
+     * 
+     * @return {Boolean} <code>true</code> if the plugin should not be executed
+     * more than once even if there are multiple ticks to handle.
+     */
+    this.ignoresExtraTicks = function () {
+        return false;
+    };
+    
+    /**
      * Sends an event asynchronously. The event is delived in the GamePlay's
      * background thread.
      * 
