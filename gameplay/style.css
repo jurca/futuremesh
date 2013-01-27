@@ -178,6 +178,44 @@ body {
     height: 45px;
     background: url('ui-images/background-construct-button.png');
     margin-bottom: 5px;
+    position: relative;
+    text-align: center;
+    font-size: 8px;
+    text-transform: uppercase;
+    color: white;
+}
+
+.construction-button .construction-progress {
+    position: absolute;
+    left: 2px;
+    top: 0px;
+    width: 76px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 6px 6px 0 0;
+    z-index: 1;
+}
+
+.construction-button .construction-icon {
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    width: 70px;
+    height: 38px;
+}
+
+.construction-button img {
+    width: 70px;
+    height: 38px;
+}
+
+.construction-button .construction-label {
+    position: absolute;
+    left: 2px;
+    bottom: 0px;
+    width: 76px;
+    min-height: 13px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 0 0 6px 6px;
 }
 
 .construction-button:first-child {

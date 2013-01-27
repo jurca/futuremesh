@@ -9,7 +9,7 @@ Settings.load({
     sfxInaccessibleTileColor: '#a00000',
     mouseWheelSpeed: 0.4,
     loadingMusic: ['data/music/loading.mp3', 'data/music/loading.ogg'],
-    loadingMusicVolume: 0.4,
+    loadingMusicVolume: 0.20,
     loadingMusicLength: 15.6745,
     gameMusic: {
         playlists: {
@@ -50,7 +50,8 @@ Settings.load({
     tickDuration: 30, // 33 FPS
     maxTicks: 2,
     gamePlayPlugins: [
-        'GameMusicPlugin',
-        'ConstructionButtonsScroller'
+        //'GameMusicPlugin',
+        'ConstructionButtonsScroller',
+        'BuildingsConstructionUIPlugin'
     ]
 });
