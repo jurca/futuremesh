@@ -34,6 +34,10 @@ var GameLoader;
  *                 Map instance containing the loaded map as its data. This
  *                 event should be observed by any plugin using the game map,
  *                 e.g. renderers and unit navigators (path finders).</li>
+ *             <li><code>playerInitialization</code> - The event has a Player
+ *                 instance as its data. The Player instance contains
+ *                 information about the current human player that will control
+ *                 the game through the UI.</li>
  *         </ul>
  *         </li>
  *     <li>switch to in-game UI - the loader fades-out the loading music, hides
@@ -56,9 +60,11 @@ var GameLoader;
  *        finished.
  * @param {String} mapFileUrl URL the the file containing the gameplay map
  *        data.
+ * @param {Player} currentPlayer Player instance containing information about
+ *        the current human player.
  */
 GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
-        loadingScreen, gameplayScreen, mapFileUrl) {
+        loadingScreen, gameplayScreen, mapFileUrl, currentPlayer) {
     var spriteloader, steps, stepMessages, currentStep, performNextStep,
             setProgress, backgroundMusic, map, gamePlay, gameMusic, plugins;
     
@@ -130,8 +136,9 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             gamePlay = new GamePlay(plugins, Settings);
             
             // enqueue plugin initialization events
-            gamePlay.sendEvent("gameMusicInitialization", gameMusic);
-            gamePlay.sendEvent("gameMapInitialization", map);
+            gamePlay.sendEvent('gameMusicInitialization', gameMusic);
+            gamePlay.sendEvent('gameMapInitialization', map);
+            gamePlay.sendEvent('playerInitialization', currentPlayer);
             
             gamePlay.start();
             
