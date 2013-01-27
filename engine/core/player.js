@@ -75,7 +75,7 @@ var Player;
          */
         this.resources = resources;
         /**
-         * The player's race ID. See Race class for more details.
+         * The player's race ID. See the Race class for more details.
          *
          * @type Number
          */
