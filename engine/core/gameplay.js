@@ -168,6 +168,7 @@ GamePlay = function (plugins, settings) {
         
         for (i = plugins.length; i--;) {
             plugin = plugins[i];
+            plugin.setGamePlay(this);
             if (plugin instanceof ScheduledPlugin) {
                 if (plugin.ignoresExtraTicks()) {
                     singleTickScheduledPlugins.push(plugin);
@@ -186,5 +187,5 @@ GamePlay = function (plugins, settings) {
         }
         
         scheduledPlugins.push(eventDeliveryPlugin);
-    }());
+    }.call(this));
 };
