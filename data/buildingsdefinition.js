@@ -15,7 +15,8 @@ BuildingsDefinition = (function () {
             colorify: '#ffffff',
             colorifyDistance: 440,
             prerequisities: [],
-            resource: null
+            resource: null,
+            race: 0
         },
         {
             type: 1,
@@ -28,7 +29,8 @@ BuildingsDefinition = (function () {
             colorify: '#000000',
             colorifyDistance: 0,
             prerequisities: [],
-            resource: 1
+            resource: 1,
+            race: null
         }
     ];
 
