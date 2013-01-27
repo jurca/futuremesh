@@ -6,6 +6,7 @@ BuildingsDefinition = (function () {
     types = [
         {
             type: 0,
+            name: 'Construction Yard',
             image: 'data/images/buildings/construction-yard.png',
             imageWidth: undefined,
             imageHeight: undefined,
@@ -20,6 +21,7 @@ BuildingsDefinition = (function () {
         },
         {
             type: 1,
+            name: 'Ore',
             image: 'data/images/buildings/ore.png',
             imageWidth: undefined,
             imageHeight: undefined,

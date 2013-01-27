@@ -48,6 +48,13 @@ var Building;
         this.y = y;
         
         /**
+         * The name of the building. The name is used in the UI.
+         *
+         * @type String
+         */
+        this.name = definition.name;
+        
+        /**
          * The path to the building's image.
          *
          * @type String
