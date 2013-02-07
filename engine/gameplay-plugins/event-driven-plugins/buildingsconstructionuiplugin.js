@@ -53,8 +53,7 @@ BuildingsConstructionUIPlugin = function () {
         img.alt = building.name;
         
         progressInfo = node.getElementsByTagName('div')[0];
-        node.getElementsByTagName('div')[2].innerHTML =
-                building.name;
+        node.getElementsByTagName('div')[2].innerHTML = building.name;
         
         // we have information about image's dimensions, so we can scale it
         if (building.imageWidth && building.imageHeigth) {
@@ -62,7 +61,9 @@ BuildingsConstructionUIPlugin = function () {
         }
         
         node.addEventListener('click', function () {
-            progressInfo.innerHTML = '0 %';
+            if (!progressInfo.innerHTML) {
+                progressInfo.innerHTML = '0 %';
+            }
             instance.sendEvent('enqueueBuildingConstruction', {
                 player: playerId,
                 building: building.type
