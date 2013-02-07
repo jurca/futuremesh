@@ -6,6 +6,7 @@ UnitsDefinition = (function () {
     types = [
         {
             type: 0,
+            name: 'Harvester',
             image: 'data/images/units/harvester/?.png',
             speed: 3,
             turnSpeed: 1,
