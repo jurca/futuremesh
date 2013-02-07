@@ -11,7 +11,8 @@ UnitsDefinition = (function () {
             turnSpeed: 1,
             colorify: '#ffffff',
             colorifyDistance: 240,
-            resource: 1
+            resource: 1,
+            race: 0
         }
     ];
 
