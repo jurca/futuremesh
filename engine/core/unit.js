@@ -37,36 +37,42 @@ var Unit;
     Unit = function (x, y, direction, type, player, color) {
         var definition;
         definition = UnitsDefinition.getType(type);
+        
         /**
          * ID number of the instance.
          *
          * @type Number
          */
         this.id = id++;
+        
         /**
          * X coordinate of the unit's position on the map.
          *
          * @type Number
          */
         this.x = x;
+        
         /**
          * Y coordinate of the unit's position on the map.
          *
          * @type Number
          */
         this.y = y;
+        
         /**
          * X coordinate of the unit's previous position on the map.
          *
          * @type Number
          */
         this.lastX = x;
+        
         /**
          * Y coordinate of the unit's previous position on the map.
          *
          * @type Number
          */
         this.lastY = y;
+        
         /**
          * Unit's current direction represented as an integer from interval
          * [0,7]. The meaning of the value is:
@@ -84,12 +90,14 @@ var Unit;
          * @type Number
          */
         this.direction = direction;
+        
         /**
          * ID of the unit's type.
          *
          * @type Number
          */
         this.type = type;
+        
         /**
          * Pattern of URLs to unit's graphical representation. Should contain
          * a ? mark - this will be replaced by the loader with direction number
@@ -98,12 +106,14 @@ var Unit;
          * @type String
          */
         this.image = definition.image;
+        
         /**
          * Unit's speed of movement in tiles per second.
          *
          * @type Number
          */
         this.speed = definition.speed;
+        
         /**
          * Unit's turning speed in direction changes per second. One change of
          * direction can always be only increment or decrement of the unit's
@@ -112,6 +122,7 @@ var Unit;
          * @type Number
          */
         this.turnSpeed = definition.turnSpeed;
+        
         /**
          * Current unit's action / status. The meaning is:
          * <ul>
@@ -123,12 +134,14 @@ var Unit;
          * @type Number
          */
         this.action = 0;
+        
         /**
          * ID of the player owning this unit.
          *
          * @type Number
          */
         this.player = player;
+        
         /**
          * The color in the building's image that should be replaced by the
          * player's color. So far only hex format (#rrggbb or rrggbb is
@@ -137,6 +150,7 @@ var Unit;
          * @type String
          */
         this.colorify = definition.colorify;
+        
         /**
          * The maximum "distance" from the color specified in the colorify
          * property for the color in the building's image to be replaced by the
@@ -148,6 +162,15 @@ var Unit;
          * @type Number
          */
         this.colorifyDistance = definition.colorifyDistance;
+        
+        /**
+         * The ID of the race this units is related to. Can be
+         * <code>null</code> if the unit is not related to any race.
+         * 
+         * @type Number
+         */
+        this.race = definition.race;
+        
         /**
          * Progress of the movement of the unit from one tile to another
          * represented by a number from interval [0,1]. When set to 0, the unit
@@ -159,6 +182,7 @@ var Unit;
          * @type Number
          */
         this.moveOffset = 0;
+        
         /**
          * Automatically calculated property representing moveOffset projected
          * to the horizontal axis. Used by renderer.
@@ -166,6 +190,7 @@ var Unit;
          * @type Number
          */
         this.moveOffsetX = 0;
+        
         /**
          * Automatically calculated property representing moveOffset projected
          * to the vertical axis. Used by renderer.
@@ -173,6 +198,7 @@ var Unit;
          * @type Number
          */
         this.moveOffsetY = 0;
+        
         /**
          * Color used to colorify the unit's graphical representation, defined
          * as a CSS-compatible color-definition string.
