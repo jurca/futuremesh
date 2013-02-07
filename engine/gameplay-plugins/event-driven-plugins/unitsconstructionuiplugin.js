@@ -1,12 +1,22 @@
 "use strict";
 var UnitsConstructionUIPlugin;
 
+/**
+ * The UnitsConstructionUIPlugin creates and handles UI buttons for starting
+ * construction of units.
+ */
 UnitsConstructionUIPlugin = function () {
     var currentPlayerRace, template, buttonsContainer, createButton,
             createButtons, instance, playerId;
     
     instance = this;
     
+    /**
+     * Creates a unit construction button and adds it to the UI.
+     * 
+     * @param {Object} unit Definition of the unit for which the button is to
+     *        be created.
+     */
     createButton = function (unit) {
         var node, img, progressInfo;
         node = document.createElement(template.tag);
