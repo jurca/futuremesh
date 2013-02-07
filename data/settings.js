@@ -52,6 +52,7 @@ Settings.load({
     gamePlayPlugins: [
         //'GameMusicPlugin',
         'ConstructionButtonsScroller',
-        'BuildingsConstructionUIPlugin'
+        'BuildingsConstructionUIPlugin',
+        'UnitsConstructionUIPlugin'
     ]
 });
