@@ -34,6 +34,13 @@ var GameLoader;
  *                 Map instance containing the loaded map as its data. This
  *                 event should be observed by any plugin using the game map,
  *                 e.g. renderers and unit navigators (path finders).</li>
+ *             <li><code>playerResourcesInitialization</code> - The event has
+ *                 an array of resource stats for each player on the map. Each
+ *                 array index corresponds with a player index. Each array
+ *                 value is an array of resource stats for a player. The keys
+ *                 of the resource stats array correspond to resource types,
+ *                 the values are the amounts of the resources the given player
+ *                 posseses.</li>
  *             <li><code>playerInitialization</code> - The event has a Player
  *                 instance as its data. The Player instance contains
  *                 information about the current human player that will control
@@ -62,9 +69,15 @@ var GameLoader;
  *        data.
  * @param {Player} currentPlayer Player instance containing information about
  *        the current human player.
+ * @param {Array} playerResources Array of resource stats for each player on
+ *        the map. Each array index corresponds with a player index. Each array
+ *        value is an array of resource stats for a player. The keys of the
+ *        resource stats array correspond to resource types, the values are the
+ *        amounts of the resources the given player posseses.
  */
 GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
-        loadingScreen, gameplayScreen, mapFileUrl, currentPlayer) {
+        loadingScreen, gameplayScreen, mapFileUrl, currentPlayer,
+        playerResources) {
     var spriteloader, steps, stepMessages, currentStep, performNextStep,
             setProgress, backgroundMusic, map, gamePlay, gameMusic, plugins;
     
@@ -138,6 +151,8 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             // enqueue plugin initialization events
             gamePlay.sendEvent('gameMusicInitialization', gameMusic);
             gamePlay.sendEvent('gameMapInitialization', map);
+            gamePlay.sendEvent('playerResourcesInitialization',
+                    playerResources);
             gamePlay.sendEvent('playerInitialization', currentPlayer);
             
             gamePlay.start();

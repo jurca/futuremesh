@@ -53,6 +53,7 @@ Settings.load({
         //'GameMusicPlugin',
         'ConstructionButtonsScroller',
         'BuildingsConstructionUIPlugin',
-        'UnitsConstructionUIPlugin'
+        'UnitsConstructionUIPlugin',
+        'ResourceManagerPlugin'
     ]
 });

@@ -20,7 +20,9 @@ addEventListener('load', function () {
         loader = new GameLoader($('#loading-all')[0], $('#loading-current')[0],
                 $('#loading-message')[0], $('#loading-screen')[0],
                 $('#gameplay-screen')[0], 'data/maps/test2.map',
-                Player.getPlayer(0));
+                Player.getPlayer(0), [
+                    [10000] // resources of player 0
+                ]);
         loader.load();
     }, 25);
 }, false);
