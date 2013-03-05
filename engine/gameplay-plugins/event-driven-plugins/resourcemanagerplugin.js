@@ -22,7 +22,7 @@ ResourceManagerPlugin = function () {
     };
 
     this.onResourceRequest = function (request) {
-        var dispatch, i, amount, playerResources, satisfiable;
+        var dispatch, i, playerResources, satisfiable;
         dispatch = {
             target: request.target,
             player: request.player,
