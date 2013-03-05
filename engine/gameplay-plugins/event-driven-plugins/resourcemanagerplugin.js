@@ -3,16 +3,16 @@ var ResourceManagerPlugin;
 
 ResourceManagerPlugin = function () {
     var playerId, resources, updateUI, resourceContainers, initContainers;
-    
+
     updateUI = function () {
         var playerResources, i;
         playerResources = resources[playerId];
         for (i = playerResources.length; i--;) {
-            
+
             resourceContainers[i].innerHTML = playerResources[i];
         }
     };
-    
+
     initContainers = function () {
         var i;
         resourceContainers = [];
@@ -20,24 +20,32 @@ ResourceManagerPlugin = function () {
             resourceContainers[i] = document.querySelector('#resource-' + i);
         }
     };
-    
-    this.onResourcesRequested = function (request) {
-        var dispatch, i, amount, playerResources;
+
+    this.onResourceRequest = function (request) {
+        var dispatch, i, amount, playerResources, satisfiable;
         dispatch = {
-            receiver: request.requestor,
+            target: request.target,
             player: request.player,
             resources: []
         };
+        satisfiable = true;
         playerResources = resources[request.player];
         for (i = request.resources.length; i--;) {
-            amount = Math.min(playerResources[i], request.resources[i]);
-            playerResources[i] -= amount;
-            dispatch.resources[i] = amount;
+            if (playerResources[i] < request.resources[i]) {
+                dispatch = {
+                    target: request.target,
+                    player: request.player,
+                    resources: false // indicates refused request
+                }
+                break;
+            }
+            playerResources[i] -= request.resources[i];
+            dispatch.resources[i] = request.resources[i];
         }
-        this.sendEvent('resourcesDispatched', dispatch);
+        this.sendEvent('resourceDispatch', dispatch);
         updateUI();
     };
-    
+
     this.onResourcesGained = function (gainInfo) {
         var playerResources, i;
         playerResources = resources[gainInfo.player];
@@ -46,7 +54,7 @@ ResourceManagerPlugin = function () {
         }
         updateUI();
     };
-    
+
     this.onPlayerResourcesInitialization = function (resourceStats) {
         resources = resourceStats;
         if (playerId !== undefined) {
@@ -54,7 +62,7 @@ ResourceManagerPlugin = function () {
             updateUI();
         }
     };
-    
+
     this.onPlayerInitialization = function (player) {
         playerId = player.id;
         if (resources) {
