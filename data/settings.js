@@ -54,6 +54,7 @@ Settings.load({
         'ConstructionButtonsScroller',
         'BuildingsConstructionUIPlugin',
         'UnitsConstructionUIPlugin',
-        'ResourceManagerPlugin'
+        'ResourceManagerPlugin',
+        'BuildingsUnitsConstruction'
     ]
 });
