@@ -53,7 +53,7 @@ ResourceManagerPlugin = function () {
                     target: request.target,
                     player: request.player,
                     resources: false // indicates refused request
-                }
+                };
                 break;
             }
             playerResources[i] -= request.resources[i];
