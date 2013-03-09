@@ -17,7 +17,12 @@ BuildingsDefinition = (function () {
             colorifyDistance: 440,
             prerequisities: [],
             resource: null,
-            race: 0
+            race: 0,
+            construction: { // total cost: 5000, duration: 1500 ticks
+                step: [10],
+                stepProgress: 2, // fully constructed when progress is 1000
+                stepDuration: 3 // number of ticks
+            }
         },
         {
             type: 1,
@@ -32,7 +37,8 @@ BuildingsDefinition = (function () {
             colorifyDistance: 0,
             prerequisities: [],
             resource: 1,
-            race: null
+            race: null,
+            construction: null // non-constructable building
         }
     ];
 

@@ -1,7 +1,7 @@
 "use strict";
-var BuildingsUnitsConctruction;
+var BuildingsUnitsConstruction;
 
-BuildingsUnitsConctruction = function () {
+BuildingsUnitsConstruction = function () {
     /**
      * The buildingQueues object represents a map of player IDs to queues of
      * buildings and units to construct. The map value is an object with the
@@ -34,17 +34,18 @@ BuildingsUnitsConctruction = function () {
      *
      * @type Object
      */
-    var buildingQueues = {};
+    var constructionQueues = {}, instance = this, onResourceDispatch;
 
     this.handleTick = function () {
         var playerId, buildingsTasks, buildingType;
-        for (playerId in buildingQueues) {
-            if (!buildingQueues.hasOwnProperty(playerId)) {
+        for (playerId in constructionQueues) {
+            if (!constructionQueues.hasOwnProperty(playerId)) {
                 continue;
             }
-            buildingsTasks = buildingQueues[playerId].buildings;
+            buildingsTasks = constructionQueues[playerId].buildings;
             for (buildingType in buildingsTasks) {
-                if (!buildingsTasks.hasOwnProperty(buildingType)) {
+                if (!buildingsTasks.hasOwnProperty(buildingType) ||
+                        !buildingsTasks[buildingType]) {
                     continue;
                 }
                 if (buildingsTasks[buildingType].waitingForResources) {
@@ -57,7 +58,8 @@ BuildingsUnitsConctruction = function () {
                 this.sendEvent('resourceRequest', {
                     target: buildingType,
                     player: playerId,
-                    resources: buildingsTasks.definition.resourceCost
+                    resources: buildingsTasks[buildingType].definition.
+                            construction.step
                 });
                 buildingsTasks[buildingType].waitingForResources = true;
             }
@@ -72,13 +74,13 @@ BuildingsUnitsConctruction = function () {
             case 'stop':
                 break;
             case 'enqueueBuildingConstruction':
-                if (!buildingQueues[eventData.player]) {
-                    buildingQueues[eventData.player] = {
+                if (!constructionQueues[eventData.player]) {
+                    constructionQueues[eventData.player] = {
                         buildings: {},
                         units: {}
                     };
                 }
-                buildings = buildingQueues[eventData.player].buildings;
+                buildings = constructionQueues[eventData.player].buildings;
                 if (buildings[eventData.building]) {
                     return; // cannot enqueue building construction
                 }
@@ -91,6 +93,9 @@ BuildingsUnitsConctruction = function () {
                     stepTimer: 0
                 };
                 break;
+            case 'resourceDispatch':
+                onResourceDispatch(eventData);
+                break;
         }
     };
 
@@ -98,8 +103,37 @@ BuildingsUnitsConctruction = function () {
         return [
             'start',
             'stop',
-            'enqueueBuildingConstruction'
+            'enqueueBuildingConstruction',
+            'resourceDispatch'
         ];
     };
+
+    /**
+     * Event handler for the <code>resourceDispatch</code> event. The event is
+     * sent by the Resource Manager plug-in as a response to the
+     * <code>resourceRequest</code> event.
+     *
+     * @param {Object} data The event data.
+     */
+    onResourceDispatch = function (data) {
+        var playersBuildings, buildingTask;
+        playersBuildings = constructionQueues[data.player].buildings;
+        buildingTask = playersBuildings[data.target];
+        if (data.resources) {
+            buildingTask.progress +=
+                    buildingTask.definition.construction.stepProgress;
+            buildingTask.stepTimer =
+                    buildingTask.definition.construction.stepDuration;
+            instance.sendEvent('buildingConstrucionProgress', {
+                player: data.player,
+                building: data.target,
+                progress: buildingTask.progress
+            });
+            if (buildingTask.progress >= 1000) {
+                playersBuildings[data.target] = undefined; // finished
+            }
+        }
+        buildingTask.waitingForResources = false;
+    };
 };
-BuildingsUnitsConctruction.prototype = new MixedPlugin();
+BuildingsUnitsConstruction.prototype = new MixedPlugin();
