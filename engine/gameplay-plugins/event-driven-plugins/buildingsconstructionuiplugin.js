@@ -55,6 +55,8 @@ BuildingsConstructionUIPlugin = function () {
 
         progressInfo = node.getElementsByTagName('div')[0];
         node.getElementsByTagName('div')[2].innerHTML = building.name;
+        node.title = '¢ ' + (building.construction.step[0] *
+                (1000 / building.construction.stepProgress));
 
         // we have information about image's dimensions, so we can scale it
         if (building.imageWidth && building.imageHeigth) {
