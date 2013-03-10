@@ -27,6 +27,8 @@
      *          <li>controls - when set and set to value that evaluates as true
      *              the audio element will display controls provided by the
      *              browser</li>
+     *          <li>loop - <code>true</code> if the audio should be looped by
+     *              the browser (requires native support on the browser).</li>
      *        </ul>
      *        Other options properties are used by the constructor and are
      *        irrelevant here.
@@ -43,6 +45,9 @@
             audio.setAttribute('controls', 'controls');
         }
         audio.autobuffer = true;
+        if (options.loop) {
+            audio.loop = true;
+        }
         for (i = src.length; i--;) {
             source = document.createElement('source');
             source.setAttribute('type', 'audio/' +
@@ -82,6 +87,8 @@
      *          <li>onended - Function that should be executed once the audio
      *              playback has finished. This requires the duration property
      *              to be set.</li>
+     *          <li>loop - <code>true</code> if the audio should be looped by
+     *              the browser (requires native support on the browser).</li>
      *        </ul>
      */
     Audio = function (src, options) {
@@ -224,6 +231,6 @@
     Audio.setDefaultContainer = function (container) {
         defaultContainer = container;
     };
-    
+
     window.Audio = Audio;
 }());
