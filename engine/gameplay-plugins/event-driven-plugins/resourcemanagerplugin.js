@@ -42,6 +42,7 @@ ResourceManagerPlugin = function () {
         var dispatch, i, playerResources, satisfiable;
         dispatch = {
             target: request.target,
+            targetType: request.targetType,
             player: request.player,
             resources: []
         };
@@ -51,6 +52,7 @@ ResourceManagerPlugin = function () {
             if (playerResources[i] < request.resources[i]) {
                 dispatch = {
                     target: request.target,
+                    targetType: request.targetType,
                     player: request.player,
                     resources: false // indicates refused request
                 };

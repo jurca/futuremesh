@@ -34,10 +34,11 @@ BuildingsUnitsConstruction = function () {
      *
      * @type Object
      */
-    var constructionQueues = {}, instance = this, onResourceDispatch;
+    var constructionQueues = {}, instance = this, onResourceDispatch,
+            onEnqueueUnitConstruction;
 
     this.handleTick = function () {
-        var playerId, buildingsTasks, buildingType;
+        var playerId, buildingsTasks, buildingType, unitsTasks, unitType;
         for (playerId in constructionQueues) {
             if (!constructionQueues.hasOwnProperty(playerId)) {
                 continue;
@@ -57,11 +58,34 @@ BuildingsUnitsConstruction = function () {
                 }
                 this.sendEvent('resourceRequest', {
                     target: buildingType,
+                    targetType: 'building',
                     player: playerId,
                     resources: buildingsTasks[buildingType].definition.
                             construction.step
                 });
                 buildingsTasks[buildingType].waitingForResources = true;
+            }
+            unitsTasks = constructionQueues[playerId].units;
+            for (unitType in unitsTasks) {
+                if (!unitsTasks.hasOwnProperty(unitType) ||
+                        !unitsTasks[unitType]) {
+                    continue;
+                }
+                if (unitsTasks[unitType].waitingForResources) {
+                    continue; // we already sent request for resources
+                }
+                if (unitsTasks[unitType].stepTimeout) {
+                    unitsTasks[unitType].stepTimeout--;
+                    continue;
+                }
+                this.sendEvent('resourceRequest', {
+                    target: unitType,
+                    targetType: 'unit',
+                    player: playerId,
+                    resources: unitsTasks[unitType].definition.construction.
+                            step
+                });
+                unitsTasks[unitType].waitingForResources = true;
             }
         }
     };
@@ -90,8 +114,11 @@ BuildingsUnitsConstruction = function () {
                     progress: 0,
                     definition: definition,
                     waitingForResources: false,
-                    stepTimer: 0
+                    stepTimeout: 0
                 };
+                break;
+            case 'enqueueUnitConstruction':
+                onEnqueueUnitConstruction(eventData);
                 break;
             case 'resourceDispatch':
                 onResourceDispatch(eventData);
@@ -104,8 +131,41 @@ BuildingsUnitsConstruction = function () {
             'start',
             'stop',
             'enqueueBuildingConstruction',
+            'enqueueUnitConstruction',
             'resourceDispatch'
         ];
+    };
+
+    /**
+     * Event handler for the <code>enqueueUnitConstruction</code> event. The
+     * event is sent by the UnitsConstructionUI plug-in when the user clicks on
+     * a unit construction button.
+     *
+     * @param {Object} data Construction request details.
+     */
+    onEnqueueUnitConstruction = function (data) {
+        var units, definition;
+        if (!constructionQueues[data.player]) {
+            constructionQueues[data.player] = {
+                buildings: {},
+                units: {}
+            };
+        }
+        units = constructionQueues[data.player].units;
+        if (units[data.unit]) {
+            units[data.unit].enqueued =
+                    Math.min(units[data.unit].enqueued + 1, 30);
+        } else {
+            definition = UnitsDefinition.getType(data.unit);
+            units[data.unit] = {
+                type: data.unit,
+                progress: 0,
+                definition: definition,
+                waitingForResources: false,
+                stepTimeout: 0,
+                enqueued: 0
+            };
+        }
     };
 
     /**
@@ -116,24 +176,50 @@ BuildingsUnitsConstruction = function () {
      * @param {Object} data The event data.
      */
     onResourceDispatch = function (data) {
-        var playersBuildings, buildingTask;
-        playersBuildings = constructionQueues[data.player].buildings;
-        buildingTask = playersBuildings[data.target];
-        if (data.resources) {
-            buildingTask.progress +=
-                    buildingTask.definition.construction.stepProgress;
-            buildingTask.stepTimer =
-                    buildingTask.definition.construction.stepDuration;
-            instance.sendEvent('buildingConstrucionProgress', {
-                player: data.player,
-                building: data.target,
-                progress: buildingTask.progress
-            });
-            if (buildingTask.progress >= 1000) {
-                playersBuildings[data.target] = undefined; // finished
+        var playersBuildings, buildingTask, playerUnits, unitTask;
+        if (data.targetType === 'unit') {
+            playerUnits = constructionQueues[data.player].units;
+            unitTask = playerUnits[data.target];
+            if (data.resources) {
+                unitTask.progress +=
+                        unitTask.definition.construction.stepProgress;
+                unitTask.stepTimeout +=
+                        unitTask.definition.construction.stepDuration;
+                instance.sendEvent('unitConstructionProgress', {
+                    player: data.player,
+                    unit: data.target,
+                    progress: unitTask.progress,
+                    enqueued: unitTask.enqueued
+                });
+                if (unitTask.progress >= 1000) {
+                    if (unitTask.enqueued) {
+                        unitTask.enqueued--;
+                        unitTask.progress = 0;
+                    } else {
+                        playerUnits[data.target] = undefined; // finished
+                    }
+                }
             }
+            unitTask.waitingForResources = false;
+        } else if (data.targetType === 'building') {
+            playersBuildings = constructionQueues[data.player].buildings;
+            buildingTask = playersBuildings[data.target];
+            if (data.resources) {
+                buildingTask.progress +=
+                        buildingTask.definition.construction.stepProgress;
+                buildingTask.stepTimeout =
+                        buildingTask.definition.construction.stepDuration;
+                instance.sendEvent('buildingConstrucionProgress', {
+                    player: data.player,
+                    building: data.target,
+                    progress: buildingTask.progress
+                });
+                if (buildingTask.progress >= 1000) {
+                    playersBuildings[data.target] = undefined; // finished
+                }
+            }
+            buildingTask.waitingForResources = false;
         }
-        buildingTask.waitingForResources = false;
     };
 };
 BuildingsUnitsConstruction.prototype = new MixedPlugin();
