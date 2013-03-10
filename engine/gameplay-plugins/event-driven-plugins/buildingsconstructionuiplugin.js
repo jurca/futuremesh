@@ -8,7 +8,8 @@ var BuildingsConstructionUIPlugin;
  */
 BuildingsConstructionUIPlugin = function () {
     var currentPlayerRace, template, buttonsContainer, createButton,
-            createButtons, scaleButtonIcon, instance, playerId, buttons;
+            createButtons, scaleButtonIcon, instance, playerId, buttons,
+            getConstructionButton;
 
     instance = this;
     buttons = {};
@@ -74,6 +75,17 @@ BuildingsConstructionUIPlugin = function () {
                 alert('placing the building is not implemented yet');
             }
         }, false);
+        addEventListener('contextmenu', function (event) {
+            var clickedNode;
+            event.preventDefault();
+            clickedNode = getConstructionButton(event.target);
+            if (clickedNode === node) {
+                instance.sendEvent('cancelBuildingConstruction', {
+                    player: playerId,
+                    building: building.type
+                });
+            }
+        });
 
         node.progressInfo = progressInfo;
         buttons[building.type] = node;
@@ -171,6 +183,27 @@ BuildingsConstructionUIPlugin = function () {
      */
     this.onStop = function (tmp) {
         buttonsContainer.innerHTML = '';
+    };
+
+    /**
+     * Returns the construction button encapsuling the provided clicked HTML
+     * element. The method returns <code>null</code> if the clicked element is
+     * not encapsulated by a construction button element.
+     *
+     * @param {HTMLElement} clickedNode The HTML clicked by the user.
+     * @returns {HTMLElement} The construction button element or
+     *          <code>null</code>.
+     */
+    getConstructionButton = function (clickedNode) {
+        var limit;
+        limit = 3;
+        while (clickedNode.className !== 'construction-button') {
+            if (!limit--) {
+                return null;
+            }
+            clickedNode = clickedNode.parentNode;
+        }
+        return clickedNode;
     };
 };
 BuildingsConstructionUIPlugin.prototype = new AdvancedEventDrivenPlugin();

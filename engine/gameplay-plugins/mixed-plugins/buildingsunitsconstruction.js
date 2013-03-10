@@ -36,7 +36,7 @@ BuildingsUnitsConstruction = function () {
      */
     var constructionQueues = {}, instance = this, onResourceDispatch,
             onEnqueueUnitConstruction, maxQueueLength,
-            onCancelUnitConstruction;
+            onCancelUnitConstruction, onCancelBuildingConstruction;
 
     maxQueueLength = Settings.pluginConfiguration.BuildingsUnitsConstruction.
             maxQueueLength;
@@ -130,6 +130,9 @@ BuildingsUnitsConstruction = function () {
             case 'cancelUnitConstruction':
                 onCancelUnitConstruction(eventData);
                 break;
+            case 'cancelBuildingConstruction':
+                onCancelBuildingConstruction(eventData);
+                break;
         }
     };
 
@@ -140,8 +143,33 @@ BuildingsUnitsConstruction = function () {
             'enqueueBuildingConstruction',
             'enqueueUnitConstruction',
             'resourceDispatch',
-            'cancelUnitConstruction'
+            'cancelUnitConstruction',
+            'cancelBuildingConstruction'
         ];
+    };
+
+    onCancelBuildingConstruction = function (data) {
+        var buildingTasks, resources, i, constructionInfo;
+        if (!constructionQueues[data.player]) {
+            return;
+        }
+        buildingTasks = constructionQueues[data.player].buildings;
+        if (!buildingTasks[data.building]) {
+            return;
+        }
+        resources = [];
+        constructionInfo = buildingTasks[data.building].definition.
+                construction;
+        for (i = constructionInfo.step.length; i--;) {
+            resources[i] = constructionInfo.step[i] *
+                    buildingTasks[data.building].progress /
+                    constructionInfo.stepProgress;
+        }
+        instance.sendEvent('resourcesGained', {
+            player: data.player,
+            resources: resources
+        });
+        buildingTasks[data.building] = undefined;
     };
 
     /**
@@ -257,6 +285,14 @@ BuildingsUnitsConstruction = function () {
             playersBuildings = constructionQueues[data.player].buildings;
             buildingTask = playersBuildings[data.target];
             if (data.resources) {
+                if (!buildingTask) {
+                    // task has been canceled, return the resources
+                    instance.sendEvent('resourcesGained', {
+                        player: data.player,
+                        resources: data.resources
+                    });
+                    return;
+                }
                 buildingTask.progress +=
                         buildingTask.definition.construction.stepProgress;
                 buildingTask.stepTimeout =
