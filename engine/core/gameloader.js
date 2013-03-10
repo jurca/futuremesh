@@ -5,9 +5,9 @@ var GameLoader;
  * Loader utility for loading all necessary game data and initializing the game
  * itself. The loader only initializes itself within the constructor. The
  * loading process is started using the load() method.
- * 
+ *
  * <p>The loading and initialization process in performed in several steps:</p>
- * 
+ *
  * <ol>
  *     <li>loading of loading screen background music - The GameLoader loads
  *         the background music played during loading of in-game files and game
@@ -50,7 +50,7 @@ var GameLoader;
  *     <li>switch to in-game UI - the loader fades-out the loading music, hides
  *         the loading UI and displays the in-game UI.</li>
  * </ol>
- * 
+ *
  * @param {HTMLElement} progressbarAll An HTML element containing a single HTML
  *        DIV element. This element represents a progressbar for the overall
  *        progress of the loading process.
@@ -80,9 +80,9 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         playerResources) {
     var spriteloader, steps, stepMessages, currentStep, performNextStep,
             setProgress, backgroundMusic, map, gamePlay, gameMusic, plugins;
-    
+
     spriteloader = new SpriteLoader();
-    
+
     steps = [
         function () { // images
             spriteloader.addObserver(function (progress) {
@@ -99,7 +99,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         function () { // music
             var movedToNextStep;
             movedToNextStep = false;
-            
+
             gameMusic = new GameMusic();
             gameMusic.registerLoadingObserver(function (progress) {
                 if (progress < 0) {
@@ -136,27 +136,27 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         function () { // initialize GamePlay daemon's plugins
             var i, pluginName;
             plugins = [];
-            
+
             for (i = Settings.gamePlayPlugins.length; i--;) {
                 pluginName = Settings.gamePlayPlugins[i];
                 plugins.push(eval('new ' + pluginName + '()'));
                 setProgress(i / Settings.gamePlayPlugins.length);
             }
-            
+
             performNextStep();
         },
         function () { // start game engine (the GamePlay daemon)
             gamePlay = new GamePlay(plugins, Settings);
-            
+
             // enqueue plugin initialization events
             gamePlay.sendEvent('gameMusicInitialization', gameMusic);
             gamePlay.sendEvent('gameMapInitialization', map);
             gamePlay.sendEvent('playerResourcesInitialization',
                     playerResources);
             gamePlay.sendEvent('playerInitialization', currentPlayer);
-            
+
             gamePlay.start();
-            
+
             performNextStep();
         },
         function () { // hide loading page and display gameplay page
@@ -189,7 +189,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         "Done"
     ];
     currentStep = -1;
-    
+
     /**
      * Initiates the loading process. The loader loads the background music
      * first, the loading of game data is started after the music playback
@@ -199,16 +199,14 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         backgroundMusic = new Audio(Settings.loadingMusic, {
             volume: Settings.loadingMusicVolume,
             duration: Settings.loadingMusicLength,
+            loop: true,
             onload: function () {
                 backgroundMusic.play();
                 performNextStep();
-            },
-            onended: function () {
-                backgroundMusic.playFromStart();
             }
         });
     };
-    
+
     /**
      * Executes the next step of the loading process. The step is executed
      * after a 15ms delay, so that the browser can perform DOM reflow of the
@@ -222,12 +220,12 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             steps[currentStep]();
         }, 15);
     };
-    
+
     /**
      * Sets the values of the progress bars. It is necessary to specify only
      * the value of the current step progressbar, the "overall progress"
      * progressbar's value is computed automatically.
-     * 
+     *
      * @param {Number} progress The progress within the current step specified
      *        as a number between 0 and 1 inclusive.
      */
