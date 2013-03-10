@@ -7,13 +7,14 @@ var UnitsConstructionUIPlugin;
  */
 UnitsConstructionUIPlugin = function () {
     var currentPlayerRace, template, buttonsContainer, createButton,
-            createButtons, instance, playerId;
-    
+            createButtons, instance, playerId, buttons;
+
     instance = this;
-    
+    buttons = {};
+
     /**
      * Creates a unit construction button and adds it to the UI.
-     * 
+     *
      * @param {Object} unit Definition of the unit for which the button is to
      *        be created.
      */
@@ -22,29 +23,31 @@ UnitsConstructionUIPlugin = function () {
         node = document.createElement(template.tag);
         node.className = template.className;
         node.innerHTML = template.innerHTML;
-        
+
         img = node.getElementsByTagName('img')[0];
         img.src = unit.imageData[5].src;
         img.alt = unit.name;
         img.style.width = Settings.tileWidth + 'px';
         img.style.height = Settings.tileHeight + 'px';
-        
+
         progressInfo = node.getElementsByTagName('div')[0];
         node.getElementsByTagName('div')[2].innerHTML = unit.name;
-        
+
         node.addEventListener('click', function () {
             if (!progressInfo.innerHTML) {
                 progressInfo.innerHTML = '0 %';
             }
-            instance.sendEvent('enqueueBuildingConstruction', {
+            instance.sendEvent('enqueueUnitConstruction', {
                 player: playerId,
                 unit: unit.type
             });
         }, false);
-        
+
+        node.progressInfo = progressInfo;
+        buttons[unit.type] = node;
         buttonsContainer.appendChild(node);
     };
-    
+
     /**
      * Creates buttons for constructing new units in the UI.
      */
@@ -61,11 +64,23 @@ UnitsConstructionUIPlugin = function () {
             }
         }
     };
-    
+
+    this.onUnitConstructionProgress = function (data) {
+        var unitButton, label;
+        if (data.player == playerId) {
+            unitButton = buttons[data.unit];
+            label = Math.floor(data.progress / 10) + ' %';
+            if (data.enqueued) {
+                label += ' (' + data.enqueued + ')';
+            }
+            unitButton.progressInfo.innerHTML = label;
+        }
+    };
+
     /**
      * Event handler for the <code>playerInitialization</code>. The event is
      * sent by the GameLoader utility.
-     * 
+     *
      * @param {Player} player The current human player controlling the UI
      *        repesented as a Player instance.
      */
@@ -76,12 +91,12 @@ UnitsConstructionUIPlugin = function () {
             createButtons();
         }
     };
-    
+
     /**
      * Event handler for the <code>start</code> event. The event is sent by the
      * GamePlay daemon when it is started and carries a <code>null</code> as
      * its data.
-     * 
+     *
      * @param {Object} tmp A <code>null</code> representing the event's data.
      */
     this.onStart = function (tmp) {
@@ -89,7 +104,7 @@ UnitsConstructionUIPlugin = function () {
         templateNode = document.querySelector(
                 '#units-buttons .construction-buttons-content *');
         buttonsContainer = templateNode.parentNode;
-        
+
         template = {
             tag: templateNode.nodeName,
             className: templateNode.className,
@@ -102,12 +117,12 @@ UnitsConstructionUIPlugin = function () {
             createButtons();
         }
     };
-    
+
     /**
      * Event handler for the <code>stop</code> event. The event is sent by the
      * GamePlay daemon when it is stopped and carries a <code>null</code> as
      * its data.
-     * 
+     *
      * @param {Object} tmp A <code>null</code> representing the event's data.
      */
     this.onStop = function (tmp) {
