@@ -7,7 +7,7 @@ var UnitsConstructionUIPlugin;
  */
 UnitsConstructionUIPlugin = function () {
     var currentPlayerRace, template, buttonsContainer, createButton,
-            createButtons, instance, playerId, buttons;
+            createButtons, instance, playerId, buttons, getConstructionButton;
 
     instance = this;
     buttons = {};
@@ -44,6 +44,17 @@ UnitsConstructionUIPlugin = function () {
                 unit: unit.type
             });
         }, false);
+        addEventListener('contextmenu', function (event) {
+            var clickedNode;
+            event.preventDefault();
+            clickedNode = getConstructionButton(event.target);
+            if (clickedNode === node) {
+                instance.sendEvent('cancelUnitConstruction', {
+                    player: playerId,
+                    unit: unit.type
+                });
+            }
+        });
 
         node.progressInfo = progressInfo;
         buttons[unit.type] = node;
@@ -129,6 +140,27 @@ UnitsConstructionUIPlugin = function () {
      */
     this.onStop = function (tmp) {
         buttonsContainer.innerHTML = '';
+    };
+
+    /**
+     * Returns the construction button encapsuling the provided clicked HTML
+     * element. The method returns <code>null</code> if the clicked element is
+     * not encapsulated by a construction button element.
+     *
+     * @param {HTMLElement} clickedNode The HTML clicked by the user.
+     * @returns {HTMLElement} The construction button element or
+     *          <code>null</code>.
+     */
+    getConstructionButton = function (clickedNode) {
+        var limit;
+        limit = 3;
+        while (clickedNode.className !== 'construction-button') {
+            if (!limit--) {
+                return null;
+            }
+            clickedNode = clickedNode.parentNode;
+        }
+        return clickedNode;
     };
 };
 UnitsConstructionUIPlugin.prototype = new AdvancedEventDrivenPlugin();

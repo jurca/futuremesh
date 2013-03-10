@@ -35,7 +35,8 @@ BuildingsUnitsConstruction = function () {
      * @type Object
      */
     var constructionQueues = {}, instance = this, onResourceDispatch,
-            onEnqueueUnitConstruction, maxQueueLength;
+            onEnqueueUnitConstruction, maxQueueLength,
+            onCancelUnitConstruction;
 
     maxQueueLength = Settings.pluginConfiguration.BuildingsUnitsConstruction.
             maxQueueLength;
@@ -126,6 +127,9 @@ BuildingsUnitsConstruction = function () {
             case 'resourceDispatch':
                 onResourceDispatch(eventData);
                 break;
+            case 'cancelUnitConstruction':
+                onCancelUnitConstruction(eventData);
+                break;
         }
     };
 
@@ -135,8 +139,45 @@ BuildingsUnitsConstruction = function () {
             'stop',
             'enqueueBuildingConstruction',
             'enqueueUnitConstruction',
-            'resourceDispatch'
+            'resourceDispatch',
+            'cancelUnitConstruction'
         ];
+    };
+
+    /**
+     * Event handler for the <code>cancelUnitConstruction</code> event. The
+     * event is sent by the Units Construction UI plug-in when the user cancels
+     * a production of a unit. The handler cancels the production task and
+     * performs a refund of all resources consumed by the unit production
+     * process.
+     *
+     * @param {Object} data Event data.
+     */
+    onCancelUnitConstruction = function (data) {
+        var unitTasks, resources, i, constructionInfo;
+        if (!constructionQueues[data.player]) {
+            return;
+        }
+        unitTasks = constructionQueues[data.player].units;
+        if (!unitTasks[data.unit]) {
+            return;
+        }
+        if (unitTasks[data.unit].enqueued) {
+            unitTasks[data.unit].enqueued--;
+        } else {
+            resources = [];
+            constructionInfo = unitTasks[data.unit].definition.construction;
+            for (i = constructionInfo.step.length; i--;) {
+                resources[i] = constructionInfo.step[i] *
+                        unitTasks[data.unit].progress /
+                        constructionInfo.stepProgress;
+            }
+            instance.sendEvent('resourcesGained', {
+                player: data.player,
+                resources: resources
+            });
+            unitTasks[data.unit] = undefined;
+        }
     };
 
     /**
@@ -184,6 +225,14 @@ BuildingsUnitsConstruction = function () {
             playerUnits = constructionQueues[data.player].units;
             unitTask = playerUnits[data.target];
             if (data.resources) {
+                if (!unitTask) {
+                    // task has been canceled, return the resources
+                    instance.sendEvent('resourcesGained', {
+                        player: data.player,
+                        resources: data.resources
+                    });
+                    return;
+                }
                 unitTask.progress +=
                         unitTask.definition.construction.stepProgress;
                 unitTask.stepTimeout +=
