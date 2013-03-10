@@ -32,6 +32,8 @@ UnitsConstructionUIPlugin = function () {
 
         progressInfo = node.getElementsByTagName('div')[0];
         node.getElementsByTagName('div')[2].innerHTML = unit.name;
+        node.title = '¢ ' + (unit.construction.step[0] *
+                (1000 / unit.construction.stepProgress));
 
         node.addEventListener('click', function () {
             if (!progressInfo.innerHTML) {
