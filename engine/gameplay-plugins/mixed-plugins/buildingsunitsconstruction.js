@@ -35,7 +35,10 @@ BuildingsUnitsConstruction = function () {
      * @type Object
      */
     var constructionQueues = {}, instance = this, onResourceDispatch,
-            onEnqueueUnitConstruction;
+            onEnqueueUnitConstruction, maxQueueLength;
+
+    maxQueueLength = Settings.pluginConfiguration.BuildingsUnitsConstruction.
+            maxQueueLength;
 
     this.handleTick = function () {
         var playerId, buildingsTasks, buildingType, unitsTasks, unitType;
@@ -154,7 +157,7 @@ BuildingsUnitsConstruction = function () {
         units = constructionQueues[data.player].units;
         if (units[data.unit]) {
             units[data.unit].enqueued =
-                    Math.min(units[data.unit].enqueued + 1, 30);
+                    Math.min(units[data.unit].enqueued + 1, maxQueueLength);
         } else {
             definition = UnitsDefinition.getType(data.unit);
             units[data.unit] = {

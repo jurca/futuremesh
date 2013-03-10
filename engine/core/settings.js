@@ -11,7 +11,7 @@ Settings = {
      * @type Number
      */
     tileSize: undefined,
-    
+
     /**
      * Vertical scaling of the graphics in the battlefield view. Represented as
      * a number from interval [0,1]
@@ -25,7 +25,7 @@ Settings = {
      * @type Number
      */
     tileWidth: undefined,
-    
+
     /**
      * Height of the rotated and skewed tile in pixels.
      *
@@ -40,7 +40,7 @@ Settings = {
      * @type Number
      */
     gridIndexGranularity: undefined,
-    
+
     /**
      * Set to true if the images of tiles has been already transformed. If set
      * to false the engine will rotate and skew the tile images.
@@ -48,7 +48,7 @@ Settings = {
      * @type Boolean
      */
     tileImagesTransformed: false,
-    
+
     /**
      * Set to true if the images of buildings has been already transformed. If
      * set to false the engine will rotate and skew the building images.
@@ -56,7 +56,7 @@ Settings = {
      * @type Boolean
      */
     buildingImagesTransformed: false,
-    
+
     /**
      * Set to true if the images of units has been already transformed. If set
      * to false the engine will rotate and skew the unit images.
@@ -70,46 +70,46 @@ Settings = {
      * @type Number
      */
     sfx3DLightFactor: undefined,
-    
+
     /**
      * Sets the color of the SFX 3D light beams. Should be a CSS color
      * definition.
-     * 
+     *
      * @type String
      */
     sfx3DLightColor: undefined,
-    
+
     /**
      * Sets the color of the building overlay rendered by the SFX renderer over
      * the tiles that are occupied by buildings. Should be a CSS color
      * definition.
-     * 
+     *
      * @type String
      */
     sfxBuildLayerColor: undefined,
-    
+
     /**
      * Sets the color used to paint the tiles accessible to units when
      * displaying of the navigation index is enabled. Should be a CSS color
      * definition.
      */
     sfxAccessibleTileColor: undefined,
-    
+
     /**
      * Sets the color used to paint the tiles inaccessible to units when
      * displaying of the navigation index is enabled. Should be a CSS color
      * definition.
      */
     sfxInaccessibleTileColor: undefined,
-    
+
     /**
      * Sets the speed how fast the map can be scrolled using the mouse wheel.
      * Recommended value is 0.4.
-     * 
+     *
      * @type Number
      */
     mouseWheelSpeed: undefined,
-    
+
     /**
      * Audio files (MP3 or OGG) containing music played during the game loading
      * screen.
@@ -117,23 +117,23 @@ Settings = {
      * @type Array
      */
     loadingMusic: [],
-    
+
     /**
      * The volume of the music played during the game loading screen. The value
      * must be between 0 and 1 inclusive.
-     * 
+     *
      * @type Number
      */
     loadingMusicVolume: 1,
-    
+
     /**
      * Length of the music played during the game loading screen. The value is
      * in seconds with milliseconds as fraction.
-     * 
+     *
      * @type Number
      */
     loadingMusicLength: undefined,
-    
+
     /**
      * Configuration of the GameMusic daemon.
      *
@@ -143,11 +143,11 @@ Settings = {
         /**
          * Song playlists for the music daemon. Each entry name is a gameplay
          * intensity index, a number from range [0, 1].
-         * 
+         *
          * <p>A playlist is an array of objects, where each objects contains
          * information about a single song. The object has to have the
          * following properties:</p>
-         * 
+         *
          * <ul>
          *     <li><code>src</code> - array of strings. Each string is a URL
          *         to the music sound file. Each file is the same song but a
@@ -158,20 +158,20 @@ Settings = {
          *         Milliseconds of the duration are specified as the floating
          *         point part.</li>
          * </ul>
-         * 
+         *
          * @type Object
          */
         playlists: {
             0: []
         },
-        
+
         /**
          * The duration of the song cross-fade effect in milliseconds.
          *
          * @type Number
          */
         fadeDuration: 3500,
-        
+
         /**
          * Volume of the music played by the game music daemon. The volume is
          * specified as a number within the range [0, 1].
@@ -180,18 +180,18 @@ Settings = {
          */
         volume: 0.7
     },
-    
+
     /**
      * Duration of a GamePlay's background thread's tick in milliseconds. It
      * should be large enough for all gameplay plugins to execute. The user
      * will experience low FPS if the number is too high, on the other hand the
      * game may run slow (well, as fast as possible) if the number is too low.
      * The default settings is for 33 FPS.
-     * 
+     *
      * @type Number
      */
     tickDuration: 30,
-    
+
     /**
      * Maximum number of ticks executed in batch in the GamePlay's background
      * thread. This happens if the thread is unable to execute all plugins in
@@ -201,14 +201,22 @@ Settings = {
      * @type Number
      */
     maxTicks: 3,
-    
+
     /**
      * Array of plugin names for the GamePlay daemon. These plugins are located
      * in the sub-packages of the <code>engine.gameplay-plugins</code> package.
-     * 
+     *
      * @type String
      */
     gamePlayPlugins: [],
+
+    /**
+     * Map of GamePlay plugin names to their configurations. Configuration of
+     * each plug-in is usually an object with various properties.
+     *
+     * @type Object
+     */
+    pluginConfiguration: {},
 
     /**
      * Sets and loads the settings. Some properties will be calculated
@@ -267,6 +275,9 @@ Settings = {
      *              otherwise the user will experience glitches.</li>
      *          <li>gamePlayPlugins - Array of names of plugins for the
      *              GamePlay daemon.</li>
+     *          <li>pluginConfiguration - Map of GamePlay plugin names to their
+     *              configurations. Configuration of each plug-in is usually an
+     *              object with various properties.</li>
      *        </ul>
      *        If any of these properties will be ommited, default value will be
      *        used (if exists).
@@ -299,5 +310,6 @@ Settings = {
         this.loadingMusicLength = settings.loadingMusicLength;
         this.gameMusic = settings.gameMusic;
         this.gamePlayPlugins = settings.gamePlayPlugins;
+        this.pluginConfiguration = settings.pluginConfiguration;
     }
 };

@@ -56,5 +56,10 @@ Settings.load({
         'UnitsConstructionUIPlugin',
         'ResourceManagerPlugin',
         'BuildingsUnitsConstruction'
-    ]
+    ],
+    pluginConfiguration: {
+        BuildingsUnitsConstruction: {
+            maxQueueLength: 30
+        }
+    }
 });
