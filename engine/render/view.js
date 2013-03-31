@@ -8,29 +8,19 @@ View = function () {
     var mainview, minimap;
 
     /**
-     * Sets canvases for rendering of the terrain, buildings and units. These
-     * canvases has to be distinct - it is not possible to use one canvas to
-     * render all.
-     * 
-     * @param {HTMLCanvasElement} terrainCanvas Canvas that should be used to
-     *        render the terrain
-     * @param {HTMLCanvasElement} buildingsCanvas Canvas that should be used to
-     *        render the buildings
-     * @param {HTMLCanvasElement} unitsCanvas Canvas that should be used to
-     *        render the units
-     * @param {HTMLCanvasElement} sfxCanvas Canvas that should be used to
-     *        render sfx
+     * Sets canvas for rendering of the terrain, buildings and units.
+     *
+     * @param {HTMLCanvasElement} viewCanvas Canvas that should be used by the
+     *        renderers.
      */
-    this.setCanvases = function (terrainCanvas, buildingsCanvas, unitsCanvas,
-            sfxCanvas) {
+    this.setCanvas = function (viewCanvas) {
         mainview = new MainView();
-        mainview.setCanvases(terrainCanvas, buildingsCanvas, unitsCanvas,
-                sfxCanvas);
+        mainview.setCanvas(viewCanvas);
     };
 
     /**
      * Sets the container into which minimap render will be placed.
-     * 
+     *
      * @param {HTMLElement} container The container that will be used by
      *        minimap renderer to render minimap.
      */
@@ -42,7 +32,7 @@ View = function () {
     /**
      * Sets th map to be rendered. This cannot be done before view canvases and
      * minimap container has been set.
-     * 
+     *
      * @param {Map} map Instance of the Map class containing raw map data.
      */
     this.setMap = function (map) {

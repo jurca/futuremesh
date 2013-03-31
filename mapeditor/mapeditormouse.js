@@ -3,28 +3,29 @@ var MapEditorMouse;
 
 MapEditorMouse = function () {
     var $, mouse, status, inCanvas;
-    
+
     $ = function (selector) {
         return document.getElementById(selector);
     };
-    
+
     inCanvas = false;
     status = $('mouse');
     mouse = new Mouse();
-    mouse.setCanvasOffset($('sfx').offsetLeft, $('sfx').offsetTop);
-    
+    mouse.setCanvasOffset($('view-canvas').offsetLeft,
+            $('view-canvas').offsetTop);
+
     this.setMapOffset = function (x, y) {
         mouse.setMapOffset(x, y);
     };
-    
+
     this.getX = function () {
         return mouse.getMapX();
     };
-    
+
     this.getY = function() {
         return mouse.getMapY();
     };
-    
+
     addEventListener('mousemove', function () {
         if (inCanvas) {
             status.innerHTML = '[' + mouse.getMapX() + ',' +
@@ -33,14 +34,14 @@ MapEditorMouse = function () {
             status.innerHTML = '[--,--]';
         }
     }, false);
-    
-    $('sfx').addEventListener('mouseover', function () {
+
+    $('view-canvas').addEventListener('mouseover', function () {
         inCanvas = true;
     }, false);
-    
-    $('sfx').addEventListener('mouseout', function () {
+
+    $('view-canvas').addEventListener('mouseout', function () {
         inCanvas = false;
     }, false);
-    
+
     status.innerHTML = '[--,--]';
 };

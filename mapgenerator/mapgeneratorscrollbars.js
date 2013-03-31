@@ -8,27 +8,27 @@ var MapGeneratorScrollbars;
  */
 MapGeneratorScrollbars = function (view) {
     var hScroll, vScroll, x, y, viewCanvas;
-    
+
     hScroll = document.getElementById('h-scroll');
     vScroll = document.getElementById('v-scroll');
-    viewCanvas = document.getElementById('sfx');
+    viewCanvas = document.getElementById('view-canvas');
     x = 0;
     y = 0;
-    
+
     hScroll.addEventListener('change', function () {
         var width;
         width = view.getLayersDimensions().width;
         x = Math.floor(this.value * width);
         view.display(x, y);
     }, false);
-    
+
     vScroll.addEventListener('change', function () {
         var height;
         height = view.getLayersDimensions().height;
         y = Math.floor(this.value * height);
         view.display(x, y);
     }, false);
-    
+
     viewCanvas.addEventListener('mousewheel', function (e) {
         var distance, layerSize;
         e.preventDefault();
