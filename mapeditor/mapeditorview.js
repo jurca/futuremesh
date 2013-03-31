@@ -8,8 +8,7 @@ var MapEditorView;
  */
 MapEditorView = function () {
     var terrainLayer, buildingsLayer, unitsLayer, sfxLayer, enableTerrain,
-            enableBuildings, enableUnits, enableSFX, terrainLayerCanvas,
-            buildingsLayerCanvas, unitsLayerCanvas, sfxLayerCanvas,
+            enableBuildings, enableUnits, enableSFX, viewCanvas,
             enableBuildable, enableNavigationIndex;
 
     enableTerrain = true;
@@ -21,17 +20,17 @@ MapEditorView = function () {
 
     /**
      * Updates the display of the tile at the provided coordinates.
-     * 
+     *
      * @param {Number} x The x coordinate of the changed tile.
      * @param {Number} y The y coordinate of the changed tile.
      */
     this.updateTerrain = function (x, y) {
         terrainLayer.updateTile(x, y);
     };
-    
+
     /**
      * Updates the display of the buildings layer with the provided building.
-     * 
+     *
      * @param {Building} building The building that was updated.
      */
     this.updateBuilding = function (building) {
@@ -40,7 +39,7 @@ MapEditorView = function () {
 
     /**
      * Removes the provided building from the buildings layer.
-     * 
+     *
      * @param {Building} building The building to remove.
      */
     this.removeBuilding = function (building) {
@@ -53,28 +52,28 @@ MapEditorView = function () {
     this.toggleTerrain = function () {
         enableTerrain = !enableTerrain;
     };
-    
+
     /**
      * Toggles displaying of the buildings layer.
      */
     this.toggleBuildings = function () {
         enableBuildings = !enableBuildings;
     };
-    
+
     /**
      * Toggles displaying of the units layer.
      */
     this.toggleUnits = function () {
         enableUnits = !enableUnits;
     };
-    
+
     /**
      * Toggles displaying of the SFX layer.
      */
     this.toggleSFX = function () {
         enableSFX = !enableSFX;
     };
-    
+
     /**
      * Toggles displaying of the buildable tiles.
      */
@@ -82,7 +81,7 @@ MapEditorView = function () {
         enableBuildable = !enableBuildable;
         sfxLayer.setDisplayBuildableOverlay(enableBuildable);
     };
-    
+
     /**
      * Toggles displaying of tiles accessible to units.
      */
@@ -92,32 +91,21 @@ MapEditorView = function () {
     };
 
     /**
-     * Sets rendering canvases for terrain layer, buildings layer and units
-     * layer. These canvases has to be distinct.
+     * Sets rendering canvas for terrain layer, buildings layer and units
+     * layers.
      *
-     * @param {HTMLCanvasElement} terrainCanvas The canvas for the terrain
-     *        layer renderer.
-     * @param {HTMLCanvasElement} buildingsCanvas The canvas for the buildings
-     *        layer renderer.
-     * @param {HTMLCanvasElement} unitsCanvas The canvas for the units layer
-     *        renderer.
-     * @param {HTMLCanvasElement} sfxCanvas The canvas for the sfx layer
-     *        renderer.
+     * @param {HTMLCanvasElement} viewCanvas The canvas for the renderers.
      */
-    this.setCanvases = function (terrainCanvas, buildingsCanvas, unitsCanvas,
-            sfxCanvas) {
+    this.setCanvas = function (newViewCanvas) {
         terrainLayer = new TerrainLayer();
-        terrainLayer.setCanvas(terrainCanvas);
+        terrainLayer.setCanvas(newViewCanvas);
         buildingsLayer = new BuildingsLayer();
-        buildingsLayer.setCanvas(buildingsCanvas);
+        buildingsLayer.setCanvas(newViewCanvas);
         unitsLayer = new UnitsLayer();
-        unitsLayer.setCanvas(unitsCanvas);
+        unitsLayer.setCanvas(newViewCanvas);
         sfxLayer = new SFX();
-        sfxLayer.setCanvas(sfxCanvas);
-        terrainLayerCanvas = terrainCanvas;
-        buildingsLayerCanvas = buildingsCanvas;
-        unitsLayerCanvas = unitsCanvas;
-        sfxLayerCanvas = sfxCanvas;
+        sfxLayer.setCanvas(newViewCanvas);
+        viewCanvas = newViewCanvas;
     };
 
     /**
@@ -143,17 +131,11 @@ MapEditorView = function () {
      * @param {Number} y The Y-coordinate offset for renderers.
      */
     this.display = function (x, y) {
-        terrainLayerCanvas.getContext('2d').clearRect(0, 0,
-                terrainLayerCanvas.width, terrainLayerCanvas.height);
+        viewCanvas.getContext('2d').clearRect(0, 0,
+                viewCanvas.width, viewCanvas.height);
         enableTerrain && terrainLayer.display(x, y);
-        buildingsLayerCanvas.getContext('2d').clearRect(0, 0,
-                buildingsLayerCanvas.width, buildingsLayerCanvas.height);
         enableBuildings && buildingsLayer.display(x, y);
-        unitsLayerCanvas.getContext('2d').clearRect(0, 0,
-                unitsLayerCanvas.width, unitsLayerCanvas.height);
         enableUnits && unitsLayer.display(x, y);
-        sfxLayerCanvas.getContext('2d').clearRect(0, 0,
-                sfxLayerCanvas.width, sfxLayerCanvas.height);
         enableSFX && sfxLayer.display(x, y);
     };
 

@@ -9,28 +9,20 @@ MainView = function () {
     var terrainLayer, buildingsLayer, unitsLayer, sfxLayer;
 
     /**
-     * Sets rendering canvases for terrain layer, buildings layer and units
-     * layer. These canvases has to be distinct.
+     * Sets rendering canvas for terrain layer, buildings layer and units
+     * layer.
      *
-     * @param {HTMLCanvasElement} terrainCanvas The canvas for the terrain
-     *        layer renderer.
-     * @param {HTMLCanvasElement} buildingsCanvas The canvas for the buildings
-     *        layer renderer.
-     * @param {HTMLCanvasElement} unitsCanvas The canvas for the units layer
-     *        renderer.
-     * @param {HTMLCanvasElement} sfxCanvas The canvas for the sfx layer
-     *        renderer.
+     * @param {HTMLCanvasElement} viewCanvas The canvas for the renderers.
      */
-    this.setCanvases = function (terrainCanvas, buildingsCanvas, unitsCanvas,
-            sfxCanvas) {
+    this.setCanvas = function (viewCanvas) {
         terrainLayer = new TerrainLayer();
-        terrainLayer.setCanvas(terrainCanvas);
+        terrainLayer.setCanvas(viewCanvas);
         buildingsLayer = new BuildingsLayer();
-        buildingsLayer.setCanvas(buildingsCanvas);
+        buildingsLayer.setCanvas(viewCanvas);
         unitsLayer = new UnitsLayer();
-        unitsLayer.setCanvas(unitsCanvas);
+        unitsLayer.setCanvas(viewCanvas);
         sfxLayer = new SFX();
-        sfxLayer.setCanvas(sfxCanvas);
+        sfxLayer.setCanvas(viewCanvas);
     };
 
     /**

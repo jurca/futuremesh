@@ -99,7 +99,6 @@ BuildingsLayer = function () {
      * @param {Number} y The Y offset in pixels.
      */
     this.display = function (x, y) {
-        canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
         canvasContext.drawImage(bufferCanvas, -x, -y);
     };
 };

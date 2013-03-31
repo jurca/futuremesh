@@ -8,19 +8,17 @@ MapGenerator = function () {
     var tabs, form, select, option, i, type, forms, modal, progressbar, view,
             terrainGenerator, compressor, executeBatch, generateMap, getById,
             resourceGenerator, baseGenerator;
-    
+
     modal = new Modal('Initializing...');
     progressbar = new Progressbar(50);
     modal.appendChild(progressbar);
     modal.center();
-    
+
     tabs = new Tabs();
     forms = new Forms();
     compressor = new MapCompressor();
     view = new MainView();
-    view.setCanvases(document.getElementById('terrain'),
-            document.getElementById('buildings'),
-            document.getElementById('units'), document.getElementById('sfx'));
+    view.setCanvas(document.getElementById('view-canvas'));
     new MapGeneratorScrollbars(view);
     terrainGenerator = new TerrainGenerator();
     resourceGenerator = new ResourceGenerator();
@@ -44,7 +42,7 @@ MapGenerator = function () {
             select.appendChild(option);
         }
     }
-    
+
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         modal = new Modal('Generating map...');
@@ -54,7 +52,7 @@ MapGenerator = function () {
         tabs.setActiveTab(0, 1);
         generateMap();
     }, false);
-    
+
     /**
      * Generates the map using the data provided in the form.
      */
@@ -118,37 +116,28 @@ MapGenerator = function () {
             },
             function () { // generate the global overview of the map
                 var size;
-                view.setCanvases(getById('global-terrain'),
-                        getById('global-buildings'), getById('global-units'),
-                        getById('global-sfx'));
+                view.setCanvas(getById('global-view-canvas'));
                 view.setMap(map);
                 size = view.getLayersDimensions();
-                getById('global-terrain').width = size.width;
-                getById('global-terrain').height = size.height;
-                getById('global-buildings').width = size.width;
-                getById('global-buildings').height = size.height;
-                getById('global-units').width = size.width;
-                getById('global-units').height = size.height;
-                getById('global-sfx').width = size.width;
-                getById('global-sfx').height = size.height;
+                getById('global-view-canvas').width = size.width;
+                getById('global-view-canvas').height = size.height;
                 view.display(0, 0);
                 progressbar.setValue(85);
             },
             function () { // display the map
-                view.setCanvases(getById('terrain'), getById('buildings'),
-                        getById('units'), getById('sfx'));
+                view.setCanvas(getById('view-canvas'));
                 view.setMap(map);
                 view.display(0, 0);
                 modal.close();
             }
         ], 10);
     };
-    
+
     /**
      * Executes a batch of functions (tasks) in the provided order. The tasks
      * with be executed with scheduled breaks between the task execution, so
      * that the browser UI can be updated.
-     * 
+     *
      * @param {Array} tasks An array of functions to execute in order.
      * @param {Number} pause The pause between task execution in miliseconds.
      */
@@ -163,15 +152,15 @@ MapGenerator = function () {
             tasks[task++]();
         }, pause);
     };
-    
+
     /**
      * Returns an element of the specified ID.
-     * 
+     *
      * @return Element The element of the specified ID.
      */
     getById = function (elementId) {
         return document.getElementById(elementId);
     };
-    
+
     modal.close();
 };

@@ -11,16 +11,16 @@ SFX = function () {
             displayBuildableTiles, displayTileOverlay, enableBuildOverlay,
             displayNavigableTiles, navigationIndex, enableNavigationIndex,
             inaccessibleColor, accessibleColor;
-    
+
     depthFactor = Settings.sfx3DLightFactor;
     accessibleColor = Settings.sfxAccessibleTileColor;
     inaccessibleColor = Settings.sfxInaccessibleTileColor;
     enableBuildOverlay = false;
     enableNavigationIndex = false;
-    
+
     /**
      * Sets the output canvas for rendering.
-     * 
+     *
      * @param {HTMLCavansElement} newCanvas New output canvas for rendering.
      */
     this.setCanvas = function (newCanvas) {
@@ -28,16 +28,15 @@ SFX = function () {
         canvasWidth = canvas.width;
         canvasHeight = canvas.height;
         context = canvas.getContext('2d');
-        context.globalAlpha = 0.3;
         context.strokeStyle = Settings.sfx3DLightColor;
         context.lineCap = 'round';
         canvasCenterX = canvasWidth / 2;
         canvasCenterY = canvasHeight / 2;
     };
-    
+
     /**
      * Sets the current map of which SFX should be renderer.
-     * 
+     *
      * @param {Map} newMap The map for rendering. The method also accepts raw
      *        map data.
      */
@@ -53,19 +52,19 @@ SFX = function () {
         buildingsIndex = newMap.getBuildingsIndex();
         navigationIndex = newMap.getNavigationIndex();
     };
-    
+
     /**
      * Set whether or not the SFX renderer should display an overlay over the
      * buildings to signal that those tiles cannot be used for placing other
      * buildings.
-     * 
+     *
      * @param {Boolean} displayBuildableOverlay When set to true, the SFX
      *        renderer will display an overlay over the buildings.
      */
     this.setDisplayBuildableOverlay = function (displayBuildableOverlay) {
         enableBuildOverlay = displayBuildableOverlay;
     };
-    
+
     this.setDisplayNavigationIndex = function (displayNavigationIndex) {
         enableNavigationIndex = displayNavigationIndex;
     };
@@ -73,22 +72,23 @@ SFX = function () {
     /**
      * Displays the SFX of the map on the chosen offset on the provided
      * canvas.
-     * 
+     *
      * @param {Number} x X offset for rendering.
      * @param {Number} y Y offset for rendering.
      */
     this.display = function (x, y) {
+        context.globalAlpha = 0.3;
         displayLightSFX(x, y);
         enableBuildOverlay && displayBuildableTiles(x, y);
         enableNavigationIndex && displayNavigableTiles(x, y);
+        context.globalAlpha = 1;
     };
-    
+
     displayLightSFX = function (x, y) {
         var mapOffsetX, mapOffsetY, i, j, offsetX, offsetY, shiftX, endX, endY,
                 mapRow, mapTile;
         y -= tileHeight;
         x -= tileWidth / 2;
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
         mapOffsetX = Math.floor(x / tileWidth);
         mapOffsetY = Math.floor(y / tileHeight);
         for (j = canvasTileHeight + 2; j--;) {
@@ -114,7 +114,7 @@ SFX = function () {
             }
         }
     };
-    
+
     displayBuildableTiles = function (x, y) {
         var mapOffsetX, mapOffsetY, i, j, mapRow, offsetY, shiftX, mapTile,
                 offsetX;
@@ -138,7 +138,7 @@ SFX = function () {
             }
         }
     };
-    
+
     displayTileOverlay = function (x, y) {
         context.beginPath();
         context.moveTo(x + (tileWidth / 2), y);
@@ -147,7 +147,7 @@ SFX = function () {
         context.lineTo(x, y + tileHeight);
         context.fill();
     };
-    
+
     displayNavigableTiles = function (x, y) {
         var mapOffsetX, mapOffsetY, i, j, mapRow, offsetY, shiftX, mapTile,
                 offsetX;

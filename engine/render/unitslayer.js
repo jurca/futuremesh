@@ -29,7 +29,7 @@ UnitsLayer = function () {
      * been set. The map isn't actually used in any way - it is used only to
      * determine the dimensions of grid index used to optimize rendering of the
      * units layer. The granularity of the index may be set using Settings.
-     * 
+     *
      * @param {Map} map A Map class instance.
      */
     this.setMap = function (map) {
@@ -78,7 +78,7 @@ UnitsLayer = function () {
      * renderer uses only grid index to identify the section of the map of
      * which units should be rendered, so the values returned by this method
      * are dimensions of a hypothetical inner rendering buffer.
-     * 
+     *
      * @return {Object} Objection containing information about layer dimensions
      *         in two properties:
      *         <ul>
@@ -97,7 +97,7 @@ UnitsLayer = function () {
      * Event handler for change of any unit's state. If any unit is created,
      * destroyed or moved or has performed any action, the units layer render
      * can be notified of this change using this method.
-     * 
+     *
      * @param {Unit} unit Unit of which state has changed.
      */
     this.onUnitChange = function (unit) {
@@ -115,15 +115,12 @@ UnitsLayer = function () {
 
     /**
      * Display chosen part of the whole map view's units.
-     * 
+     *
      * @param {Number} x The X offset of the view specified in pixels
      * @param {Number} y The Y offset of the view specified in pixels
      */
     this.display = function (x, y) {
         var gridX, gridY, indexX, indexY, i, j;
-        canvasContext.globalCompositeOperation = 'destination-out';
-        canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
-        canvasContext.globalCompositeOperation = 'source-over';
         gridX = Math.max(0, Math.floor(x / tileWidth) - 1);
         gridY = Math.max(0, Math.floor(y / tileHeight) - 1);
         indexX = Math.floor(gridX / indexGranularity);
@@ -142,7 +139,7 @@ UnitsLayer = function () {
     /**
      * Display content of a grid index' cell - the units contained in this cell
      * - onto the renderer's canvas
-     * 
+     *
      * @param {Number} x The X coordinate in the grid index indentifying the
      *        column of the grid index containing the cell
      * @param {Number} y The Y coordinate in the grid index indentifying the
@@ -172,7 +169,7 @@ UnitsLayer = function () {
 
     /**
      * Adds a new unit to the index and grid index.
-     * 
+     *
      * @param {Unit} unit Unit to be added to the index.
      */
     addUnit = function (unit) {
@@ -183,7 +180,7 @@ UnitsLayer = function () {
 
     /**
      * Removes a unit from the index and the grid index.
-     * 
+     *
      * @param {Unit} unit Unit to be removed from the index.
      */
     removeUnit = function (unit) {

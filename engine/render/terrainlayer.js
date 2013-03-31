@@ -60,10 +60,10 @@ TerrainLayer = function () {
     this.display = function (x, y) {
         canvasContext.drawImage(bufferCanvas, -x, -y);
     };
-    
+
     /**
      * Updates the display of the tile at the provided coordinates.
-     * 
+     *
      * @param {Number} x The x coordinate of the changed tile.
      * @param {Number} y The y coordinate of the changed tile.
      */
