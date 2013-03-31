@@ -3,13 +3,13 @@ var Form;
 
 Form = function () {
     var $, instance;
-    
+
     instance = this;
-    
+
     $ = function (selector) {
         return document.querySelectorAll(selector);
     };
-    
+
     $('#addDir')[0].addEventListener('click', function (e) {
         var par, input;
         e.preventDefault();
@@ -17,10 +17,11 @@ Form = function () {
         input = document.createElement('input');
         input.type = 'text';
         input.name = 'dir';
+        input.size = 40;
         par.appendChild(input);
         $('#addDir')[0].parentNode.parentNode.appendChild(par);
     }, false);
-    
+
     $('#addExclude')[0].addEventListener('click', function (e) {
         var par, input;
         e.preventDefault();
@@ -31,7 +32,7 @@ Form = function () {
         par.appendChild(input);
         $('#addExclude')[0].parentNode.parentNode.appendChild(par);
     }, false);
-    
+
     this.getData = function () {
         var data, inputs, i;
         data = {
@@ -53,11 +54,11 @@ Form = function () {
         data.jsMinLevel = $('select[name="level"]')[0].value;
         return data;
     };
-    
+
     this.trim = function (string) {
         return string.replace(/^\s*(\S*)\s*$/, '$1');
     };
-    
+
     this.setHandler = function (handler) {
         $('form')[0].addEventListener('submit', function (e) {
             e.preventDefault();
