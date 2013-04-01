@@ -9,11 +9,11 @@ window.onerror = function (message, source, line) {
 
 addEventListener('load', function () {
     var $;
-    
+
     $ = function (selector) {
         return document.querySelectorAll(selector);
     };
-    
+
     setTimeout(function () {
         var loader;
         Player.createGenericPlayers();
@@ -22,7 +22,8 @@ addEventListener('load', function () {
                 $('#gameplay-screen')[0], 'data/maps/test2.map',
                 Player.getPlayer(0), [
                     [10000] // resources of player 0
-                ]);
+                ],
+                $('#view-canvas')[0], $('#minimap')[0]);
         loader.load();
     }, 25);
 }, false);

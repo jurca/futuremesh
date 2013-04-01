@@ -45,6 +45,11 @@ var GameLoader;
  *                 instance as its data. The Player instance contains
  *                 information about the current human player that will control
  *                 the game through the UI.</li>
+ *             <li><code>viewInitialization</code> - The event has an object
+ *                 bearing the main view rendering canvas and minimap view
+ *                 container. The object has the following properties:
+ *                 <code>view</code> for the main view canvas and
+ *                 <code>minimap</code> for the minimap view container.</li>
  *         </ul>
  *         </li>
  *     <li>switch to in-game UI - the loader fades-out the loading music, hides
@@ -77,7 +82,7 @@ var GameLoader;
  */
 GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         loadingScreen, gameplayScreen, mapFileUrl, currentPlayer,
-        playerResources) {
+        playerResources, viewCanvas, minimapContainer) {
     var spriteloader, steps, stepMessages, currentStep, performNextStep,
             setProgress, backgroundMusic, map, gamePlay, gameMusic, plugins;
 
@@ -154,6 +159,10 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             gamePlay.sendEvent('playerResourcesInitialization',
                     playerResources);
             gamePlay.sendEvent('playerInitialization', currentPlayer);
+            gamePlay.sendEvent('viewInitialization', {
+                view: viewCanvas,
+                minimap: minimapContainer
+            });;
 
             gamePlay.start();
 
@@ -201,7 +210,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             duration: Settings.loadingMusicLength,
             loop: true,
             onload: function () {
-                backgroundMusic.play();
+                //backgroundMusic.play();
                 performNextStep();
             }
         });
