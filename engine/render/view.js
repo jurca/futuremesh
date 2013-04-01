@@ -30,6 +30,16 @@ View = function () {
     };
 
     /**
+     * Sets the size of the minimal view.
+     *
+     * @param {Number} width Width of the minimap view.
+     * @param {Number} height Height of the minimap view.
+     */
+    this.setMinimapSize = function (width, height) {
+        minimap.setSize(width, height);
+    };
+
+    /**
      * Sets th map to be rendered. This cannot be done before view canvases and
      * minimap container has been set.
      *
@@ -41,7 +51,7 @@ View = function () {
                     'container');
         }
         mainview.setMap(map);
-        minimap.setMap(map.getMap());
+        minimap.setMap(map);
     };
 
     /**

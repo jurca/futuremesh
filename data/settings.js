@@ -63,7 +63,11 @@ Settings.load({
             maxQueueLength: 30
         },
         ViewRendererPlugin: {
-            borderOffset: 30 // pixels
+            borderOffset: 30, // pixels
+            minimap: {
+                width: 200,
+                height: 200
+            }
         }
     }
 });

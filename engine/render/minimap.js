@@ -6,15 +6,15 @@ var MiniMap;
  * the previous renderered state.
  */
 MiniMap = function () {
-    var map, container, buildingsLayer, unitsLayer, width, height, mapWidth,
+    var tiles, container, buildingsLayer, unitsLayer, width, height, mapWidth,
             mapHeight, buildingsLayerCtx, unitsLayerCtx, xRatio, yRatio,
             tileWidth, tileHeight, changedTerrain, changedBuildings,
             changedUnits, drawTileLine, fill, buildingsLayerIndex, createIndex,
             xRatioC, yRatioC, initRenderer, renderUnitsLayer,
             renderBuildingsLayer, renderTerrainLayer, terrainLayer,
-            terrainLayerCtx;
+            terrainLayerCtx, map, instance;
 
-    map = [];
+    tiles = [];
     terrainLayer = document.createElement('canvas');
     terrainLayerCtx = terrainLayer.getContext('2d');
     buildingsLayer = document.createElement('canvas');
@@ -24,21 +24,22 @@ MiniMap = function () {
     changedTerrain = false;
     changedBuildings = false;
     changedUnits = false;
+    instance = this;
 
     /**
      * Sets the raw map data and initializes the renderer.
      *
-     * @param {Array} newMap The raw map data.
+     * @param {Map} newMap The map data.
      */
     this.setMap = function (newMap) {
-        if (!(newMap instanceof Array) || !newMap[0] ||
-                !(newMap[0] instanceof Array)) {
-            throw new Error("invalid format of map");
+        if (!(newMap instanceof Map)) {
+            throw new TypeError("An instance of the Map class is required");
         }
         map = newMap;
-        mapHeight = map.length;
-        mapWidth = map[0].length;
-        if (container) {
+        tiles = newMap.getTiles();
+        mapHeight = tiles.length;
+        mapWidth = tiles[0].length;
+        if (container && width) {
             initRenderer();
         }
     };
@@ -71,7 +72,24 @@ MiniMap = function () {
         newContainer.appendChild(buildingsLayer);
         container.appendChild(newContainer);
         container.appendChild(unitsLayer);
-        if (mapWidth) {
+        if (mapWidth && width) {
+            initRenderer();
+        }
+    };
+
+    /**
+     * Sets the size of the minimal view.
+     *
+     * @param {Number} newWidth Width of the minimap view.
+     * @param {Number} newHeight Height of the minimap view.
+     */
+    this.setSize = function (newWidth, newHeight) {
+        width = newWidth;
+        height = newHeight;
+        terrainLayer.width = buildingsLayer.width = unitsLayer.width = width;
+        terrainLayer.height = buildingsLayer.height = unitsLayer.height =
+                height;
+        if (map && container) {
             initRenderer();
         }
     };
@@ -165,8 +183,8 @@ MiniMap = function () {
      */
     renderTerrainLayer = function () {
         var i, j, row;
-        for (i = map.length; i--;) {
-            row = map[i];
+        for (i = tiles.length; i--;) {
+            row = tiles[i];
             for (j = row.length; j--;) {
                 terrainLayerCtx.fillStyle = row[j].minimap;
                 terrainLayerCtx.fillRect(xRatio * j, yRatio * i,
@@ -262,6 +280,7 @@ MiniMap = function () {
      * Initalizes the renderer - scaling, tile sizes and private properties.
      */
     initRenderer = function () {
+        var i;
         xRatio = width / mapWidth;
         yRatio = height / mapHeight;
         xRatioC = Math.ceil(xRatio);
@@ -272,5 +291,12 @@ MiniMap = function () {
         changedBuildings = [];
         changedUnits = [];
         buildingsLayerIndex = createIndex();
+
+        for (i = map.getBuildings().length; i--;) {
+            instance.onBuildingChange(map.getBuildings()[i]);
+        }
+        for (i = map.getUnits().length; i--;) {
+            instance.onUnitChange(map.getUnits()[i]);
+        }
     };
 };
