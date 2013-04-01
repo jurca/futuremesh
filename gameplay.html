@@ -13,6 +13,9 @@
         <script type="text/javascript" src="data/settings.js"></script>
 
         <!-- remove these lines once finished -->
+        <script type="text/javascript" src="engine/render/view.js"></script>
+        <script type="text/javascript" src="engine/render/mainview.js"></script>
+        <script type="text/javascript" src="engine/render/minimap.js"></script>
         <script type="text/javascript" src="engine/core/settings.js"></script>
         <script type="text/javascript" src="data/settings.js"></script>
         <script type="text/javascript" src="engine/core/gameloader.js"></script>
@@ -30,6 +33,7 @@
         <script type="text/javascript" src="engine/gameplay-plugins/event-driven-plugins/unitsconstructionuiplugin.js"></script>
         <script type="text/javascript" src="engine/gameplay-plugins/event-driven-plugins/resourcemanagerplugin.js"></script>
         <script type="text/javascript" src="engine/gameplay-plugins/mixed-plugins/buildingsunitsconstruction.js"></script>
+        <script type="text/javascript" src="engine/gameplay-plugins/mixed-plugins/viewrendererplugin.js"></script>
         <!-- /remove these lines once finished -->
 
         <!-- bootstrap -->
@@ -47,10 +51,7 @@
             <div id="gameplay-screen">
                 <div class="top-shade"></div>
                 <div id="view">
-                    <div class="canvas-container"><canvas id="terrain" width="800" height="600"></canvas></div>
-                    <div class="canvas-container"><canvas id="buildings" width="800" height="600"></canvas></div>
-                    <div class="canvas-container"><canvas id="units" width="800" height="600"></canvas></div>
-                    <canvas id="sfx" width="800" height="600"></canvas>
+                    <canvas id="view-canvas" width="800" height="600"></canvas>
                 </div>
 
                 <div class="middle-right-shade">

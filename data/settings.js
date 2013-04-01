@@ -55,11 +55,15 @@ Settings.load({
         'BuildingsConstructionUIPlugin',
         'UnitsConstructionUIPlugin',
         'ResourceManagerPlugin',
-        'BuildingsUnitsConstruction'
+        'BuildingsUnitsConstruction',
+        'ViewRendererPlugin'
     ],
     pluginConfiguration: {
         BuildingsUnitsConstruction: {
             maxQueueLength: 30
+        },
+        ViewRendererPlugin: {
+            borderOffset: 30 // pixels
         }
     }
 });
