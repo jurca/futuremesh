@@ -17,7 +17,7 @@ Map = function () {
      * day in the future.
      */
     tiles = [];
-    
+
     /**
      * Two-dimensional array matching the tiles of the map. Each item is a null
      * or a reference to the building occupying the tile. If a building is
@@ -26,24 +26,24 @@ Map = function () {
      * The structure of the index is: [verical axis (y)][horizontal axis (x)]
      */
     buildings = [];
-    
+
     /**
      * List of all buildings instances present on the map.
      */
     buildingsList = [];
-    
+
     /**
      * Tow-dimensional array matching the tiles of the map. Each item is a null
      * or a reference to the unit occupying the tile. The structure of the index
      * is: [vertical axis(y)][horizontal axis (x)]
      */
     units = [];
-    
+
     /**
      * List of all units instances present on the map.
      */
     unitsList = [];
-    
+
     /**
      * Two-dimensional array matching the tiles of the map. Each item is a
      * boolean value representing whether the tile is occupied or empty. The
@@ -55,7 +55,7 @@ Map = function () {
     /**
      * Updates the building's status on the map (e.g. adding to the map or
      * editing it).
-     * 
+     *
      * @param {Building} building The building that has been updated on the map.
      */
     this.updateBuilding = function (building) {
@@ -69,10 +69,10 @@ Map = function () {
                     (navigationIndex[position.y][position.x] = false);
         }
     };
-    
+
     /**
      * Removes the building from the map.
-     * 
+     *
      * @param {Building} building The building to remove from the map.
      */
     this.removeBuilding = function (building) {
@@ -91,10 +91,10 @@ Map = function () {
                     (navigationIndex[position.y][position.x] = true);
         }
     };
-    
+
     /**
      * Updates the unit's status on the map (e.g. adding to the map).
-     * 
+     *
      * @param {Unit} unit The unit that has been updated on the map.
      */
     this.updateUnit = function (unit) {
@@ -147,17 +147,17 @@ Map = function () {
      * tiles.
      *
      * @return {Array} Raw map data.
-     * @deprecated Use getTiles({Array} tiles) instead.
+     * @deprecated Use getTiles() instead.
      */
     this.getMap = function () {
         return tiles;
     }
-    
+
     /**
      * Returns the object (building/unit) at the specified coordinates. If the
      * specified tile contains both building and unit, the method returns the
      * unit.
-     * 
+     *
      * @param {Number} x The x-coordinate.
      * @param {Number} y The y-coordinate.
      */
@@ -167,20 +167,20 @@ Map = function () {
         }
         return buildings[y][x];
     };
-    
+
     /**
      * Sets tiles of the map.
-     * 
+     *
      * @param {Array} newTiles Two-dimensional array of map tiles objects.
      */
     this.setTiles = function (newTiles) {
         tiles = newTiles;
         createIndex();
     };
-    
+
     /**
      * Retuns the tiles of the map as a two-dimensional array of tile objects.
-     * 
+     *
      * @return {Array} Map's tiles.
      */
     this.getTiles = function () {
@@ -189,16 +189,16 @@ Map = function () {
 
     /**
      * Returns list of all buildings the map contains.
-     * 
+     *
      * @return {Array} List of all buildings on the map.
      */
     this.getBuildings = function () {
         return buildingsList;
     };
-    
+
     /**
      * Returns list of all units the map contains.
-     * 
+     *
      * @return {Array} List of all units on the map.
      */
     this.getUnits = function () {
@@ -207,7 +207,7 @@ Map = function () {
 
     /**
      * Returns the tile index referencing to the buildings occuyping the tiles.
-     * 
+     *
      * @return {Array} Two-dimensional array matching the tiles containing
      *         references to buildings occupying them.
      */
@@ -218,7 +218,7 @@ Map = function () {
     /**
      * Returns the tile index about which tiles are accessible to units and
      * which are not.
-     * 
+     *
      * @return {Array} Two-dimensional array matching the tiles containing
      *         information whether the tile is accessible to units or not.
      */
@@ -249,7 +249,7 @@ Map = function () {
 
     /**
      * Generates a completely empty map consisting of only type 0 tiles.
-     * 
+     *
      * @param {Number} width The width of the required map
      * @param {Number} height The height of the required map
      */
@@ -350,7 +350,7 @@ Map = function () {
             this.updateUnit(Unit.importData(data.units[i]));
         }
     };
-    
+
     getBuildingPositions = function (building) {
         var positions, startX, startY, i, j, x, y;
         positions = [];
@@ -374,7 +374,7 @@ Map = function () {
         }
         return positions;
     };
-    
+
     createIndex = function () {
         var i, j, row, index;
         index = [];
@@ -387,14 +387,14 @@ Map = function () {
         }
         return index;
     };
-    
+
     createIndexes = function () {
         buildings = createIndex();
         units = createIndex();
         navigationIndex = createIndex();
         initNavigationIndex();
     };
-    
+
     initNavigationIndex = function () {
         var i, j, row, navigationRow;
         for (j = tiles.length; j--;) {
