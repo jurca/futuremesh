@@ -202,6 +202,9 @@ BuildingsConstructionUIPlugin = function () {
                 return null;
             }
             clickedNode = clickedNode.parentNode;
+            if (!clickedNode) {
+                return null;
+            }
         }
         return clickedNode;
     };
