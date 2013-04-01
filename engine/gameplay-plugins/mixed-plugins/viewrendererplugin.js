@@ -59,7 +59,8 @@ ViewRendererPlugin = function () {
      *        canvas and the minimap container.
      */
     function onViewInitialization(data) {
-        var minimapSize;
+        var minimapSize, viewWidth, viewHeight, viewWidthInTiles,
+                viewHeightInTiles;
         view = new View();
         view.setCanvas(data.view);
         view.setMinimapContainer(data.minimap);
@@ -68,6 +69,11 @@ ViewRendererPlugin = function () {
         if (map) {
             view.setMap(map);
         }
+        viewWidth = data.view.width;
+        viewHeight = data.view.height;
+        viewWidthInTiles = Math.round(viewWidth / Settings.tileWidth);
+        viewHeightInTiles = Math.round(viewHeight / Settings.tileHeight);
+        view.setMainViewSize(viewWidthInTiles, viewHeightInTiles);
     }
 
     // constructor code

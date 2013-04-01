@@ -12,7 +12,8 @@ MiniMap = function () {
             changedUnits, drawTileLine, fill, buildingsLayerIndex, createIndex,
             xRatioC, yRatioC, initRenderer, renderUnitsLayer,
             renderBuildingsLayer, renderTerrainLayer, terrainLayer,
-            terrainLayerCtx, map, instance;
+            terrainLayerCtx, map, instance, viewBordersLayer, viewBordersCtx,
+            viewBordersWidth, viewBordersHeight, lastX, lastY;
 
     tiles = [];
     terrainLayer = document.createElement('canvas');
@@ -21,6 +22,10 @@ MiniMap = function () {
     buildingsLayerCtx = buildingsLayer.getContext('2d');
     unitsLayer = document.createElement('canvas');
     unitsLayerCtx = unitsLayer.getContext('2d');
+    viewBordersLayer = document.createElement('canvas');
+    viewBordersCtx = viewBordersLayer.getContext('2d');
+    viewBordersCtx.lineCap = 'square';
+    viewBordersCtx.lineJoin = 'bevel';
     changedTerrain = false;
     changedBuildings = false;
     changedUnits = false;
@@ -45,6 +50,19 @@ MiniMap = function () {
     };
 
     /**
+     * Sets the size of the main view in tiles (for displaying informational
+     * rectangle informing the user about the current position of the camera
+     * over the map)
+     *
+     * @param {Number} width Width of the main view in tiles.
+     * @param {Number} height Height of the main view in tiles.
+     */
+    this.setMainViewSize = function (width, height) {
+        viewBordersWidth = width;
+        viewBordersHeight = height;
+    };
+
+    /**
      * Sets the container in which the minimap should be rendered. The renderer
      * will place additional canvases into the container that will be used to
      * render the separate layers of the minimap. Then the renderer is
@@ -60,9 +78,10 @@ MiniMap = function () {
         container = newContainer;
         width = container.offsetWidth;
         height = container.offsetHeight;
-        terrainLayer.width = buildingsLayer.width = unitsLayer.width = width;
+        terrainLayer.width = buildingsLayer.width = unitsLayer.width =
+                viewBordersLayer.width = width;
         terrainLayer.height = buildingsLayer.height = unitsLayer.height =
-                height;
+                viewBordersLayer.height = height;
         newContainer = document.createElement('div');
         newContainer.style.height = '0px';
         newContainer.appendChild(terrainLayer);
@@ -71,7 +90,11 @@ MiniMap = function () {
         newContainer.style.height = '0px';
         newContainer.appendChild(buildingsLayer);
         container.appendChild(newContainer);
-        container.appendChild(unitsLayer);
+        newContainer = document.createElement('div');
+        newContainer.style.height = '0px';
+        newContainer.appendChild(unitsLayer);
+        container.appendChild(newContainer);
+        container.appendChild(viewBordersLayer);
         if (mapWidth && width) {
             initRenderer();
         }
@@ -86,9 +109,10 @@ MiniMap = function () {
     this.setSize = function (newWidth, newHeight) {
         width = newWidth;
         height = newHeight;
-        terrainLayer.width = buildingsLayer.width = unitsLayer.width = width;
+        terrainLayer.width = buildingsLayer.width = unitsLayer.width =
+                viewBordersLayer.width = width;
         terrainLayer.height = buildingsLayer.height = unitsLayer.height =
-                height;
+                viewBordersLayer.height = height;
         if (map && container) {
             initRenderer();
         }
@@ -115,11 +139,27 @@ MiniMap = function () {
     /**
      * Renders the registered changes of buildings and units. If the terrain
      * has not been rendered so far, it is rendered too.
+     *
+     * @param {Number} x X position of the camera over the map in pixels.
+     * @param {Number} y Y position of the camera over the map in pixels.
      */
-    this.render = function () {
+    this.render = function (x, y) {
         changedTerrain && renderTerrainLayer();
         changedBuildings.length && renderBuildingsLayer();
         changedUnits.length && renderUnitsLayer();
+        if ((x !== lastX) || (y !== lastY)) {
+            lastX = x;
+            lastY = y;
+            x = Math.round(x / Settings.tileWidth);
+            y = Math.round(y / Settings.tileHeight);
+            viewBordersCtx.strokeStyle = 'white';
+            viewBordersCtx.lineWidth =
+                    Math.round((tileWidth + tileHeight) / 2);
+            viewBordersCtx.clearRect(0, 0, viewBordersLayer.width,
+                    viewBordersLayer.height);
+            viewBordersCtx.strokeRect(x, y, viewBordersWidth,
+                    viewBordersHeight);
+        }
     };
 
     /**

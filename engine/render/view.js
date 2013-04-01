@@ -77,6 +77,18 @@ View = function () {
     };
 
     /**
+     * Sets the size of the main view in tiles (for displaying informational
+     * rectangle informing the user about the current position of the camera
+     * over the map)
+     *
+     * @param {Number} width Width of the main view in tiles.
+     * @param {Number} height Height of the main view in tiles.
+     */
+    this.setMainViewSize = function (width, height) {
+        minimap.setMainViewSize(width, height);
+    };
+
+    /**
      * Displays the view and minimap using all renderers.
      *
      * @param {Number} x The X-coordinate offset for renderers.
@@ -84,7 +96,7 @@ View = function () {
      */
     this.display = function (x, y) {
         mainview.display(x, y);
-        minimap.render();
+        minimap.render(x, y);
     };
 
     /**
