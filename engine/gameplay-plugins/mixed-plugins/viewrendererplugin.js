@@ -59,9 +59,12 @@ ViewRendererPlugin = function () {
      *        canvas and the minimap container.
      */
     function onViewInitialization(data) {
+        var minimapSize;
         view = new View();
         view.setCanvas(data.view);
         view.setMinimapContainer(data.minimap);
+        minimapSize = Settings.pluginConfiguration.ViewRendererPlugin.minimap;
+        view.setMinimapSize(minimapSize.width, minimapSize.height);
         if (map) {
             view.setMap(map);
         }
