@@ -56,7 +56,8 @@ Settings.load({
         'UnitsConstructionUIPlugin',
         'ResourceManagerPlugin',
         'BuildingsUnitsConstruction',
-        'ViewRendererPlugin'
+        'ViewRendererPlugin',
+        'MinimapControlPlugin'
     ],
     pluginConfiguration: {
         BuildingsUnitsConstruction: {
