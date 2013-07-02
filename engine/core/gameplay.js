@@ -6,11 +6,11 @@ var GamePlay;
  * provide services, API and handle actions in a way that the user can play the
  * game. The GamePlay class handles event delivery for event-driven plugins and
  * running the scheduled plugins in regular time periods call "ticks".
- * 
+ *
  * The GamePlay object is initialized by an GameLoader class instance. You
  * shouldn't create instances of this class unless you really know what you are
  * doing.
- * 
+ *
  * @param {Array} plugins Array of plugins instances. Plugins usually extend
  *        the ScheduledPlugin class, the EventDrivenPlugin class or the
  *        MixedPlugin class (for plugins that are both scheduled and
@@ -32,9 +32,9 @@ GamePlay = function (plugins, settings) {
     var thread, threadInterval, scheduledPlugins, lastTick, tickOverflow,
             eventDeliveryPlugin, eventDrivenPlugins, eventQueue,
             singleTickScheduledPlugins;
-    
+
     // --------------------- background thread logic --------------------------
-    
+
     thread = function () {
         var i, j, now, tickCount;
         now = (new Date()).getTime();
@@ -51,12 +51,12 @@ GamePlay = function (plugins, settings) {
             singleTickScheduledPlugins[i].handleTick();
         }
     };
-    
+
     // --------------------- event delivery plugin ----------------------------
-    
+
     (function () {
         var PluginConstructor;
-        
+
         /**
          * Constructor for the event delivery plugin.
          */
@@ -68,7 +68,7 @@ GamePlay = function (plugins, settings) {
                 // us from getting stuck in a possibly infinite loop.
                 currentEvents = eventQueue;
                 eventQueue = [];
-                
+
                 // deliver the events
                 for (i = currentEvents.length; i--;) {
                     currentEvent = currentEvents[i];
@@ -86,15 +86,15 @@ GamePlay = function (plugins, settings) {
             };
         };
         PluginConstructor.prototype = new ScheduledPlugin();
-        
+
         eventDeliveryPlugin = new PluginConstructor();
     }())
-    
+
     // -------------------------- public API ----------------------------------
-    
+
     /**
      * Sends an event to plugins listening for events of the specified name.
-     * 
+     *
      * @param {String} eventName Name of the event to send.
      * @param {Object} eventData Any data to send with the event. Can be of any
      *        type.
@@ -105,7 +105,7 @@ GamePlay = function (plugins, settings) {
             data: eventData
         });
     };
-    
+
     /**
      * Starts the GamePlay daemon, its background thread, scheduled plugins and
      * event delivery. All event-driven plugins will receive the "start" event
@@ -120,8 +120,9 @@ GamePlay = function (plugins, settings) {
         threadInterval = setInterval(thread, settings.tickDuration);
         this.sendEvent("start", null);
         eventDeliveryPlugin.handleTick(); // deliver the event right now
+        this.sendEvent("running", null);
     };
-    
+
     /**
      * Stops the GamePlay daemon, stopping the background thread, scheduled
      * plugins and event delivery. All event-driven plugins receive the "stop"
@@ -137,20 +138,20 @@ GamePlay = function (plugins, settings) {
         eventDeliveryPlugin.handleTick(); // deliver the event right now
         threadInterval = null;
     };
-    
+
     // -------------------------- constructor ---------------------------------
-    
+
     (function () {
         var i, plugin, registerEventDrivenPlugin;
         eventQueue = [];
         scheduledPlugins = [];
         singleTickScheduledPlugins = [];
         eventDrivenPlugins = {};
-        
+
         /**
          * Retrieves the list of observed events from the plugin and registers
          * the plugin as a listener of all the event specified by the plugin.
-         * 
+         *
          * @param {EventDrivenPlugin|MixedPlugin} plugin The plugin to
          *        register as event listener.
          */
@@ -165,7 +166,7 @@ GamePlay = function (plugins, settings) {
                 eventDrivenPlugins[eventName].push(plugin);
             }
         };
-        
+
         for (i = plugins.length; i--;) {
             plugin = plugins[i];
             plugin.setGamePlay(this);
@@ -185,7 +186,7 @@ GamePlay = function (plugins, settings) {
                         ' is not a valid plugin');
             }
         }
-        
+
         scheduledPlugins.push(eventDeliveryPlugin);
     }.call(this));
 };
