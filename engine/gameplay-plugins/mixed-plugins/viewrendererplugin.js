@@ -5,7 +5,8 @@ var ViewRendererPlugin;
  * The view renderer plug-in is used to render the main view and minimap.
  */
 ViewRendererPlugin = function () {
-    var view, map, x, y;
+    var view, map, x, y, borderOffset, viewWidth, viewHeight, viewLayerSize,
+            minX, minY, maxX, maxY;
 
     // public API
 
@@ -25,17 +26,38 @@ ViewRendererPlugin = function () {
             case 'gameMapInitialization':
                 onGameMapInitialization(data);
                 break;
+            case 'viewSetByMinimap':
+                onViewSetByMinimap(data);
+                break;
         }
     };
 
     this.getObservedEvents = function () {
         return [
             'viewInitialization',
-            'gameMapInitialization'
+            'gameMapInitialization',
+            'viewSetByMinimap'
         ];
     };
 
     // private API
+
+    /**
+     * Event listener for the <code>viewSetByMinimap</code> event. The view
+     * will be shifter according to the data received from the minimap: a
+     * position of the user's click on the minimap scaled to the interval 0.0
+     * to 1.0.
+     *
+     * @param {Object} data Event data, an object with the <code>x</code> and
+     *        <code>y</code> fields representing the position of the user's
+     *        click on the minimap.
+     */
+    function onViewSetByMinimap(data) {
+        x = Math.floor(viewLayerSize.width * data.x - viewWidth / 2);
+        y = Math.floor(viewLayerSize.height * data.y - viewHeight / 2);
+        x = Math.min(maxX, Math.max(x, minX));
+        y = Math.min(maxY, Math.max(y, minY));
+    }
 
     /**
      * Event listener for the <code>gameMapInitialization</code> event. The map
@@ -59,8 +81,7 @@ ViewRendererPlugin = function () {
      *        canvas and the minimap container.
      */
     function onViewInitialization(data) {
-        var minimapSize, viewWidth, viewHeight, viewWidthInTiles,
-                viewHeightInTiles;
+        var minimapSize, viewWidthInTiles, viewHeightInTiles;
         view = new View();
         view.setCanvas(data.view);
         view.setMinimapContainer(data.minimap);
@@ -74,11 +95,22 @@ ViewRendererPlugin = function () {
         viewWidthInTiles = Math.round(viewWidth / Settings.tileWidth);
         viewHeightInTiles = Math.round(viewHeight / Settings.tileHeight);
         view.setMainViewSize(viewWidthInTiles, viewHeightInTiles);
+        viewLayerSize = view.getMainViewLayersDimensions();
+        maxX = viewLayerSize.width - viewWidth - borderOffset;
+        maxY = viewLayerSize.height - viewHeight - borderOffset;
     }
 
-    // constructor code
-
-    x = Settings.pluginConfiguration.ViewRendererPlugin.borderOffset;
-    y = Settings.pluginConfiguration.ViewRendererPlugin.borderOffset;
+    /**
+     * Constructor.
+     *
+     * @param {Object} pluginSettings Configuration of this plug-in.
+     */
+    (function (pluginSettings) {
+        borderOffset = pluginSettings.borderOffset;
+        x = borderOffset;
+        y = borderOffset;
+        minX = borderOffset;
+        minY = borderOffset;
+    }(Settings.pluginConfiguration.ViewRendererPlugin));
 };
 ViewRendererPlugin.prototype = new MixedPlugin();
