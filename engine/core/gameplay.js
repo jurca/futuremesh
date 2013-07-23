@@ -62,7 +62,8 @@ GamePlay = function (plugins, settings) {
          */
         PluginConstructor = function () {
             this.handleTick = function () {
-                var currentEvents, i, eventListeningPlugins, j, currentEvent;
+                var currentEvents, i, eventListeningPlugins, j, currentEvent,
+                        eventCount;
                 // We create a new queue for events registered during the
                 // delivery of the events in the current queue. This prevents
                 // us from getting stuck in a possibly infinite loop.
@@ -70,7 +71,8 @@ GamePlay = function (plugins, settings) {
                 eventQueue = [];
 
                 // deliver the events
-                for (i = currentEvents.length; i--;) {
+                eventCount = currentEvents.length;
+                for (i = 0; i < eventCount; i++) {
                     currentEvent = currentEvents[i];
                     eventListeningPlugins =
                             eventDrivenPlugins[currentEvent.name];
@@ -88,7 +90,7 @@ GamePlay = function (plugins, settings) {
         PluginConstructor.prototype = new ScheduledPlugin();
 
         eventDeliveryPlugin = new PluginConstructor();
-    }())
+    }());
 
     // -------------------------- public API ----------------------------------
 
