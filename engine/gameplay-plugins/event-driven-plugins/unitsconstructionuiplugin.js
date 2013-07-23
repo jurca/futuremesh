@@ -126,7 +126,7 @@ UnitsConstructionUIPlugin = function () {
             height: 38
         };
         buttonsContainer.innerHTML = '';
-        if (currentPlayerRace) {
+        if (currentPlayerRace !== undefined) {
             createButtons();
         }
     };
