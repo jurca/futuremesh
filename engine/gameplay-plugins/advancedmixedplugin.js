@@ -1,14 +1,13 @@
 "use strict";
-var AdvancedEventDrivenPlugin;
+var AdvancedMixedPlugin;
 
 /**
- * The Advanced Event-Driven Plugin is an extension of Event-Drive Plugin that
- * enables declaratice creation of event handles for specific events. An event
- * handler is a function with name matching the
- * <code>/^on[A-Z][a-zA-Z]*$/</code> regular expression, e.g.
- * <code>onStart</code>.
+ * The Advanced Mixed Plugin is an extension of Mixed Plugin that enables
+ * declaratice creation of event handles for specific events. An event handler
+ * is a function with name matching the <code>/^on[A-Z][a-zA-Z]*$/</code>
+ * regular expression, e.g. <code>onStart</code>.
  *
- * <p>The <code>AdvancedEventDrivenPlugin</code> class implements the
+ * <p>The <code>AdvancedMixedPlugin</code> class implements the
  * <code>getObservedEvents()</code> and <code>handleEvent(name, data)</code>
  * methods using a reflective code that uses the defined event handlers.</p>
  *
@@ -26,10 +25,14 @@ var AdvancedEventDrivenPlugin;
  *         alert("stop event delivered!");
  *     };
  * };
- * ExamplePlugin.prototype = new AdvancedEventDrivenPlugin();
+ * ExamplePlugin.prototype = new AdvancedMixedPlugin();
  * </pre>
+ *
+ * Please note that the plug-in extending this class must still implement the
+ * <code>handleTick()</code> method defined by the <code>ScheduledPlugin</code>
+ * class.
  */
-AdvancedEventDrivenPlugin = function () {
+AdvancedMixedPlugin = function () {
     // override
     this.getObservedEvents = function () {
         var events, i;
@@ -55,4 +58,4 @@ AdvancedEventDrivenPlugin = function () {
         this[method](eventData);
     };
 };
-AdvancedEventDrivenPlugin.prototype = new EventDrivenPlugin();
+AdvancedMixedPlugin.prototype = new MixedPlugin();
