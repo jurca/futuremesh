@@ -52,6 +52,7 @@ View = function () {
         }
         mainview.setMap(map);
         minimap.setMap(map);
+        minimap.setMainViewBufferSize(mainview.getLayersDimensions());
     };
 
     /**

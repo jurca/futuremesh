@@ -13,7 +13,8 @@ MiniMap = function () {
             xRatioC, yRatioC, initRenderer, renderUnitsLayer,
             renderBuildingsLayer, renderTerrainLayer, terrainLayer,
             terrainLayerCtx, map, instance, viewBordersLayer, viewBordersCtx,
-            viewBordersWidth, viewBordersHeight, lastX, lastY;
+            viewBordersWidth, viewBordersHeight, lastX, lastY,
+            mainViewBufferWidth, mainViewBufferHeight;
 
     tiles = [];
     terrainLayer = document.createElement('canvas');
@@ -150,16 +151,21 @@ MiniMap = function () {
         if ((x !== lastX) || (y !== lastY)) {
             lastX = x;
             lastY = y;
-            x = Math.round(x / Settings.tileWidth);
-            y = Math.round(y / Settings.tileHeight);
+            x = Math.round(x / mainViewBufferWidth * width);
+            y = Math.round(y / mainViewBufferHeight * height);
             viewBordersCtx.strokeStyle = 'white';
             viewBordersCtx.lineWidth =
                     Math.round((tileWidth + tileHeight) / 2);
             viewBordersCtx.clearRect(0, 0, viewBordersLayer.width,
                     viewBordersLayer.height);
-            viewBordersCtx.strokeRect(x, y, viewBordersWidth,
-                    viewBordersHeight);
+            viewBordersCtx.strokeRect(x, y, viewBordersWidth * xRatio,
+                    viewBordersHeight * yRatio * 2);
         }
+    };
+
+    this.setMainViewBufferSize = function (dimensions) {
+        mainViewBufferWidth = dimensions.width;
+        mainViewBufferHeight = dimensions.height;
     };
 
     /**
