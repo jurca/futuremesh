@@ -2,6 +2,7 @@ body {
     background: silver;
     font-family: sans-serif;
     font-size: 12px;
+    user-select: none;
 }
 
 #page-container {
