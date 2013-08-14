@@ -32,7 +32,7 @@ MinimapControlPlugin = function () {
             handlePositionSelection(event.offsetX, event.offsetY);
             event.preventDefault();
         }, false);
-        minimap.addEventListener("mouseup", function () {
+        window.addEventListener("mouseup", function () {
             mouseDown = false;
         }, false);
         minimap.addEventListener("mousemove", function (event) {
