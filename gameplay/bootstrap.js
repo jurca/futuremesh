@@ -16,6 +16,10 @@ addEventListener('load', function () {
 
     setTimeout(function () {
         var loader;
+        $("body")[0].setAttribute("unselectable", "on");
+        $("body")[0].addEventListener("selectstart", function (e) {
+            e.preventDefault();
+        }, false);
         Player.createGenericPlayers();
         loader = new GameLoader($('#loading-all')[0], $('#loading-current')[0],
                 $('#loading-message')[0], $('#loading-screen')[0],
