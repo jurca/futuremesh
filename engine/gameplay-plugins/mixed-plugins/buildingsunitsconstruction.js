@@ -1,10 +1,19 @@
 "use strict";
 var BuildingsUnitsConstruction;
 
+/**
+ * The Buildings Units Construction is a plug-in that manages buildings and
+ * units construction/productions. Buildings and units construction tasks are
+ * scheduled using events, the plug-in handles the production progress along
+ * with resource reduction. The plug-in sends an event whenever a custruction
+ * task finishes.
+ *
+ * @constructor
+ */
 BuildingsUnitsConstruction = function () {
     /**
-     * The buildingQueues object represents a map of player IDs to queues of
-     * buildings and units to construct. The map value is an object with the
+     * The constructionQueues object represents a map of player IDs to queues
+     * of buildings and units to construct. The map value is an object with the
      * following structure:
      *
      * <pre>
@@ -34,13 +43,18 @@ BuildingsUnitsConstruction = function () {
      *
      * @type Object
      */
-    var constructionQueues = {}, instance = this, onResourceDispatch,
-            onEnqueueUnitConstruction, maxQueueLength,
-            onCancelUnitConstruction, onCancelBuildingConstruction;
+    var constructionQueues = {}, instance, maxQueueLength;
 
-    maxQueueLength = Settings.pluginConfiguration.BuildingsUnitsConstruction.
-            maxQueueLength;
+    /**
+     * Constructor.
+     */
+    (function () {
+        instance = this;
+        maxQueueLength = Settings.pluginConfiguration.
+                BuildingsUnitsConstruction.maxQueueLength;
+    }.call(this));
 
+    // override
     this.handleTick = function () {
         var playerId, buildingsTasks, buildingType, unitsTasks, unitType;
         for (playerId in constructionQueues) {
@@ -94,61 +108,59 @@ BuildingsUnitsConstruction = function () {
         }
     };
 
-    this.handleEvent = function (eventName, eventData) {
+    /**
+     * Event handler for the <code>start</code> event.
+     *
+     * @param {Object} data Event data.
+     */
+    this.onStart = function (data) {
+    };
+
+    /**
+     * Event handler for the <code>stop</code> event.
+     *
+     * @param {Object} data Event data.
+     */
+    this.onStop = function (data) {
+    };
+
+    /**
+     * Event handler for the <code>enqueueBuildingConstruction</code>. The
+     * handler enqueues construction of a new building of the specified
+     * building is not already being constructed.
+     *
+     * @param {type} eventData
+     */
+    this.onEnqueueBuildingConstruction = function (eventData) {
         var buildings, definition;
-        switch (eventName) {
-            case 'start':
-                break;
-            case 'stop':
-                break;
-            case 'enqueueBuildingConstruction':
-                if (!constructionQueues[eventData.player]) {
-                    constructionQueues[eventData.player] = {
-                        buildings: {},
-                        units: {}
-                    };
-                }
-                buildings = constructionQueues[eventData.player].buildings;
-                if (buildings[eventData.building]) {
-                    return; // cannot enqueue building construction
-                }
-                definition = BuildingsDefinition.getType(eventData.building);
-                buildings[eventData.building] = {
-                    type: eventData.building,
-                    progress: 0,
-                    definition: definition,
-                    waitingForResources: false,
-                    stepTimeout: 0
-                };
-                break;
-            case 'enqueueUnitConstruction':
-                onEnqueueUnitConstruction(eventData);
-                break;
-            case 'resourceDispatch':
-                onResourceDispatch(eventData);
-                break;
-            case 'cancelUnitConstruction':
-                onCancelUnitConstruction(eventData);
-                break;
-            case 'cancelBuildingConstruction':
-                onCancelBuildingConstruction(eventData);
-                break;
+        if (!constructionQueues[eventData.player]) {
+            constructionQueues[eventData.player] = {
+                buildings: {},
+                units: {}
+            };
         }
+        buildings = constructionQueues[eventData.player].buildings;
+        if (buildings[eventData.building]) {
+            return; // cannot enqueue building construction
+        }
+        definition = BuildingsDefinition.getType(eventData.building);
+        buildings[eventData.building] = {
+            type: eventData.building,
+            progress: 0,
+            definition: definition,
+            waitingForResources: false,
+            stepTimeout: 0
+        };
     };
 
-    this.getObservedEvents = function () {
-        return [
-            'start',
-            'stop',
-            'enqueueBuildingConstruction',
-            'enqueueUnitConstruction',
-            'resourceDispatch',
-            'cancelUnitConstruction',
-            'cancelBuildingConstruction'
-        ];
-    };
-
-    onCancelBuildingConstruction = function (data) {
+    /**
+     * Handler for the <code>cancelBuildingConstruction</code> event. The
+     * handler cancels construction of the specified building, returning all
+     * consumed resources to the respective player.
+     *
+     * @param {Object} data Event data.
+     */
+    this.onCancelBuildingConstruction = function (data) {
         var buildingTasks, resources, i, constructionInfo;
         if (!constructionQueues[data.player]) {
             return;
@@ -181,7 +193,7 @@ BuildingsUnitsConstruction = function () {
      *
      * @param {Object} data Event data.
      */
-    onCancelUnitConstruction = function (data) {
+    this.onCancelUnitConstruction = function (data) {
         var unitTasks, resources, i, constructionInfo;
         if (!constructionQueues[data.player]) {
             return;
@@ -215,7 +227,7 @@ BuildingsUnitsConstruction = function () {
      *
      * @param {Object} data Construction request details.
      */
-    onEnqueueUnitConstruction = function (data) {
+    this.onEnqueueUnitConstruction = function (data) {
         var units, definition;
         if (!constructionQueues[data.player]) {
             constructionQueues[data.player] = {
@@ -247,7 +259,7 @@ BuildingsUnitsConstruction = function () {
      *
      * @param {Object} data The event data.
      */
-    onResourceDispatch = function (data) {
+    this.onResourceDispatch = function (data) {
         var playersBuildings, buildingTask, playerUnits, unitTask;
         if (data.targetType === 'unit') {
             playerUnits = constructionQueues[data.player].units;
@@ -310,4 +322,4 @@ BuildingsUnitsConstruction = function () {
         }
     };
 };
-BuildingsUnitsConstruction.prototype = new MixedPlugin();
+BuildingsUnitsConstruction.prototype = new AdvancedMixedPlugin();
