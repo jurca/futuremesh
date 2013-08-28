@@ -3,6 +3,11 @@ var MapEditorMainMenu;
 
 /**
  * Class handling the main menu of the Map Editor.
+ *
+ * @param {MapEditor} mapEditor Instance of the Map Editor using this main
+ *        menu.
+ * @param {Number} defaultMapWidth The default width of a new map in tiles.
+ * @param {Number} defaultMapHeight The default height of a new map in tiles.
  */
 MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
     var $, compressor, fileName;
@@ -44,7 +49,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         ], 'create');
         form.setHandler(function (data) {
             var map;
-            modal.close()
+            modal.close();
             map = new Map();
             if (data.type == 1) {
                 map.randomMap(data.width, data.height);
@@ -58,7 +63,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         modal.appendChild(form);
         modal.center();
     }, false);
-    
+
     $('menu-save').addEventListener('click', function () {
         var modal, message;
         if (!fileName) {
@@ -73,7 +78,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
             var data, url;
             data = 'name=' + fileName + '&data=' + encodeURIComponent(
                     compressor.compress(mapEditor.getMap().exportData(), 3));
-            url = 'cgi-bin/savemap.py';
+            url = 'cgi-bin/savemap.php';
             Ajax.post(url, data, function () {
                 modal.close();
                 new Alert('Saved!');
@@ -83,7 +88,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
             });
         }, 25);
     }, false);
-    
+
     $('menu-save-as').addEventListener('click', function () {
         var modal, loadingMessage, url;
         modal = new Modal('Save map as...', false);
@@ -92,7 +97,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                 document.createTextNode('Loading files...'));
         modal.appendChild(loadingMessage);
         modal.center();
-        url = 'cgi-bin/listdir.py?dir=' + encodeURIComponent('data/maps');
+        url = 'cgi-bin/listdir.php?dir=' + encodeURIComponent('data/maps');
         Ajax.get(url,
             function (files) {
                 var chooser;
@@ -114,7 +119,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                         data = 'name=' + file + '&data=' +
                                 encodeURIComponent(compressor.compress(
                                 mapEditor.getMap().exportData(), 3));
-                        url = 'cgi-bin/savemap.py';
+                        url = 'cgi-bin/savemap.php';
                         Ajax.post(url, data, function () {
                             modal.close();
                             new Alert('Saved!');
@@ -131,12 +136,12 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
             function () {
                 loadingMessage.firstChild.nodeValue = 'Cannot load files';
                 setInterval(function () {
-                    modal.close()
+                    modal.close();
                 }, 700);
             }
         );
     }, false);
-    
+
     $('menu-load').addEventListener('click', function () {
         var modal, loadingMessage, url;
         modal = new Modal('Load map', false);
@@ -145,7 +150,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                 document.createTextNode('Loading files...'));
         modal.appendChild(loadingMessage);
         modal.center();
-        url = 'cgi-bin/listdir.py?dir=' + encodeURIComponent('data/maps');
+        url = 'cgi-bin/listdir.php?dir=' + encodeURIComponent('data/maps');
         Ajax.get(url, function (files) {
                 var chooser;
                 modal.close();
@@ -180,7 +185,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
             function () {
                 loadingMessage.firstChild.nodeValue = 'Cannot load files';
                 setInterval(function () {
-                    modal.close()
+                    modal.close();
                 }, 700);
             }
         );
