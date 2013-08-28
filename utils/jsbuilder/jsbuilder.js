@@ -4,26 +4,26 @@ var JsBuilder;
 JsBuilder = function () {
     var $, ajax, console, files, loadDirs, loadDir, addFile, loadFiles,
             fileContents, loadFile, buildFile;
-    
+
     $ = function (selector) {
         return document.querySelectorAll(selector);
     };
-    
+
     ajax = new Ajax();
     console = new Console();
-    
+
     (new Form()).setHandler(function (data) {
         console.clear();
         files = [];
         fileContents = [];
         loadDirs(data);
     });
-    
+
     loadDirs = function (data) {
         console.log('Loading directories contents...');
         loadDir(data, 0);
     };
-    
+
     loadDir = function (data, i) {
         var dir;
         if (i >= data.dirs.length) {
@@ -35,9 +35,10 @@ JsBuilder = function () {
         dir = data.dirs[i];
         console.log('Loading contents of directory ' + dir);
         dir = encodeURIComponent(dir);
-        ajax.get('/cgi-bin/listdir.py?dir=' + dir, function (response) {
+        ajax.get('../cgi-bin/listdir.php?dir=' + dir, function (response) {
             var files, j;
             files = JSON.parse(response);
+            dir = decodeURIComponent(dir);
             for (j = files.length; j--;) {
                 addFile(dir + '/' + files[j], data.exclude);
             }
@@ -46,25 +47,25 @@ JsBuilder = function () {
             console.log('Cannot load direcotory: ' + dir);
         });
     };
-    
+
     addFile = function (file, exclude) {
         var i;
         if (!file.match(/^.*[.]js$/i)) {
             return;
         }
         for (i = exclude.length; i--;) {
-            if (exclude[i] == file) {
+            if (exclude[i] === file) {
                 return;
             }
         }
         files.unshift(file);
     };
-    
+
     loadFiles = function (data) {
         console.log('Loading file contents...');
         loadFile(data, 0);
     };
-    
+
     loadFile = function (data, i) {
         var file, nocache;
         if (i >= files.length) {
@@ -75,14 +76,14 @@ JsBuilder = function () {
         file = files[i];
         console.log('Loading file ' + file);
         nocache = (new Date()).getTime();
-        ajax.get('/' + file + '?nocache=' + nocache, function (response) {
+        ajax.get('../' + file + '?nocache=' + nocache, function (response) {
             fileContents.push(response);
             loadFile(data, i + 1);
         }, function () {
             console.log('Cannot load file ' + file);
         });
     };
-    
+
     buildFile = function (data) {
         var content, size;
         console.log('Building file...');
