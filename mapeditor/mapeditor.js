@@ -150,10 +150,10 @@ addEventListener('load', function () {
         progressbar = new Progressbar(0);
         modal.appendChild(progressbar);
         modal.center();
-        imageLoader = new SpriteLoader()
+        imageLoader = new SpriteLoader();
         imageLoader.addObserver(function (percent) {
             progressbar.setValue(percent * 100);
-            if (percent == 1) {
+            if (percent === 1) {
                 new MapEditor();
                 modal.close();
             }
