@@ -79,6 +79,10 @@ var GameLoader;
  *        value is an array of resource stats for a player. The keys of the
  *        resource stats array correspond to resource types, the values are the
  *        amounts of the resources the given player posseses.
+ * @param {HTMLElement} viewCanvas The canvas element used for rendering the
+ *        main view.
+ * @param {HTMLElement} minimapContainer Container of the minimap-rendering
+ *        canvases.
  */
 GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         loadingScreen, gameplayScreen, mapFileUrl, currentPlayer,
@@ -95,7 +99,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
                     throw new Error('Cannot load images');
                 }
                 setProgress(progress);
-                if (progress == 1) {
+                if (progress === 1) {
                     performNextStep();
                 }
             });
@@ -111,7 +115,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
                     throw new Error('Cannot load music');
                 }
                 setProgress(progress);
-                if ((progress == 1) && !movedToNextStep) {
+                if ((progress === 1) && !movedToNextStep) {
                     performNextStep();
                     movedToNextStep = true;
                 }
@@ -122,10 +126,10 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 var compressor;
-                if (xhr.readyState != 4) {
+                if (xhr.readyState !== 4) {
                     return;
                 }
-                if (xhr.status == 200) {
+                if (xhr.status === 200) {
                     compressor = new MapCompressor();
                     map = new Map();
                     map.importData(compressor.decompress(xhr.responseText, 3));
@@ -178,7 +182,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
                 volume = (1 - i / total) * Settings.loadingMusicVolume;
                 backgroundMusic.setVolume(volume);
                 setProgress(i / total);
-                if (i == total) {
+                if (i === total) {
                     clearInterval(interval);
                     setTimeout(function () {
                         loadingScreen.style.display = 'none';
