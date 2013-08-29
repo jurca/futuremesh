@@ -37,12 +37,18 @@ Form = function () {
         var data, inputs, i;
         data = {
             dirs: [],
+            files: [],
             exclude: []
         };
         inputs = $('input[name="dir"]');
         for (i = inputs.length; i--;) {
             inputs[i].value = this.trim(inputs[i].value);
-            inputs[i].value && (data.dirs.push(inputs[i].value));
+            inputs[i].value && (data.dirs.unshift(inputs[i].value));
+        }
+        inputs = $('input[name="file"]');
+        for (i = inputs.length; i--;) {
+            inputs[i].value = this.trim(inputs[i].value);
+            inputs[i].value && (data.files.unshift(inputs[i].value));
         }
         inputs = $('input[name="exclude"]');
         for (i = inputs.length; i--;) {

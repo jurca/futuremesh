@@ -13,9 +13,14 @@ JsBuilder = function () {
     console = new Console();
 
     (new Form()).setHandler(function (data) {
+        var i;
         console.clear();
         files = [];
         fileContents = [];
+        for (i = 0; i < data.files.length; i++) {
+            addFile(data.files[i], data.exclude);
+            data.exclude.push(data.files[i]);
+        }
         loadDirs(data);
     });
 
@@ -58,7 +63,7 @@ JsBuilder = function () {
                 return;
             }
         }
-        files.unshift(file);
+        files.push(file);
     };
 
     loadFiles = function (data) {
