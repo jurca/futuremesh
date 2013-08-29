@@ -2,10 +2,9 @@
 var Unit;
 
 (function () {
-    var id, units;
+    var id;
 
     id = 0;
-    units = [];
 
     /**
      * The Unit class representing any unit on the map. This class serves both
@@ -37,42 +36,42 @@ var Unit;
     Unit = function (x, y, direction, type, player, color) {
         var definition;
         definition = UnitsDefinition.getType(type);
-        
+
         /**
          * ID number of the instance.
          *
          * @type Number
          */
         this.id = id++;
-        
+
         /**
          * X coordinate of the unit's position on the map.
          *
          * @type Number
          */
         this.x = x;
-        
+
         /**
          * Y coordinate of the unit's position on the map.
          *
          * @type Number
          */
         this.y = y;
-        
+
         /**
          * X coordinate of the unit's previous position on the map.
          *
          * @type Number
          */
         this.lastX = x;
-        
+
         /**
          * Y coordinate of the unit's previous position on the map.
          *
          * @type Number
          */
         this.lastY = y;
-        
+
         /**
          * Unit's current direction represented as an integer from interval
          * [0,7]. The meaning of the value is:
@@ -90,14 +89,14 @@ var Unit;
          * @type Number
          */
         this.direction = direction;
-        
+
         /**
          * ID of the unit's type.
          *
          * @type Number
          */
         this.type = type;
-        
+
         /**
          * Pattern of URLs to unit's graphical representation. Should contain
          * a ? mark - this will be replaced by the loader with direction number
@@ -106,14 +105,14 @@ var Unit;
          * @type String
          */
         this.image = definition.image;
-        
+
         /**
          * Unit's speed of movement in tiles per second.
          *
          * @type Number
          */
         this.speed = definition.speed;
-        
+
         /**
          * Unit's turning speed in direction changes per second. One change of
          * direction can always be only increment or decrement of the unit's
@@ -122,7 +121,7 @@ var Unit;
          * @type Number
          */
         this.turnSpeed = definition.turnSpeed;
-        
+
         /**
          * Current unit's action / status. The meaning is:
          * <ul>
@@ -134,23 +133,23 @@ var Unit;
          * @type Number
          */
         this.action = 0;
-        
+
         /**
          * ID of the player owning this unit.
          *
          * @type Number
          */
         this.player = player;
-        
+
         /**
          * The color in the building's image that should be replaced by the
          * player's color. So far only hex format (#rrggbb or rrggbb is
          * supported).
-         * 
+         *
          * @type String
          */
         this.colorify = definition.colorify;
-        
+
         /**
          * The maximum "distance" from the color specified in the colorify
          * property for the color in the building's image to be replaced by the
@@ -158,19 +157,19 @@ var Unit;
          * transformed to the distance from the player's color, so gradients
          * are kept intact. The distance is computed as distance in 3D
          * euclid space, where red, green and blue represent axis.
-         * 
+         *
          * @type Number
          */
         this.colorifyDistance = definition.colorifyDistance;
-        
+
         /**
          * The ID of the race this units is related to. Can be
          * <code>null</code> if the unit is not related to any race.
-         * 
+         *
          * @type Number
          */
         this.race = definition.race;
-        
+
         /**
          * Progress of the movement of the unit from one tile to another
          * represented by a number from interval [0,1]. When set to 0, the unit
@@ -182,7 +181,7 @@ var Unit;
          * @type Number
          */
         this.moveOffset = 0;
-        
+
         /**
          * Automatically calculated property representing moveOffset projected
          * to the horizontal axis. Used by renderer.
@@ -190,7 +189,7 @@ var Unit;
          * @type Number
          */
         this.moveOffsetX = 0;
-        
+
         /**
          * Automatically calculated property representing moveOffset projected
          * to the vertical axis. Used by renderer.
@@ -198,7 +197,7 @@ var Unit;
          * @type Number
          */
         this.moveOffsetY = 0;
-        
+
         /**
          * Color used to colorify the unit's graphical representation, defined
          * as a CSS-compatible color-definition string.
@@ -283,7 +282,7 @@ var Unit;
                         (this.direction == 4 ? 1 : 0.5);
             }
         };
-        
+
         /**
          * Exports the information about the unit in form of a JSON-serializable
          * object so that the unit can be recostructed from this data later.
@@ -301,20 +300,8 @@ var Unit;
                 player: this.player
             };
         };
-
-        units.push(this);
     };
 
-    /**
-     * Returns Unit class' instance of the chosen ID.
-     *
-     * @param {Number} id ID of the created instance to retrieve
-     * @return {Unit} The Unit class instance having the id property set to id.
-     */
-    Unit.getUnit = function (id) {
-        return units[id];
-    };
-    
     /**
      * Creates new unit from provided data. The data should be a result of the
      * exportData method.
@@ -322,6 +309,7 @@ var Unit;
      * @param {Object} data The data from the exportData method.
      */
     Unit.importData = function (data) {
-        return new Unit(data.x, data.y, data.direction, data.type, data.player);
+        return new Unit(data.x, data.y, data.direction, data.type,
+                data.player);
     };
 }());
