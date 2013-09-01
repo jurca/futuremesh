@@ -17,10 +17,10 @@ MapCompressor = function () {
     var compressLevel1, compressLevel2, compressLevel1Buildings,
             compressLevel3, decompressLevel1, decompressLevel2,
             decompressLevel3, spliceTiles, decompressLevel1Tiles;
-    
+
     /**
      * Compresses exported map data according to the given compression level.
-     * 
+     *
      * @param {Object} map Exported map data.
      * @param {Number} level The compression level.
      */
@@ -30,12 +30,12 @@ MapCompressor = function () {
         (level > 2) && (map = compressLevel3(map));
         return map;
     };
-    
+
     /**
      * Decompresses compressed map data to map data that can be imported by the
      * Map class. The specified compression level must match the one used for
      * compression, otherwise the decompression will fail.
-     * 
+     *
      * @param {String} map The compressed string representing the map data.
      * @param {Number} level The compression level used for data compression.
      */
@@ -45,7 +45,7 @@ MapCompressor = function () {
         (level > 0) && (map = decompressLevel1(map));
         return map;
     };
-    
+
     decompressLevel1 = function (map) {
         var tiles, i, buildings, units;
         tiles = decompressLevel1Tiles(map);
@@ -73,10 +73,11 @@ MapCompressor = function () {
         return {
             tiles: tiles,
             buildings: buildings,
-            units: units
+            units: units,
+            projectiles: []
         };
     };
-    
+
     decompressLevel1Tiles = function (map) {
         var tiles, row, i, j;
         tiles = spliceTiles(map.tiles, map.width);
@@ -92,7 +93,7 @@ MapCompressor = function () {
         }
         return tiles;
     };
-    
+
     spliceTiles = function (tiles, cols) {
         var rows;
         rows = [];
@@ -102,7 +103,7 @@ MapCompressor = function () {
         rows.reverse();
         return rows;
     };
-    
+
     decompressLevel2 = function (map) {
         var i, tiles, mapTiles, buildings, mapBuildings, units, mapUnits;
         tiles = map.tiles;
@@ -142,7 +143,7 @@ MapCompressor = function () {
             units: mapUnits
         };
     };
-    
+
     decompressLevel3 = function (map) {
         var tiles, buildings, units, i;
         map = map.split('|');
@@ -166,7 +167,7 @@ MapCompressor = function () {
             units: units
         };
     };
-    
+
     compressLevel3 = function (map) {
         var tiles, buildings, units, i;
         tiles = map.tiles;
@@ -189,7 +190,7 @@ MapCompressor = function () {
             units.join('-')
         ].join('|');
     };
-    
+
     compressLevel2 = function (map) {
         var tiles, mapTiles, buildings, mapBuildings, units, mapUnits, i;
         tiles = [];
@@ -217,7 +218,7 @@ MapCompressor = function () {
             units: units
         };
     };
-    
+
     compressLevel1 = function (map) {
         var rowCount, colCount, mapTiles, mapTilesRow, tiles, i, j, buildings,
                 units, mapUnits;
@@ -254,7 +255,7 @@ MapCompressor = function () {
             units: units
         };
     };
-    
+
     compressLevel1Buildings = function (mapBuildings) {
         var buildings, i;
         buildings = [];

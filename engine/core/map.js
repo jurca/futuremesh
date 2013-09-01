@@ -7,8 +7,7 @@ var Map;
  */
 Map = function () {
     var tiles, buildings, buildingsList, units, unitsList, navigationIndex,
-            getBuildingPositions, createIndex, createIndexes,
-            initNavigationIndex;
+            projectiles;
 
     /**
      * Two-dimensional array of tiles on the map. The first index is vertical
@@ -34,8 +33,8 @@ Map = function () {
 
     /**
      * Tow-dimensional array matching the tiles of the map. Each item is a null
-     * or a reference to the unit occupying the tile. The structure of the index
-     * is: [vertical axis(y)][horizontal axis (x)]
+     * or a reference to the unit occupying the tile. The structure of the
+     * index is: [vertical axis(y)][horizontal axis (x)]
      */
     units = [];
 
@@ -51,6 +50,12 @@ Map = function () {
      * cannot pass.
      */
     navigationIndex = [];
+
+    /**
+     * List of all projectiles currently present on the map. Each element is an
+     * instance of the <code>Projectile</code> class.
+     */
+    projectiles = [];
 
     /**
      * Updates the building's status on the map (e.g. adding to the map or
@@ -78,7 +83,7 @@ Map = function () {
     this.removeBuilding = function (building) {
         var positions, position, i;
         for (i = buildingsList.length; i--;) {
-            if (buildingsList[i].id == building.id) {
+            if (buildingsList[i].id === building.id) {
                 buildingsList.splice(i, 1);
                 break;
             }
@@ -90,6 +95,37 @@ Map = function () {
             (!building.passable) &&
                     (navigationIndex[position.y][position.x] = true);
         }
+    };
+
+    /**
+     * Adds a new projectile to the map.
+     *
+     * @param {Projectile} projectile
+     */
+    this.addProjectile = function (projectile) {
+        projectiles.push(projectile);
+    };
+
+    /**
+     * Returns the list of all projectiles currently present on the map. Each
+     * element of the list is a Projectile instance.
+     *
+     * @returns {Array} The list of all projectiles currently present on the
+     *          map.
+     */
+    this.getProjectiles = function () {
+        return projectiles;
+    };
+
+    /**
+     * Removes the projectile at the specified index from the map.
+     *
+     * @param {Number} index The index of the projectile in the projectile
+     *        list.
+     * @see getProjectiles()
+     */
+    this.removeProjectile = function (index) {
+        projectiles.splice(index, 1);
     };
 
     /**
@@ -107,20 +143,20 @@ Map = function () {
                 break;
             case 1: // destroyed
                 for (i = unitsList.length; i--;) {
-                    if (unitsList[i].id == unit.id) {
+                    if (unitsList[i].id === unit.id) {
                         unitsList.splice(i, 1);
                         break;
                     }
                 }
                 if (units[unit.y][unit.x] &&
-                        (units[unit.y][unit.x].id == unit.id)) {
+                        (units[unit.y][unit.x].id === unit.id)) {
                     units[unit.y][unit.x] = null;
                     navigationIndex[unit.y][unit.x] = true;
                 }
                 break;
             case 2: // moved
                 if (units[unit.lastY][unit.lastX] &&
-                        (units[unit.lastX][unit.lastX].id == unit.id)) {
+                        (units[unit.lastX][unit.lastX].id === unit.id)) {
                     units[unit.lastY][unit.lastX] = null;
                     navigationIndex[unit.lastY][unit.lastX] = true;
                 }
@@ -151,7 +187,7 @@ Map = function () {
      */
     this.getMap = function () {
         return tiles;
-    }
+    };
 
     /**
      * Returns the object (building/unit) at the specified coordinates. If the
@@ -298,7 +334,8 @@ Map = function () {
      *         JSON-serializable.
      */
     this.exportData = function () {
-        var i, j, data, mapRow, dataRow, buildingData, unitsData;
+        var i, j, data, mapRow, dataRow, buildingData, unitsData,
+                projectileData;
         data = [];
         for (i = tiles.length; i--;) {
             mapRow = tiles[i];
@@ -310,16 +347,21 @@ Map = function () {
         }
         buildingData = [];
         for (i = buildingsList.length; i--;) {
-            buildingData.push(buildingsList[i].exportData());
+            buildingData.unshift(buildingsList[i].exportData());
         }
         unitsData = [];
         for (i = unitsList.length; i--;) {
-            unitsData.push(unitsList[i].exportData());
+            unitsData.unshift(unitsList[i].exportData());
+        }
+        projectileData = [];
+        for (i = projectiles.length; i--;) {
+            projectileData.unshift(projectiles[i].exportData());
         }
         return {
             tiles: data,
             buildings: buildingData,
-            units: unitsData
+            units: unitsData,
+            projectiles: projectiles
         };
     };
 
@@ -349,9 +391,25 @@ Map = function () {
         for (i = data.units.length; i--;) {
             this.updateUnit(Unit.importData(data.units[i]));
         }
+        projectiles = [];
+        for (i = data.projectiles.length; i--;) {
+            this.addProjectile(Projectile.importData(data.projectiles[i]));
+        }
     };
 
-    getBuildingPositions = function (building) {
+    /**
+     * Returns a list of coordinates of all tiles occupied by the specified
+     * building. Each coordinate is specified as an object with the following
+     * fieds:
+     * <ul>
+     *     <li><code>x</code> - the X coordinate.</li>
+     *     <li><code>y</code> - the Y coordinate.</li>
+     * </ul>
+     *
+     * @param {Building} building The building.
+     * @returns {Array}
+     */
+    function getBuildingPositions(building) {
         var positions, startX, startY, i, j, x, y;
         positions = [];
         startX = building.x + Math.floor((building.height - 1) / 2);
@@ -373,9 +431,15 @@ Map = function () {
             }
         }
         return positions;
-    };
+    }
 
-    createIndex = function () {
+    /**
+     * Creates a generic 2D index array filled with nulls. The dimensions of
+     * the created array match the dimensions of the tiles array.
+     *
+     * @returns {Array}
+     */
+    function createIndex() {
         var i, j, row, index;
         index = [];
         for (i = tiles.length; i--;) {
@@ -386,16 +450,34 @@ Map = function () {
             index.push(row);
         }
         return index;
-    };
+    }
 
-    createIndexes = function () {
+    /**
+     * Creates the indexes used for quick assessment of which tiles are free
+     * for buildings and/or units and which can be navigated by units.
+     *
+     * @see buildings
+     * @see units
+     * @see navigationIndex
+     */
+    function createIndexes() {
         buildings = createIndex();
         units = createIndex();
         navigationIndex = createIndex();
         initNavigationIndex();
-    };
+    }
 
-    initNavigationIndex = function () {
+    /**
+     * Initializes the navigation index. The index is used for quick
+     * determination of which tiles can be navigated by units. The flag status
+     * for each tile is determined by the accessible flag of the tile. The
+     * initialized navigation index therefore doesn't take into account any
+     * buildings or units after this method finishes - these has to be taken
+     * care of separately.
+     *
+     * @see navigationIndex
+     */
+    function initNavigationIndex() {
         var i, j, row, navigationRow;
         for (j = tiles.length; j--;) {
             row = tiles[j];
@@ -404,5 +486,5 @@ Map = function () {
                 navigationRow[i] = row[i].accessible;
             }
         }
-    };
+    }
 };
