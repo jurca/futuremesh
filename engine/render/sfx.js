@@ -9,13 +9,15 @@ SFX = function () {
             canvasTileWidth, canvasTileHeight, depthFactor, canvasCenterX,
             canvasCenterY, buildingsIndex, displayLightSFX,
             displayBuildableTiles, enableBuildOverlay, navigationIndex,
-            enableNavigationIndex, inaccessibleColor, accessibleColor;
+            enableNavigationIndex, inaccessibleColor, accessibleColor,
+            projectiles;
 
     depthFactor = Settings.sfx3DLightFactor;
     accessibleColor = Settings.sfxAccessibleTileColor;
     inaccessibleColor = Settings.sfxInaccessibleTileColor;
     enableBuildOverlay = false;
     enableNavigationIndex = false;
+    projectiles = [];
 
     /**
      * Sets the output canvas for rendering.
@@ -50,6 +52,8 @@ SFX = function () {
         canvasTileHeight = Math.ceil(canvasHeight / tileHeight);
         buildingsIndex = newMap.getBuildingsIndex();
         navigationIndex = newMap.getNavigationIndex();
+        projectiles = newMap.getProjectiles();
+        window.projectiles = projectiles;
     };
 
     /**
@@ -84,12 +88,44 @@ SFX = function () {
      * @param {Number} y Y offset for rendering.
      */
     this.display = function (x, y) {
+        context.globalAlpha = 0.6;
+        context.lineWidth = 2; // laser beam width (projectile type 0)
+        displayProjectiles(x, y);
         context.globalAlpha = 0.3;
         displayLightSFX(x, y);
         enableBuildOverlay && displayBuildableTiles(x, y);
         enableNavigationIndex && displayNavigableTiles(x, y);
         context.globalAlpha = 1;
     };
+
+    /**
+     * Displays the projectiles that are present on the map.
+     *
+     * @param {Number} x  The horizonat offset of the camera from the map's top
+     *        left corner in pixels.
+     * @param {Number} y The vertical offset of the camera from the map's top
+     *        left corner in pixels.
+     */
+    function displayProjectiles(x, y) {
+        var i, projectile;
+        for (i = projectiles.length; i--;) {
+            projectile = projectiles[i];
+            switch (projectile.type) {
+                case 0:
+                    context.strokeStyle = projectile.player.color;
+                    context.beginPath();
+                    context.moveTo(projectile.startX - x,
+                            projectile.startY - y);
+                    context.lineTo(projectile.targetX - x,
+                            projectile.targetY - y);
+                    context.stroke();
+                    break;
+                default:
+                    throw new Error("Unsupported projectile type: " +
+                            projectile.type);
+            }
+        }
+    }
 
     /**
      * Displays a 3D-like light beams emmanating from the map's surface.
@@ -106,6 +142,7 @@ SFX = function () {
         x -= tileWidth / 2;
         mapOffsetX = Math.floor(x / tileWidth);
         mapOffsetY = Math.floor(y / tileHeight);
+        context.strokeStyle = Settings.sfx3DLightColor;
         for (j = canvasTileHeight + 2; j--;) {
             mapRow = map[j + mapOffsetY];
             if (!mapRow) {
