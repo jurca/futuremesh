@@ -53,7 +53,6 @@ SFX = function () {
         buildingsIndex = newMap.getBuildingsIndex();
         navigationIndex = newMap.getNavigationIndex();
         projectiles = newMap.getProjectiles();
-        window.projectiles = projectiles;
     };
 
     /**
