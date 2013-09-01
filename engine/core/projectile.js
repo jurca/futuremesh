@@ -192,8 +192,8 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
     /**
      * The current progress of the projectile's existence - this includes the
      * projectile being fired, traveling to the target, exploding, etc. The
-     * progress is specified as a floating-point number within the range
-     * [0, 1].
+     * progress is specified as an integral number within the range
+     * [0, duration].
      *
      * @type Number
      */
