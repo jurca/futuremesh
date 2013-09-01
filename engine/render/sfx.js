@@ -8,9 +8,8 @@ SFX = function () {
     var canvas, map, canvasWidth, canvasHeight, tileWidth, tileHeight, context,
             canvasTileWidth, canvasTileHeight, depthFactor, canvasCenterX,
             canvasCenterY, buildingsIndex, displayLightSFX,
-            displayBuildableTiles, displayTileOverlay, enableBuildOverlay,
-            displayNavigableTiles, navigationIndex, enableNavigationIndex,
-            inaccessibleColor, accessibleColor;
+            displayBuildableTiles, enableBuildOverlay, navigationIndex,
+            enableNavigationIndex, inaccessibleColor, accessibleColor;
 
     depthFactor = Settings.sfx3DLightFactor;
     accessibleColor = Settings.sfxAccessibleTileColor;
@@ -65,6 +64,14 @@ SFX = function () {
         enableBuildOverlay = displayBuildableOverlay;
     };
 
+    /**
+     * Enables or disables the rendering of the navigation index over the UI.
+     * The navigation index will show which tiles can be navigated by units
+     * (are not occupied by another unit or a building).
+     *
+     * @param {Boolean} displayNavigationIndex <code>true</code> if the
+     *        navigation display should be visible.
+     */
     this.setDisplayNavigationIndex = function (displayNavigationIndex) {
         enableNavigationIndex = displayNavigationIndex;
     };
@@ -84,7 +91,15 @@ SFX = function () {
         context.globalAlpha = 1;
     };
 
-    displayLightSFX = function (x, y) {
+    /**
+     * Displays a 3D-like light beams emmanating from the map's surface.
+     *
+     * @param {Number} x  The horizonat offset of the camera from the map's top
+     *        left corner in pixels.
+     * @param {Number} y The vertical offset of the camera from the map's top
+     *        left corner in pixels.
+     */
+    function displayLightSFX(x, y) {
         var mapOffsetX, mapOffsetY, i, j, offsetX, offsetY, shiftX, endX, endY,
                 mapRow, mapTile;
         y -= tileHeight;
@@ -113,9 +128,18 @@ SFX = function () {
                 context.stroke();
             }
         }
-    };
+    }
 
-    displayBuildableTiles = function (x, y) {
+    /**
+     * Displays the overlay showing which tiles are occupied by buildings and
+     * which are still free for building construction.
+     *
+     * @param {Number} x  The horizonat offset of the camera from the map's top
+     *        left corner in pixels.
+     * @param {Number} y The vertical offset of the camera from the map's top
+     *        left corner in pixels.
+     */
+    function displayBuildableTiles(x, y) {
         var mapOffsetX, mapOffsetY, i, j, mapRow, offsetY, shiftX, mapTile,
                 offsetX;
         context.fillStyle = Settings.sfxBuildLayerColor;
@@ -137,18 +161,37 @@ SFX = function () {
                 displayTileOverlay(offsetX, offsetY);
             }
         }
-    };
+    }
 
-    displayTileOverlay = function (x, y) {
+    /**
+     * Displays an overlay over a single map tile at the specified coordinates.
+     * The tile will be overlayed using a polygon filled with the current fill
+     * style.
+     *
+     * @param {Number} x The horizontal offset of the tile's position from the
+     *        map's top left cornenr.
+     * @param {type} y The vertical offset of the tile's position from the
+     *        map's top left corner.
+     */
+    function displayTileOverlay(x, y) {
         context.beginPath();
         context.moveTo(x + (tileWidth / 2), y);
         context.lineTo(x + tileWidth, y + tileHeight);
         context.lineTo(x + (tileWidth / 2), y + (tileHeight * 2));
         context.lineTo(x, y + tileHeight);
         context.fill();
-    };
+    }
 
-    displayNavigableTiles = function (x, y) {
+    /**
+     * Displays the overlay showing which tiles are navigable by units
+     * (accessible for unit movement).
+     *
+     * @param {Number} x The horizonat offset of the camera from the map's top
+     *        left corner in pixels.
+     * @param {Number} y The vertical offset of the camera from the map's top
+     *        left corner in pixels.
+     */
+    function displayNavigableTiles(x, y) {
         var mapOffsetX, mapOffsetY, i, j, mapRow, offsetY, shiftX, mapTile,
                 offsetX;
         mapOffsetX = Math.floor(x / tileWidth) - 1;
@@ -168,5 +211,5 @@ SFX = function () {
                 displayTileOverlay(offsetX, offsetY);
             }
         }
-    };
+    }
 };
