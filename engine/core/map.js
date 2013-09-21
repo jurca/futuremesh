@@ -392,8 +392,10 @@ Map = function () {
             this.updateUnit(Unit.importData(data.units[i]));
         }
         projectiles = [];
-        for (i = data.projectiles.length; i--;) {
-            this.addProjectile(Projectile.importData(data.projectiles[i]));
+        if (data.projectiles instanceof Array) {
+            for (i = data.projectiles.length; i--;) {
+                this.addProjectile(Projectile.importData(data.projectiles[i]));
+            }
         }
     };
 
