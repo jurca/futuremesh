@@ -57,11 +57,15 @@ Settings.load({
         'ResourceManagerPlugin',
         'BuildingsUnitsConstruction',
         'ViewRendererPlugin',
-        'MinimapControlPlugin'
+        'MinimapControlPlugin',
+        'KeyboardMapScroller'
     ],
     pluginConfiguration: {
         BuildingsUnitsConstruction: {
             maxQueueLength: 30
+        },
+        KeyboardMapScroller: {
+            scrollSpeed: 30
         },
         ViewRendererPlugin: {
             borderOffset: 30, // pixels

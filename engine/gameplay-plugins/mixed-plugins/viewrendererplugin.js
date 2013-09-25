@@ -10,15 +10,31 @@ ViewRendererPlugin = function () {
 
     // public API
 
+    // override
     this.handleTick = function () {
         view.display(x, y);
     };
 
+    // override
     this.ignoresExtraTicks = function () {
         return true;
     };
 
-    // private API
+    /**
+     * Event listener for the <code>scrollMapView</code> event. The listener
+     * will move the camera according to the specified scroll vector.
+     *
+     * @param {Object} vector 2D vector specifying how the map view should be
+     *        scrolled. The object has the following properties:
+     *        <ul>
+     *            <li><code>x</code> - the horizontal scrolling speed.</li>
+     *            <li><code>y</code> - the vertical scrolling speed.</li>
+     *        </ul>
+     */
+    this.onScrollMapView = function (vector) {
+        x = Math.min(maxX, Math.max(x + vector.x, minX));
+        y = Math.min(maxY, Math.max(y + vector.y, minY));
+    };
 
     /**
      * Event listener for the <code>viewSetByMinimap</code> event. The view
