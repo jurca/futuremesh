@@ -34,8 +34,11 @@ var Unit;
      *        color (this is recomended).
      */
     Unit = function (x, y, direction, type, player, color) {
-        var definition;
+        var definition, tileWidth, tileHeight;
         definition = UnitsDefinition.getType(type);
+
+        tileWidth = TilesDefinition.getType(0).imageData.width - 1;
+        tileHeight = (TilesDefinition.getType(0).imageData.height / 2 - 1) * 2;
 
         /**
          * ID number of the instance.
@@ -107,7 +110,8 @@ var Unit;
         this.image = definition.image;
 
         /**
-         * Unit's speed of movement in tiles per second.
+         * Unit's speed of movement in move offset units per tick (1000 is
+         * 1 tile per tick).
          *
          * @type Number
          */
@@ -128,6 +132,7 @@ var Unit;
          *     <li>0 - just created</li>
          *     <li>1 - destroyed</li>
          *     <li>2 - just moved to another tile</li>
+         *     <li>3 - unit is currently travelling</li>
          * </ul>
          *
          * @type Number
@@ -172,11 +177,12 @@ var Unit;
 
         /**
          * Progress of the movement of the unit from one tile to another
-         * represented by a number from interval [0,1]. When set to 0, the unit
-         * is displayed on the movement source tile, when set to number greater
-         * than 0 and lower than 1, the unit is displayed between the movement
-         * source tile and movement destination tile and when set to 1, the
-         * unit will be displayed on the movement destination tile.
+         * represented by an integral number from interval [0, 1000]. When set
+         * to 0, the unit is displayed on the movement source tile, when set to
+         * number greater than 0 and lower than 1000, the unit is displayed
+         * between the movement source tile and movement destination tile. When
+         * set to 1000, the unit will be displayed on the movement destination
+         * tile.
          *
          * @type Number
          */
@@ -199,6 +205,50 @@ var Unit;
         this.moveOffsetY = 0;
 
         /**
+         * The X-coordinate of the target location of the current movement. The
+         * value is the same as the X-coordinate of the first waypoint in the
+         * waypoints queue.
+         *
+         * <p>This field is set to <code>null</code> if the unit is not
+         * moving.</p>
+         *
+         * @type Number
+         */
+        this.moveTargetX = null;
+
+        /**
+         * The Y-coordinate of the target location of the current movement. The
+         * value is the same as the Y-coordinate of the first waypoint in the
+         * waypoints queue.
+         *
+         * <p>This fields is set to <code>null</code> if the unit is not
+         * moving.</p>
+         *
+         * @type Number
+         */
+        this.moveTargetY = null;
+
+        /**
+         * The current waypoints queue. Each waypoint is represented as an
+         * object with the following fields:
+         *
+         * <ul>
+         *     <li><code>x</code> - the X-coordinate of the waypoint's
+         *         location.</li>
+         *     <li><code>y</code> - the Y-coordinate of the waypoint's
+         *         location.</li>
+         * </ul>
+         *
+         * <p>The first element of this array is the first waypoint, the last
+         * element is the last waypoint to visit by this unit. The moveTargetX
+         * and moveTargetY fields are always set to the coordinates of the
+         * first waypoint. The unit is not moving if the queue is empty.</p>
+         *
+         * @type Array
+         */
+        this.waypoints = [];
+
+        /**
          * Color used to colorify the unit's graphical representation, defined
          * as a CSS-compatible color-definition string.
          *
@@ -208,7 +258,20 @@ var Unit;
                 Player.getPlayer(player).color : color;
 
         /**
-         * Moved the unit on the map by chosen amount of tiles.
+         * Moves the unit on the map by the specified amount of tiles. This
+         * method should be used at the beginning of each unit's movement to
+         * release the unit's current position and register the unit's next
+         * position.
+         *
+         * <p>This method also automatically invokes the setMoveOffset method
+         * with 0 as parameter (the start of the movement), therefore the unit
+         * will be still rendered at the same spot. The movement to the new
+         * tile should then be animated & finished by repeated calling the
+         * setMoveOffset method with an increasingly larger parameter until the
+         * parameter is set to 1000.</p>
+         *
+         * <p>Note: This method also sets the action field to 2 (just moved) so
+         * that the navigation indexes, view and minimap may be updated.</p>
          *
          * @param {Number} distance The distance the unit should be moved. It
          * is recommened to use 1 as a value.
@@ -252,6 +315,7 @@ var Unit;
                     this.y -= 1;
                     break;
             }
+            this.setMoveOffset(0);
             this.action = 2;
         };
 
@@ -261,25 +325,27 @@ var Unit;
          *
          * @param {Number} offset Progress of the unit's movement from it's
          *        current position to the tile in front of it represented as
-         *        a number from interval [0,1].
+         *        a number from interval [0, 1000].
          */
         this.setMoveOffset = function (offset) {
             this.moveOffset = offset;
+            // reverse and normalize to scale [0, 1]
+            offset = (1000 - offset) / 1000;
             if ((this.direction >= 1) && (this.direction <= 3)) {
-                this.moveOffsetX = Settings.tileWidth * offset *
-                        (this.direction == 2 ? 1 : 0.5);
+                this.moveOffsetX = tileWidth * offset *
+                        (this.direction === 2 ? 1 : 0.5);
             }
             if (this.direction >= 5) {
-                this.moveOffsetX = -Settings.tileWidth * offset *
-                        (this.direction == 6 ? 1 : 0.5);
+                this.moveOffsetX = -tileWidth * offset *
+                        (this.direction === 6 ? 1 : 0.5);
             }
-            if ((this.direction == 7) || (this.direction <= 1)) {
-                this.moveOffsetY = -Settings.tileHeight * offset *
-                        (this.direction == 0 ? 1 : 0.5);
+            if ((this.direction === 7) || (this.direction <= 1)) {
+                this.moveOffsetY = -tileHeight * offset *
+                        (this.direction === 0 ? 1 : 0.5);
             }
             if ((this.direction >= 3) && (this.direction <= 5)) {
-                this.moveOffsetY = Settings.tileHeight * offset *
-                        (this.direction == 4 ? 1 : 0.5);
+                this.moveOffsetY = tileHeight * offset *
+                        (this.direction === 4 ? 1 : 0.5);
             }
         };
 

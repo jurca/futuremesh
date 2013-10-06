@@ -8,7 +8,7 @@ UnitsDefinition = (function () {
             type: 0,
             name: 'Harvester',
             image: 'data/images/units/harvester/?.png',
-            speed: 3,
+            speed: 10,
             turnSpeed: 1,
             colorify: '#ffffff',
             colorifyDistance: 240,

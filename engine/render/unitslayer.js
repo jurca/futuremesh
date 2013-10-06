@@ -159,8 +159,8 @@ UnitsLayer = function () {
                 if (grid[currentY] && (unit = grid[currentY][currentX])) {
                     canvasContext.drawImage(UnitsDefinition.getType(unit.type).
                             playerImages[unit.direction][unit.player],
-                            offsetX + currentX * tileWidth - screenX +
-                            unit.moveOffsetX, currentY * tileHeight - screenY +
+                            offsetX + currentX * tileWidth - screenX -
+                            unit.moveOffsetX, currentY * tileHeight - screenY -
                             unit.moveOffsetY);
                 }
             }
