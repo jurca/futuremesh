@@ -2,7 +2,9 @@
 var ViewRendererPlugin;
 
 /**
- * The view renderer plug-in is used to render the main view and minimap.
+ * The view renderer plug-in is used to render the main view and minimap. The
+ * plug-in sends the <code>viewReady</code> event with the current
+ * <code>View</code> instance once the view has been initialized.
  */
 ViewRendererPlugin = function () {
     var view, map, x, y, borderOffset, viewWidth, viewHeight, viewLayerSize,
@@ -92,6 +94,7 @@ ViewRendererPlugin = function () {
         viewLayerSize = view.getMainViewLayersDimensions();
         maxX = viewLayerSize.width - viewWidth - borderOffset;
         maxY = viewLayerSize.height - viewHeight - borderOffset;
+        this.sendEvent('viewReady', view);
     };
 
     /**

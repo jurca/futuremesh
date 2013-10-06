@@ -156,7 +156,7 @@ Map = function () {
                 break;
             case 2: // moved
                 if (units[unit.lastY][unit.lastX] &&
-                        (units[unit.lastX][unit.lastX].id === unit.id)) {
+                        (units[unit.lastY][unit.lastX].id === unit.id)) {
                     units[unit.lastY][unit.lastX] = null;
                     navigationIndex[unit.lastY][unit.lastX] = true;
                 }
