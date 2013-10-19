@@ -133,6 +133,8 @@ var Unit;
          *     <li>1 - destroyed</li>
          *     <li>2 - just moved to another tile</li>
          *     <li>3 - unit is currently travelling</li>
+         *     <li>4 - unit is standing still</li>
+         *     <li>5 - unit is waiting for the tile ahead to be freed up</li>
          * </ul>
          *
          * @type Number
@@ -317,6 +319,84 @@ var Unit;
             }
             this.setMoveOffset(0);
             this.action = 2;
+        };
+
+        /**
+         * Returns the coordinates of the tile next to this unit at the
+         * direction relative to the unit's current direction.
+         *
+         * @param {Number} azimut The azimut represents the direction diference
+         *        from the unit's current direction. The azimut must be an
+         *        integral number within the range (-8, 8), where -8 represents
+         *        360° turn left (counter-clockwise) and 8 represents 360° turn
+         *        right (clockwise).
+         * @returns {Object} The coordinates of the tile next to the current
+         *          unit's location at the specified relative direction.
+         */
+        this.getCoordinatesAtDirection = function (azimut) {
+            var originalDirection, coordinates;
+            if (azimut < 0) {
+                azimut %= 8;
+                azimut += 8;
+            }
+            originalDirection = this.direction;
+            this.direction = this.direction + azimut % 8;
+            coordinates = this.getAheadCoordinates();
+            this.direction = originalDirection;
+            return coordinates;
+        };
+
+        /**
+         * Returns the coordinates of the tile directly ahead of this unit. The
+         * coordinates are represented by an object with the following fields:
+         *
+         * <ul>
+         *     <li><code>x: Number</code> - X coordinate of the tile ahead of
+         *         the unit.</li>
+         *     <li><code>y: Number</code> - Y coordinate of the tile ahead of
+         *         the unit.</li>
+         * </ul>
+         *
+         * @returns {Object} The coordinates of the tile directily ahead of the
+         *          unit.
+         */
+        this.getAheadCoordinates = function () {
+            var coordinates;
+            coordinates = {
+                x: this.x,
+                y: this.y
+            };
+            switch (this.direction) {
+                case 0:
+                    coordinates.y -= 2;
+                    break;
+                case 1:
+                    coordinates.x += this.y % 2;
+                    coordinates.y -= 1;
+                    break;
+                case 2:
+                    coordinates.x += 1;
+                    break;
+                case 3:
+                    coordinates.x += this.y % 2;
+                    coordinates.y += 1;
+                    break;
+                case 4:
+                    coordinates.x += 2;
+                    break;
+                case 5:
+                    coordinates.x -= 1 - (this.y % 2);
+                    coordinates.y += 1;
+                    break;
+                case 6:
+                    coordinates.x -= 1;
+                    break;
+                case 7:
+                    coordinates.x -= 1 - (this.y % 2);
+                    coordinates.y -= 1;
+                    break;
+            }
+            return coordinates;
         };
 
         /**

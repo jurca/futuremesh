@@ -253,7 +253,9 @@ Map = function () {
 
     /**
      * Returns the tile index about which tiles are accessible to units and
-     * which are not.
+     * which are not. This index is represented as a matrix, thus the first
+     * array coordinate represents the Y axis and the second array coordinate
+     * represents the X axis.
      *
      * @return {Array} Two-dimensional array matching the tiles containing
      *         information whether the tile is accessible to units or not.
