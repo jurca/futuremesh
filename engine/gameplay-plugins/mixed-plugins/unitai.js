@@ -54,6 +54,8 @@ UnitAI = function () {
                     break;
                 case 5: // unit is waiting for the tile ahead to be freed up
                     break;
+                case 6: // unit is turning
+                    break;
             }
         }
     };
@@ -103,20 +105,7 @@ UnitAI = function () {
         }
         unit.moveTargetX = waypoint.x;
         unit.moveTargetY = waypoint.y;
-        switch (checkAheadMovingUnit(unit)) {
-            case 0: // move ahead
-                unit.move(1);
-                map.updateUnit(unit);
-                view.onUnitChange(unit);
-                unit.action = 3; // will execute moveUnit()
-                break;
-            case 1: // bypass the obstacle ahead
-                // TODO
-                break;
-            case 2: // wait
-                unit.action = 5;
-                return;
-        }
+        startMovingUnitToNextTile(unit);
     }
 
     /**
@@ -128,13 +117,7 @@ UnitAI = function () {
      * @param {Unit} unit The unit that just started to move.
      */
     function startMovingUnitProgress(unit) {
-        // TODO: check direction - should we turn?
-            // TODO: is the unit in front of us moving - should we wait?
-        // TODO: set rotation mode if necessary
-        // "commit" the movement to other tile to map and view
-        map.updateUnit(unit);
-        view.onUnitChange(unit);
-        unit.action = 3; // moveUnit(unit) will be executed next
+        startMovingUnitToNextTile(unit);
     }
 
     /**
@@ -151,7 +134,8 @@ UnitAI = function () {
             return;
         }
         // have we reached the waypoint?
-        if ((unit.x === unit.moveTargetX) && (unit.y === unit.moveTargetY)) {
+        while ((unit.x === unit.moveTargetX) &&
+                (unit.y === unit.moveTargetY)) {
             unit.waypoints.shift();
             if (unit.waypoints.length) {
                 waypoint = unit.waypoints[0];
@@ -161,16 +145,121 @@ UnitAI = function () {
                 unit.action = 4; // stand still
                 unit.moveTargetX = null;
                 unit.moveTargetY = null;
+                return;
             }
         }
-        // TODO: check direction - should we turn ?
-            // TODO: is the unit in front of us moving - should we wait?
-        // TODO: set rotation mode if necessary
+        startMovingUnitToNextTile(unit);
+    }
+
+    /**
+     * Starts the process of moving the unit to the next tile on its path. The
+     * method first checks whether the unit is facing a reasonable direction
+     * for achieving its destination target (facing towards the destination and
+     * an empty tile or a tile occupied by unit already moving away). The
+     * method sets the unit to turning mode if the direction is wrong.
+     *
+     * <p>If the unit is facing the right direction, the method checks whether
+     * there isn't a unit ahead that is moving away from this unit. If there
+     * is, the provided unit is switched to the waiting mode - the unit waits
+     * for the tile ahead to be freed.</p>
+     *
+     * <p>Finally, if the tile ahead is empty, the unit registers the tile as
+     * its new location, frees up its current tile and starts moving to the new
+     * tile.</p>
+     *
+     * @param {Unit} unit The traveling unit.
+     */
+    function startMovingUnitToNextTile(unit) {
+        var targetDirection, azimuth;
+        // check direction - should we turn ?
+        targetDirection = getReasonableDirection(unit, unit.moveTargetX,
+                unit.moveTargetX);
+        if (targetDirection !== unit.direction) {
+            azimuth = targetDirection - unit.direction;
+            if (azimuth > 4) {
+                azimuth = 8 - azimuth;
+            }
+            unit.turningAzimuth = azimuth;
+            unit.turningProgress = 0;
+            unit.action = 6; // turning
+            return;
+        }
+        // is the unit in front of us moving - should we wait?
+        if (checkAheadMovingUnit(unit) === 2) {
+            unit.action = 5; // wait
+            return;
+        }
         // start movement to other tile
         unit.move(1); // sets unit.action = 2
         map.updateUnit(unit);
         view.onUnitChange(unit);
         unit.action = 3;
+    }
+
+    /**
+     * Returns the direction that is the best option for the provided unit to
+     * take in order to reach the specified target location.
+     *
+     * @param {Unit} unit The traveling unit.
+     * @param {type} targetX The X-coordinate of the unit's destination.
+     * @param {type} targetY The Y-coordinate of the unit's destination.
+     * @returns {Number} The direction the unit should be facing to reach its
+     *          goal.
+     */
+    function getReasonableDirection(unit, targetX, targetY) {
+        var headDirection, oldDirection, reasonableDirectionAzimuth,
+                reasonableDirection;
+        headDirection = getPreferredDirection(unit, targetX, targetY);
+        oldDirection = unit.direction;
+        unit.direction = headDirection;
+        reasonableDirectionAzimuth = findFreeDirection(unit);
+        unit.direction = oldDirection;
+        reasonableDirection = headDirection + reasonableDirectionAzimuth;
+        if (reasonableDirection < 0) {
+            reasonableDirection += 8;
+        } else if (reasonableDirection > 7) {
+            reasonableDirection %= 8;
+        }
+        return reasonableDirection;
+    }
+
+    /**
+     * Returns the preferred direction for the provided unit if the unit is to
+     * move to the specified location. The method assumes that the direct path
+     * to the specified destination is (mostly) clear, so no or minimal
+     * deviations would be required during the transporation.
+     *
+     * @param {Unit} unit The unit that is about to move to the specified
+     *        location.
+     * @param {Number} targetX The X-coordinate of the unit's destination.
+     * @param {Number} targetY The Y-coordinate of the unit's destination.
+     */
+    function getPreferredDirection(unit, targetX, targetY) {
+        var deltaX, deltaY;
+        deltaX = targetX - unit.x;
+        deltaY = targetY - unit.y;
+        if (deltaX === 0) {
+            if (deltaY > 0) {
+                return 4; // south
+            }
+            return 0; // north
+        }
+        if (deltaY === 0) {
+            if (deltaX > 0) {
+                return 2; // east
+            }
+            return 6; // west
+        }
+        if (deltaY > 0) {
+            if (deltaX > 0) {
+                return 1; // north-east
+            }
+            return 7; // north-west
+        }
+        if (deltaX > 0) {
+            return 3; // south-east
+        }
+        return 5; // south-west
     }
 
     /**
@@ -198,6 +287,9 @@ UnitAI = function () {
             }
             if (navigationIndex[coordinates.y][coordinates.x]) {
                 return direction;
+            }
+            if (direction === 0) {
+                continue;
             }
             coordinates = unit.getCoordinatesAtDirection(-direction);
             item = map.getObjectAt(coordinates.x, coordinates.y);
