@@ -135,6 +135,7 @@ var Unit;
          *     <li>3 - unit is currently travelling</li>
          *     <li>4 - unit is standing still</li>
          *     <li>5 - unit is waiting for the tile ahead to be freed up</li>
+         *     <li>6 - unit is turning to a new direction</li>
          * </ul>
          *
          * @type Number
@@ -207,6 +208,36 @@ var Unit;
         this.moveOffsetY = 0;
 
         /**
+         * The turning azimuth represents the numbers of turning steps the unit
+         * is making, along with their direction: a negative value represents
+         * turning anti-clockwise and a positive value represents turning
+         * clockwise. For example: if the unit's direction is 2 and the turning
+         * azimuth is -3, the unit will eventually turn to directions 1, 0, 7
+         * in that order.
+         *
+         * <p>The absolut value of this field is decreased every time the
+         * turning progress reaches 1000. The absolute value of this field is
+         * never greater than 4. The unit stops turning once the value reaches
+         * 0.</p>
+         *
+         * @type Number
+         */
+        this.turningAzimuth = 0;
+
+        /**
+         * Current progress of turning the unit to new direction. The progress
+         * is related to a single turning step, for example changing to unit's
+         * direction from 4 to 5 or from 4 to 3.
+         *
+         * <p>The progress is represented by an integral number from the range
+         * [0, 1000], where 0 represents the start of the turning and 1000
+         * represents the finishing of the turning.</p>
+         *
+         * @type Number
+         */
+        this.turningProgress = 0;
+
+        /**
          * The X-coordinate of the target location of the current movement. The
          * value is the same as the X-coordinate of the first waypoint in the
          * waypoints queue.
@@ -228,7 +259,7 @@ var Unit;
          *
          * @type Number
          */
-        this.moveTargetY = null;
+        this.moveTargetX = null;
 
         /**
          * The current waypoints queue. Each waypoint is represented as an
