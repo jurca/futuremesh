@@ -81,7 +81,7 @@ Music = function () {
             current ? --current : (current = playlist.length - 1);
             this.play();
         }
-    }
+    };
 
     /**
      * Return true if the playback is active.
@@ -119,7 +119,7 @@ Music = function () {
      */
     this.setLoop = function (newLoop) {
         loop = newLoop;
-    }
+    };
 
     /**
      * Returns true if loop mode is enabled.
@@ -145,7 +145,7 @@ Music = function () {
         if (!playlist[next]) {
             throw new Error('song of this index is not in playlist');
         }
-        if (next == current) {
+        if (next === current) {
             throw new Error('cannot fade to the same song');
         }
         if (!(way instanceof Function)) {
