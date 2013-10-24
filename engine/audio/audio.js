@@ -35,7 +35,7 @@
      */
     createAudio = function (src, options) {
         var audio, source, i;
-        if (typeof src == 'string') {
+        if (typeof src === 'string') {
             src = [src];
         }
         audio = document.createElement('audio');
@@ -51,7 +51,7 @@
         for (i = src.length; i--;) {
             source = document.createElement('source');
             source.setAttribute('type', 'audio/' +
-                    (getExtension[src[i]] == 'ogg' ? 'ogg' : 'mpeg'));
+                    (getExtension[src[i]] === 'ogg' ? 'ogg' : 'mpeg'));
             source.setAttribute('src', src[i]);
             audio.appendChild(source);
         }
@@ -81,7 +81,9 @@
      *              not set, default container will be used. If default
      *              container has not been set, the body element is used.</li>
      *          <li>duration - Number specifying the audio lenght in
-     *              seconds. Required by the onended option.</li>
+     *              seconds. The Audio will attempt to autodetect the duration
+     *              (if possible). The duration must be specified if the
+     *              autodetection doesn't work and onended option is used.</li>
      *          <li>onload - Function that should be executed once the audio
      *              has been loaded and is ready for playback.</li>
      *          <li>onended - Function that should be executed once the audio
@@ -100,15 +102,18 @@
         }
         container = options.container ? options.container : defaultContainer;
         audio = createAudio(src, options);
+        duration = options.duration || audio.duration;
         if (options.onload instanceof Function) {
             i = setInterval(function () {
-                if (audio.readyState == 4) {
+                if (audio.readyState === 4) {
                     clearInterval(i);
+                    if (!duration) {
+                        duration = audio.duration;
+                    }
                     options.onload();
                 }
             }, 10);
         }
-        duration = options.duration;
         playOffset = 0;
         runOnEnded = false;
 
@@ -132,7 +137,7 @@
          *         otherwise.
          */
         this.isLoaded = function () {
-            return audio.readyState == 4;
+            return audio.readyState === 4;
         };
 
         /**
