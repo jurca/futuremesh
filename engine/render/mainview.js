@@ -6,7 +6,7 @@ var MainView;
  * layers.
  */
 MainView = function () {
-    var terrainLayer, buildingsLayer, unitsLayer, sfxLayer;
+    var terrainBuildingsLayer, unitsLayer, sfxLayer;
 
     /**
      * Sets rendering canvas for terrain layer, buildings layer and units
@@ -15,10 +15,8 @@ MainView = function () {
      * @param {HTMLCanvasElement} viewCanvas The canvas for the renderers.
      */
     this.setCanvas = function (viewCanvas) {
-        terrainLayer = new TerrainLayer();
-        terrainLayer.setCanvas(viewCanvas);
-        buildingsLayer = new BuildingsLayer();
-        buildingsLayer.setCanvas(viewCanvas);
+        terrainBuildingsLayer = new TerrainBuildingsLayer();
+        terrainBuildingsLayer.setCanvas(viewCanvas);
         unitsLayer = new UnitsLayer();
         unitsLayer.setCanvas(viewCanvas);
         sfxLayer = new SFX();
@@ -31,14 +29,13 @@ MainView = function () {
      * @param {Map} map The map instance.
      */
     this.setMap = function (map) {
-        if (!terrainLayer) {
+        if (!terrainBuildingsLayer) {
             throw new Error('Cannot set map before canvas');
         }
-        terrainLayer.setMap(map.getMap());
-        buildingsLayer.setMap(map);
+        terrainBuildingsLayer.setMap(map);
         unitsLayer.setMap(map);
         sfxLayer.setMap(map);
-        terrainLayer.init();
+        terrainBuildingsLayer.init();
     };
 
     /**
@@ -48,24 +45,27 @@ MainView = function () {
      * @param {Number} y The Y-coordinate offset for renderers.
      */
     this.display = function (x, y) {
-        terrainLayer.display(x, y);
-        buildingsLayer.display(x, y);
+        terrainBuildingsLayer.display(x, y);
         unitsLayer.display(x, y);
         sfxLayer.display(x, y);
     };
 
     /**
-     * Event handler for changes about buildings - adding or removing of a
-     * building.
+     * Handles a creation of a new building on the map.
      *
-     * @param {Building} building Building which status has changed.
+     * @param {Building} building Building which was just added to the map.
      */
-    this.onBuildingChange = function (building) {
-        if (building.type === false) {
-            buildingsLayer.onBuildingRemoved(building);
-        } else {
-            buildingsLayer.onBuildingAdded(building);
-        }
+    this.onBuildingAdded = function (building) {
+        terrainBuildingsLayer.onBuildingAdded(building);
+    };
+
+    /**
+     * Handles a destruction of the provided building on the map.
+     *
+     * @param {Building} building Building which was just removed from the map.
+     */
+    this.onBuildingRemoved = function (building) {
+        terrainBuildingsLayer.onBuildingRemoved(building);
     };
 
     /**
@@ -85,9 +85,9 @@ MainView = function () {
      *         dimensions of inner buffers in pixels.
      */
     this.getLayersDimensions = function () {
-        if (!terrainLayer) {
-            throw new Error('Layers has not been initialized yet');
+        if (!terrainBuildingsLayer) {
+            throw new Error("Layer renderers have not been initialized yet");
         }
-        return terrainLayer.getBufferDimensions();
+        return terrainBuildingsLayer.getBufferDimensions();
     };
 };

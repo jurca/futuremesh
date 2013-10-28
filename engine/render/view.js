@@ -62,7 +62,11 @@ View = function () {
      * @param {Building} building Building which status has changed.
      */
     this.onBuildingChange = function (building) {
-        mainview.onBuildingChange(building);
+        if (building.type === false) {
+            mainview.onBuildingRemoved(building);
+        } else {
+            mainview.onBuildingAdded(building);
+        }
         minimap.onBuildingChange(building);
     };
 
