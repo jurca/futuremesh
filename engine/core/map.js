@@ -405,6 +405,24 @@ Map = function () {
      * Returns a list of coordinates of all tiles occupied by the specified
      * building. Each coordinate is specified as an object with the following
      * fieds:
+     *
+     * <ul>
+     *     <li><code>x</code> - the X coordinate.</li>
+     *     <li><code>y</code> - the Y coordinate.</li>
+     * </ul>
+     *
+     * @param {Building} building The building.
+     * @returns {Array}
+     */
+    this.getTilesOccupiedByBuilding = function (building) {
+        return getBuildingPositions(building);
+    };
+
+    /**
+     * Returns a list of coordinates of all tiles occupied by the specified
+     * building. Each coordinate is specified as an object with the following
+     * fieds:
+     *
      * <ul>
      *     <li><code>x</code> - the X coordinate.</li>
      *     <li><code>y</code> - the Y coordinate.</li>
