@@ -1,11 +1,20 @@
-window.onerror = function (message, source, line) {
-    var text;
-    text = "The application has encountered an error!\n\n" +
-            "Error description: " + message + "\n" +
-            "Source of error: " + source + "\n" +
-            "Line number: " + line;
-    alert(text);
-};
+(function () {
+    var alertLimit;
+
+    alertLimit = 5;
+
+    window.onerror = function (message, source, line) {
+        var text;
+        text = "The application has encountered an error!\n\n" +
+                "Error description: " + message + "\n" +
+                "Source of error: " + source + "\n" +
+                "Line number: " + line;
+        if (alertLimit) {
+            alert(text);
+            alertLimit--;
+        }
+    };
+}());
 
 addEventListener('load', function () {
     var $;
