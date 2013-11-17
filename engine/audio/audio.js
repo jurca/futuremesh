@@ -51,7 +51,7 @@
         for (i = src.length; i--;) {
             source = document.createElement('source');
             source.setAttribute('type', 'audio/' +
-                    (getExtension[src[i]] === 'ogg' ? 'ogg' : 'mpeg'));
+                    (getExtension(src[i]) === 'ogg' ? 'ogg' : 'mpeg'));
             source.setAttribute('src', src[i]);
             audio.appendChild(source);
         }
