@@ -30,6 +30,11 @@ ViewRendererPlugin = function () {
         return true;
     };
 
+    // override
+    this.handlesSubTicks = function () {
+        return true;
+    };
+
     /**
      * Event listener for the <code>scrollMapView</code> event. The listener
      * will move the camera according to the specified scroll vector.
