@@ -18,6 +18,14 @@ ViewRendererPlugin = function () {
     };
 
     // override
+    this.handleSubTick = function (tickFragment) {
+        // We re-render the screen event though this is just a sub-tick in
+        // order to maintain a steady CPU/GPU load for each frame. Only this
+        // plugin does this because it performs the most intense operations.
+        view.display(x, y);
+    };
+
+    // override
     this.ignoresExtraTicks = function () {
         return true;
     };

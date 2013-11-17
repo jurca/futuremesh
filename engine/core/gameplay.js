@@ -29,26 +29,33 @@ var GamePlay;
  *        for debugging and/or testing purposes.
  */
 GamePlay = function (plugins, settings) {
-    var thread, threadInterval, scheduledPlugins, lastTick, tickOverflow,
-            eventDeliveryPlugin, eventDrivenPlugins, eventQueue,
-            singleTickScheduledPlugins;
+    var thread, scheduledPlugins, lastTick, tickOverflow, eventDeliveryPlugin,
+            eventDrivenPlugins, eventQueue, singleTickScheduledPlugins,
+            threadActive, tickDuration, subTickScheduledPlugins;
 
     // --------------------- background thread logic --------------------------
 
     thread = function () {
-        var i, j, now, tickCount;
+        var i, j, now, tickCount, tickCountReal;
+        requestAnimationFrame(thread);
         now = (new Date()).getTime();
-        tickCount = (now - lastTick) / settings.tickDuration + tickOverflow;
-        tickOverflow = tickCount - Math.floor(tickCount);
-        tickCount = Math.floor(tickCount);
+        tickCountReal = (now - lastTick) / tickDuration + tickOverflow;
+        tickCount = Math.floor(tickCountReal);
+        tickOverflow = tickCountReal - tickCount;
         lastTick = now;
-        for (i = Math.min(tickCount, settings.maxTicks); i--;) {
-            for (j = scheduledPlugins.length; j--;) {
-                scheduledPlugins[j].handleTick();
+        if (tickCount) {
+            for (i = Math.min(tickCount, settings.maxTicks); i--;) {
+                for (j = scheduledPlugins.length; j--;) {
+                    scheduledPlugins[j].handleTick();
+                }
             }
-        }
-        for (i = singleTickScheduledPlugins.length; i--;) {
-            singleTickScheduledPlugins[i].handleTick();
+            for (i = singleTickScheduledPlugins.length; i--;) {
+                singleTickScheduledPlugins[i].handleTick();
+            }
+        } else {
+            for (i = subTickScheduledPlugins.length; i--;) {
+                subTickScheduledPlugins[i].handleSubTick(tickOverflow);
+            }
         }
     };
 
@@ -114,12 +121,13 @@ GamePlay = function (plugins, settings) {
      * with <code>null</code> as event data.
      */
     this.start = function () {
-        if (threadInterval) {
+        if (threadActive) {
             throw new Error('GamePlay daemon is already running');
         }
         lastTick = (new Date()).getTime();
         tickOverflow = 0;
-        threadInterval = setInterval(thread, settings.tickDuration);
+        threadActive = true;
+        requestAnimationFrame(thread);
         this.sendEvent("start", null);
         eventDeliveryPlugin.handleTick(); // deliver the event right now
         this.sendEvent("running", null);
@@ -132,13 +140,12 @@ GamePlay = function (plugins, settings) {
      * delivery is terminated.
      */
     this.stop = function () {
-        if (!threadInterval) {
+        if (!threadActive) {
             throw new Error('GamePlay daemon is not running');
         }
-        clearInterval(threadInterval);
+        threadActive = false;
         this.sendEvent("stop", null);
         eventDeliveryPlugin.handleTick(); // deliver the event right now
-        threadInterval = null;
     };
 
     // -------------------------- constructor ---------------------------------
@@ -148,7 +155,10 @@ GamePlay = function (plugins, settings) {
         eventQueue = [];
         scheduledPlugins = [];
         singleTickScheduledPlugins = [];
+        subTickScheduledPlugins = [];
         eventDrivenPlugins = {};
+        threadActive = false;
+        tickDuration = settings.tickDuration;
 
         /**
          * Retrieves the list of observed events from the plugin and registers
@@ -177,6 +187,9 @@ GamePlay = function (plugins, settings) {
                     singleTickScheduledPlugins.push(plugin);
                 } else {
                     scheduledPlugins.push(plugin);
+                }
+                if (plugin.handlesSubTicks()) {
+                    subTickScheduledPlugins.push(plugin);
                 }
                 if (plugin instanceof MixedPlugin) {
                     registerEventDrivenPlugin(plugin);
