@@ -118,9 +118,8 @@ var Unit;
         this.speed = definition.speed;
 
         /**
-         * Unit's turning speed in direction changes per second. One change of
-         * direction can always be only increment or decrement of the unit's
-         * direction property modulo 8.
+         * Unit's turning speed in turning offset units per tick (1000 is 1
+         * direction step per tick).
          *
          * @type Number
          */
