@@ -55,6 +55,7 @@ UnitAI = function () {
                 case 5: // unit is waiting for the tile ahead to be freed up
                     break;
                 case 6: // unit is turning
+                    turnUnit(unit);
                     break;
             }
         }
@@ -85,6 +86,36 @@ UnitAI = function () {
         map = gameMap;
         navigationIndex = map.getNavigationIndex();
     };
+
+    /**
+     * Perform turning of the provided unit on spot (provided that the unit is
+     * actually turning).
+     *
+     * @param {Unit} unit The unit turning on spot right now.
+     */
+    function turnUnit(unit) {
+        var progress;
+        if (!unit.turningAzimuth) {
+            unit.action = 4; // standing still
+            return;
+        }
+        progress = Math.min(1000, unit.turningProgress + unit.turnSpeed);
+        unit.turningProgress = progress;
+        if (progress < 1000) {
+            return;
+        }
+        if (unit.turningAzimuth > 1) {
+            unit.direction = (unit.direction + 1) % 8;
+            unit.turningAzimuth--;
+        } else {
+            unit.direction--;
+            if (unit.direction === -1) {
+                unit.direction = 7;
+            }
+            unit.turningAzimuth++;
+        }
+        unit.turningProgress = 0;
+    }
 
     /**
      * The unit has waypoint(s) set to itself, but is standing still. The
