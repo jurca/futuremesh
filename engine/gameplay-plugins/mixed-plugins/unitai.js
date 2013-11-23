@@ -33,6 +33,9 @@ UnitAI = function () {
     this.handleTick = function () {
         var i, units, unit;
         units = map.getUnits();
+        if (!window.units) {
+            window.units = units;
+        }
         for (i = units.length; i--;) {
             unit = units[i];
             switch (unit.action) {
@@ -210,7 +213,7 @@ UnitAI = function () {
             if (azimuth > 4) {
                 azimuth = 8 - azimuth;
             }
-            unit.turningAzimuth = azimuth;
+            unit.turningAzimuth = -azimuth;
             unit.turningProgress = 0;
             unit.action = 6; // turning
             return;
@@ -281,7 +284,7 @@ UnitAI = function () {
             }
             return 6; // west
         }
-        if (deltaY > 0) {
+        if (deltaY < 0) {
             if (deltaX > 0) {
                 return 1; // north-east
             }
