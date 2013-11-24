@@ -370,7 +370,7 @@ var Unit;
                 azimut += 8;
             }
             originalDirection = this.direction;
-            this.direction = this.direction + azimut % 8;
+            this.direction = (this.direction + azimut) % 8;
             coordinates = this.getAheadCoordinates();
             this.direction = originalDirection;
             return coordinates;
