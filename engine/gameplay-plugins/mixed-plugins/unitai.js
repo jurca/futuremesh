@@ -35,6 +35,7 @@ UnitAI = function () {
         units = map.getUnits();
         if (!window.units) {
             window.units = units;
+            window.unit = units[2];
         }
         for (i = units.length; i--;) {
             unit = units[i];
@@ -107,7 +108,7 @@ UnitAI = function () {
         if (progress < 1000) {
             return;
         }
-        if (unit.turningAzimuth > 1) {
+        if (unit.turningAzimuth > 0) {
             unit.direction = (unit.direction + 1) % 8;
             unit.turningAzimuth--;
         } else {
@@ -207,11 +208,11 @@ UnitAI = function () {
         var targetDirection, azimuth;
         // check direction - should we turn ?
         targetDirection = getReasonableDirection(unit, unit.moveTargetX,
-                unit.moveTargetX);
+                unit.moveTargetY);
         if (targetDirection !== unit.direction) {
-            azimuth = targetDirection - unit.direction;
+            azimuth = unit.direction - targetDirection;
             if (azimuth > 4) {
-                azimuth = 8 - azimuth;
+                azimuth = -(8 - azimuth);
             }
             unit.turningAzimuth = -azimuth;
             unit.turningProgress = 0;
