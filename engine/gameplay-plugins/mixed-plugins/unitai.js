@@ -74,6 +74,8 @@ UnitAI = function () {
                 unit.action = 4; // standing still
             }
         });
+        window.units = map.getUnits();
+        window.unit = units[2];
     };
 
     /**
@@ -269,9 +271,12 @@ UnitAI = function () {
      * @param {Number} targetY The Y-coordinate of the unit's destination.
      */
     function getPreferredDirection(unit, targetX, targetY) {
-        var deltaX, deltaY;
+        var deltaX, deltaY, sourceOffset, destinationOffset;
         deltaX = targetX - unit.x;
         deltaY = targetY - unit.y;
+        sourceOffset = unit.y % 2;
+        destinationOffset = targetY % 2;
+        deltaX += destinationOffset - sourceOffset;
         if (deltaX === 0) {
             if (deltaY > 0) {
                 return 4; // south
