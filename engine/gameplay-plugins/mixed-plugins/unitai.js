@@ -74,8 +74,6 @@ UnitAI = function () {
                 unit.action = 4; // standing still
             }
         });
-        window.units = map.getUnits();
-        window.unit = units[2];
     };
 
     /**
@@ -323,7 +321,7 @@ UnitAI = function () {
                     return direction;
                 }
             }
-            for (direction = 1; direction < 5; direction++) {
+            for (direction = 1; direction < 4; direction++) {
                 if (isFreeDirection(unit, -direction)) {
                     return -direction;
                 }
@@ -334,7 +332,7 @@ UnitAI = function () {
                     return -direction;
                 }
             }
-            for (direction = 1; direction < 5; direction++) {
+            for (direction = 1; direction < 4; direction++) {
                 if (isFreeDirection(unit, direction)) {
                     return direction;
                 }
