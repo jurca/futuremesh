@@ -211,6 +211,9 @@ UnitAI = function () {
                 unit.moveTargetY);
         if (targetDirection !== unit.direction) {
             azimuth = unit.direction - targetDirection;
+            if (azimuth < -4) {
+                azimuth = 8 + azimuth;
+            }
             if (azimuth > 4) {
                 azimuth = -(8 - azimuth);
             }
