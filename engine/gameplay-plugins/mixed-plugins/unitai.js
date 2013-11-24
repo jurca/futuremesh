@@ -74,8 +74,6 @@ UnitAI = function () {
                 unit.action = 4; // standing still
             }
         });
-        window.units = map.getUnits();
-        window.unit = units[2];
     };
 
     /**
