@@ -33,10 +33,6 @@ UnitAI = function () {
     this.handleTick = function () {
         var i, units, unit;
         units = map.getUnits();
-        if (!window.units) {
-            window.units = units;
-            window.unit = units[2];
-        }
         for (i = units.length; i--;) {
             unit = units[i];
             switch (unit.action) {
@@ -78,6 +74,8 @@ UnitAI = function () {
                 unit.action = 4; // standing still
             }
         });
+        window.units = map.getUnits();
+        window.unit = units[2];
     };
 
     /**
@@ -250,7 +248,7 @@ UnitAI = function () {
         headDirection = getPreferredDirection(unit, targetX, targetY);
         oldDirection = unit.direction;
         unit.direction = headDirection;
-        reasonableDirectionAzimuth = findFreeDirection(unit);
+        reasonableDirectionAzimuth = findFreeDirection(unit, oldDirection);
         unit.direction = oldDirection;
         reasonableDirection = headDirection + reasonableDirectionAzimuth;
         if (reasonableDirection < 0) {
@@ -306,43 +304,66 @@ UnitAI = function () {
      * for example: -2 means the unit should turn counter-clockwise twice, 1
      * means the unit should turn once clockwise.
      *
-     * @param {Unit} unit
+     * @param {Unit} unit The unit that is about to move to the next tile.
+     * @param {Number} preferedDirection The unit's last prefered direction to
+     *        move. This is used to find the direction with least amount of
+     *        turning neccessary.
      * @returns {Number} The azimuth direction the unit should turn to so it
      *          could move to a free tile. The direction is always within the
      *          [-4, 4] interval.
      */
-    function findFreeDirection(unit) {
-        var direction, coordinates, item;
-        for (direction = 0; direction < 5; direction++) {
-            coordinates = unit.getCoordinatesAtDirection(direction);
-            item = map.getObjectAt(coordinates.x, coordinates.y);
-            if (item) {
-                if ((item instanceof Unit) && (item.action === 3)) {
-                    if (((unit.direction + 8 - item.direction) % 8) !== 4) {
-                        return direction; // units are not facing each other
-                    }
+    function findFreeDirection(unit, preferedDirection) {
+        var direction;
+        if (isFreeDirection(unit, 0)) {
+            return 0;
+        }
+        if (preferedDirection > unit.direction) {
+            for (direction = 1; direction < 5; direction++) {
+                if (isFreeDirection(unit, direction)) {
+                    return direction;
                 }
             }
-            if (navigationIndex[coordinates.y][coordinates.x]) {
-                return direction;
-            }
-            if (direction === 0) {
-                continue;
-            }
-            coordinates = unit.getCoordinatesAtDirection(-direction);
-            item = map.getObjectAt(coordinates.x, coordinates.y);
-            if (item) {
-                if ((item instanceof Unit) && (item.action === 3)) {
-                    if (((unit.direction + 8 - item.direction) % 8) !== 4) {
-                        return -direction; // units are not facing each other
-                    }
+            for (direction = 1; direction < 5; direction++) {
+                if (isFreeDirection(unit, -direction)) {
+                    return -direction;
                 }
             }
-            if (navigationIndex[coordinates.y][coordinates.x]) {
-                return -direction;
+        } else {
+            for (direction = 1; direction < 5; direction++) {
+                if (isFreeDirection(unit, -direction)) {
+                    return -direction;
+                }
+            }
+            for (direction = 1; direction < 5; direction++) {
+                if (isFreeDirection(unit, direction)) {
+                    return direction;
+                }
             }
         }
         return null;
+    }
+
+    /**
+     * Checks whether the specified direction is free for the provided unit to
+     * move to.
+     *
+     * @param {Unit} unit The unit that is about to move.
+     * @param {Number} direction The direction to test.
+     * @return {Boolean} <code>true</code> if the specified direction is free
+     *         for the unit to move to.
+     */
+    function isFreeDirection(unit, direction) {
+        var coordinates, item;
+        coordinates = unit.getCoordinatesAtDirection(direction);
+        item = map.getObjectAt(coordinates.x, coordinates.y);
+        if (item) {
+            if ((item instanceof Unit) && (item.action === 3)) {
+                if (((unit.direction + 8 - item.direction) % 8) !== 4) {
+                    return true; // units are not facing each other
+                }
+            }
+        }
+        return navigationIndex[coordinates.y][coordinates.x];
     }
 
     /**
