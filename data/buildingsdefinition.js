@@ -18,11 +18,11 @@ BuildingsDefinition = (function () {
             prerequisities: [],
             resource: null,
             race: 0,
-            construction: { // total cost: 5000, duration: 1500 ticks
+            construction: { // total cost: 500, duration: 100 ticks
                 step: [10],
-                stepProgress: 2, // 500 steps, fully constructed when progress
-                                 // is 1000
-                stepDuration: 3 // number of ticks
+                stepProgress: 20, // 50 steps, fully constructed when progress
+                                  // is 1000
+                stepDuration: 1   // number of ticks, +1 for resource request
             }
         },
         {

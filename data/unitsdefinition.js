@@ -14,10 +14,10 @@ UnitsDefinition = (function () {
             colorifyDistance: 240,
             resource: 1,
             race: 0,
-            construction: { // total cost: 1500, duration: 500 ticks
+            construction: { // total cost: 150, duration: 50 ticks
                 step: [6],
-                stepProgress: 4, // 250 steps
-                stepDuration: 2
+                stepProgress: 40, // 25 steps (1000 is complete construction)
+                stepDuration: 1   // +1 for resource request
             }
         }
     ];
