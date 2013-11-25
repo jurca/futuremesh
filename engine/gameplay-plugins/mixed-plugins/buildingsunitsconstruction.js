@@ -61,6 +61,7 @@ BuildingsUnitsConstruction = function () {
             if (!constructionQueues.hasOwnProperty(playerId)) {
                 continue;
             }
+            playerId = parseInt(playerId, 10); // typecast from string to int
             buildingsTasks = constructionQueues[playerId].buildings;
             for (buildingType in buildingsTasks) {
                 if (!buildingsTasks.hasOwnProperty(buildingType) ||
