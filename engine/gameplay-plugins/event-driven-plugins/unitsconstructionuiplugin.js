@@ -72,15 +72,22 @@ UnitsConstructionUIPlugin = function () {
             type++
         ) {
             if ((unit.race !== null) &&
-                    (unit.race == currentPlayerRace)) {
+                    (unit.race === currentPlayerRace)) {
                 createButton(unit);
             }
         }
     };
 
+    /**
+     * Handler for the <code>unitConstructionProgress</code> event. The handler
+     * updates the UI with percentual info about the current unit construction
+     * progress.
+     *
+     * @param {Object} data Event's data.
+     */
     this.onUnitConstructionProgress = function (data) {
         var unitButton, label;
-        if (data.player == playerId) {
+        if (data.player === playerId) {
             unitButton = buttons[data.unit];
             label = Math.floor(data.progress / 10) + ' %';
             if (data.enqueued) {
