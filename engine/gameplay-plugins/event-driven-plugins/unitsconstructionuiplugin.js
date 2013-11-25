@@ -92,6 +92,8 @@ UnitsConstructionUIPlugin = function () {
             label = Math.floor(data.progress / 10) + ' %';
             if (data.enqueued) {
                 label += ' (' + data.enqueued + ')';
+            } else if (data.progress >= 1000) {
+                label = "";
             }
             unitButton.progressInfo.innerHTML = label;
         }
