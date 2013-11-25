@@ -27,7 +27,15 @@ UnitAI = function () {
      *
      * @type View
      */
-    view;
+    view,
+
+    /**
+     * Selected unit production buildings of the players. The indexes are
+     * player IDs, the values are Building instances.
+     *
+     * @type Array
+     */
+    productionBuildings;
 
     // override
     this.handleTick = function () {
@@ -62,6 +70,33 @@ UnitAI = function () {
     };
 
     /**
+     * Handles the <code>unitConstructionProgress</code> event. The handler
+     * adds a new unit to the map if the unit's construction has been
+     * completed.
+     *
+     * @param {Object} data Event data.
+     */
+    this.onUnitConstructionProgress = function (data) {
+        var player, unitType, direction, unit, productionBuilding, position;
+        if (data.progress < 1000) {
+            return;
+        }
+        player = data.player;
+        unitType = data.unit;
+        direction = Math.floor(Math.random() * 8);
+        productionBuilding = getProductionBuilding(player);
+        if (!productionBuilding) {
+            // Production is not possible, all central buildings have been
+            // destroyed.
+            return;
+        }
+        position = findNearestFreeTile(productionBuilding);
+        unit = new Unit(position.x, position.y, direction, unitType, player);
+        map.updateUnit(unit);
+        view.onUnitChange(unit);
+    };
+
+    /**
      * Event handler for the <code>viewReady</vode> event. The handler sets the
      * internal view reference.
      *
@@ -83,6 +118,7 @@ UnitAI = function () {
      * @param {Map} gameMap The current game map.
      */
     this.onGameMapInitialization = function (gameMap) {
+        productionBuildings = [];
         map = gameMap;
         navigationIndex = map.getNavigationIndex();
     };
@@ -115,6 +151,79 @@ UnitAI = function () {
             unit.turningAzimuth++;
         }
         unit.turningProgress = 0;
+    }
+
+    /**
+     * Attempts to find the nearest free (unoccupied by a building or a unit)
+     * tile that is accessible. The method searches the tiles in an
+     * increasingly larger and larger radius around the specified building. The
+     * results returned by this method are rough, but good enough in practice.
+     * The positions returned by this method do not guarantee a dense
+     * occupation of tiles.
+     *
+     * @param {Building} building The building around which the tiles should be
+     *        searched.
+     * @return {Object} Location of the nearest tile. The location is specified
+     *         as an object with the following fields: <code>x: Number</code>
+     *         specifying the X-coordinate and <code>y: Number</code>
+     *         specifying the Y-coordinate.
+     */
+    function findNearestFreeTile(building) {
+        var centralX, centralY, radius, circumference, angleStep, angle, x, y, a;
+        centralX = building.x + Math.floor(building.width / 2);
+        centralY = building.y + Math.floor(building.height / 2);
+        radius = Math.floor((building.width + building.height) / 2) - 1;
+        while (true) {
+            circumference = Math.floor(2 * radius * Math.PI);
+            for (angleStep = circumference; angleStep--;) {
+                angle = 2 * Math.PI / circumference * angleStep;
+                x = centralX + Math.floor(Math.cos(angle) * radius);
+                y = centralY + Math.floor(Math.sin(angle) * radius);
+                a = map.getObjectAt(x, y);
+                if (!map.getObjectAt(x, y) && navigationIndex[y][x]) {
+                    return {
+                        x: x,
+                        y: y
+                    };
+                }
+            }
+            radius++;
+        }
+    }
+
+    /**
+     * Returns the currently selected unit production building of the specified
+     * player. The method attemps to find such building if none is known. The
+     * method returns <code>null</code> if now such building exists.
+     *
+     * @param {Number} playerID The ID of the player owning the building.
+     * @return {Building} The currently selected unit production building owned
+     *         by the specified player.
+     */
+    function getProductionBuilding(playerID) {
+        var i, building, buildings, centralBuildings;
+        if (productionBuildings[playerID] instanceof Building) {
+            return productionBuildings[playerID];
+        }
+        buildings = map.getBuildings();
+        centralBuildings = [];
+        for (i = buildings.length; i--;) {
+            building = buildings[i];
+            if ((building.player === playerID) && building.isCentral) {
+                if (building.isSelectedUnitProductionBuilding) {
+                    productionBuildings[playerID] = building;
+                    return building;
+                }
+                centralBuildings.push(building);
+            }
+        }
+        if (centralBuildings.length) {
+            building = centralBuildings.shift();
+            building.isSelectedUnitProductionBuilding = true;
+            productionBuildings[playerID] = building;
+            return building;
+        }
+        return null;
     }
 
     /**
