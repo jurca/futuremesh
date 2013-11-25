@@ -18,6 +18,7 @@ BuildingsDefinition = (function () {
             prerequisities: [],
             resource: null,
             race: 0,
+            isCentral: true,
             construction: { // total cost: 500, duration: 100 ticks
                 step: [10],
                 stepProgress: 20, // 50 steps, fully constructed when progress
@@ -39,6 +40,7 @@ BuildingsDefinition = (function () {
             prerequisities: [],
             resource: 1,
             race: null,
+            isCentral: false,
             construction: null // non-constructable building
         }
     ];
