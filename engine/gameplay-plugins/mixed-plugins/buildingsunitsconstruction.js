@@ -90,6 +90,7 @@ BuildingsUnitsConstruction = function () {
                         !unitsTasks[unitType]) {
                     continue;
                 }
+                unitType = parseInt(unitType, 10); // typecast from string
                 if (unitsTasks[unitType].waitingForResources) {
                     continue; // we already sent request for resources
                 }
