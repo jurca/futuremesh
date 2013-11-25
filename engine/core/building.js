@@ -137,6 +137,26 @@ var Building;
         this.race = definition.race,
 
         /**
+         * Set to <code>true</code> if this building is the central building in
+         * the player's base. The central buildings produce all units, so all
+         * newly built units will appear next to it - if this building is also
+         * the currently selected central building.
+         *
+         * @type Boolean
+         */
+        this.isCentral = definition.isCentral;
+
+        /**
+         * Set to <code>true</code> if this building is a central building of
+         * the player's base and all newly built units should appear next to
+         * it. Each building may have only one selected unit production
+         * building at a time.
+         *
+         * @type Boolean
+         */
+        this.isSelectedUnitProductionBuilding = false;
+
+        /**
          * The ID of the player owning the building.
          *
          * @type Number
