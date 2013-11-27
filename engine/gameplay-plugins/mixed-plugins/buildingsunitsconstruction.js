@@ -187,6 +187,31 @@ BuildingsUnitsConstruction = function () {
     };
 
     /**
+     * Handler for the <code>refundBuildingConstruction</code> event. The event
+     * is sent if a building construction is completed, but the building is
+     * canceled instead of placed. The handler refunds the player all the
+     * resources that were consumed by the construction.
+     *
+     * @param {Object} data Event data.
+     */
+    this.onRefundBuildingConstruction = function (data) {
+        var resources, buildingDefinition, constructionInfo, stepCount,
+                stepProgress, i;
+        buildingDefinition = BuildingsDefinition.getType(data.building);
+        constructionInfo = buildingDefinition.construction;
+        stepCount = 1000 / constructionInfo.stepProgress;
+        stepProgress = constructionInfo.step;
+        resources = new Array(stepProgress.length);
+        for (i = stepProgress.length; i--;) {
+            resources[i] = stepCount * stepProgress[i];
+        }
+        instance.sendEvent('resourcesGained', {
+            player: data.player,
+            resources: resources
+        });
+    };
+
+    /**
      * Event handler for the <code>cancelUnitConstruction</code> event. The
      * event is sent by the Units Construction UI plug-in when the user cancels
      * a production of a unit. The handler cancels the production task and
