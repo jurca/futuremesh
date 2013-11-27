@@ -80,10 +80,19 @@ BuildingsConstructionUIPlugin = function () {
             event.preventDefault();
             clickedNode = getConstructionButton(event.target);
             if (clickedNode === node) {
-                instance.sendEvent('cancelBuildingConstruction', {
-                    player: playerId,
-                    building: building.type
-                });
+                if (node.ready) {
+                    instance.sendEvent('refundBuildingConstruction', {
+                        player: playerId,
+                        building: building.type
+                    });
+                    node.ready = false;
+                } else {
+                    instance.sendEvent('cancelBuildingConstruction', {
+                        player: playerId,
+                        building: building.type
+                    });
+                }
+                node.progressInfo.innerHTML = "";
             }
         });
 
@@ -96,16 +105,14 @@ BuildingsConstructionUIPlugin = function () {
      * Creates buttons for constructing new buildings in the UI.
      */
     createButtons = function () {
-        var building, type;
-        for (
-            type = 0;
-            building = BuildingsDefinition.getType(type);
-            type++
-        ) {
-            if ((building.race !== null) &&
-                    (building.race == currentPlayerRace)) {
+        var building, type, playerRace;
+        building = BuildingsDefinition.getType(0);
+        playerRace = currentPlayerRace;
+        for (type = 0; building;) {
+            if ((building.race !== null) && (building.race === playerRace)) {
                 createButton(building);
             }
+            building = BuildingsDefinition.getType(++type);
         }
     };
 
@@ -121,8 +128,11 @@ BuildingsConstructionUIPlugin = function () {
      */
     this.onBuildingConstrucionProgress = function (progress) {
         var buildingButton, progressLabel;
-        if (progress.player == playerId) {
+        if (progress.player === playerId) {
             buildingButton = buttons[progress.building];
+            if (!buildingButton.progressInfo.innerHTML) {
+                return;
+            }
             if (progress.progress >= 1000) {
                 progressLabel = 'READY';
                 buildingButton.ready = true;
