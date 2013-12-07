@@ -214,7 +214,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             duration: Settings.loadingMusicLength,
             loop: true,
             onload: function () {
-                //backgroundMusic.play();
+                backgroundMusic.play();
                 performNextStep();
             }
         });
