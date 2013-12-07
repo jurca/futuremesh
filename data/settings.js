@@ -9,7 +9,7 @@ Settings.load({
     sfxInaccessibleTileColor: '#a00000',
     mouseWheelSpeed: 0.4,
     loadingMusic: ['data/music/loading.mp3', 'data/music/loading.ogg'],
-    loadingMusicVolume: 0.20,
+    loadingMusicVolume: 0.01,
     loadingMusicLength: 15.6745,
     gameMusic: {
         playlists: {
