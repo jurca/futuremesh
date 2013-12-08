@@ -29,15 +29,25 @@ var GamePlay;
  *        for debugging and/or testing purposes.
  */
 GamePlay = function (plugins, settings) {
-    var thread, scheduledPlugins, lastTick, tickOverflow, eventDeliveryPlugin,
-            eventDrivenPlugins, eventQueue, singleTickScheduledPlugins,
-            threadActive, tickDuration, subTickScheduledPlugins;
+    var logicThread, renderingThread, scheduledPlugins, lastTick, tickOverflow,
+            eventDeliveryPlugin, eventDrivenPlugins, uiPlugins, eventQueue,
+            singleTickScheduledPlugins, threadsActive, tickDuration,
+            subTickScheduledPlugins, threadInterval;
 
-    // --------------------- background thread logic --------------------------
+    // -------------------- background threads logic --------------------------
 
-    thread = function () {
+    renderingThread = function () {
+        var i;
+        if (threadsActive) {
+            requestAnimationFrame(renderingThread);
+        }
+        for (i = uiPlugins.length; i--;) {
+            uiPlugins[i].renderFrame();
+        }
+    };
+
+    logicThread = function () {
         var i, j, now, tickCount, tickCountReal;
-        requestAnimationFrame(thread);
         now = (new Date()).getTime();
         tickCountReal = (now - lastTick) / tickDuration + tickOverflow;
         tickCount = Math.floor(tickCountReal);
@@ -121,13 +131,14 @@ GamePlay = function (plugins, settings) {
      * with <code>null</code> as event data.
      */
     this.start = function () {
-        if (threadActive) {
+        if (threadsActive) {
             throw new Error('GamePlay daemon is already running');
         }
         lastTick = (new Date()).getTime();
         tickOverflow = 0;
-        threadActive = true;
-        requestAnimationFrame(thread);
+        threadsActive = true;
+        requestAnimationFrame(renderingThread);
+        threadInterval = setInterval(logicThread, settings.tickDuration);
         this.sendEvent("start", null);
         eventDeliveryPlugin.handleTick(); // deliver the event right now
         this.sendEvent("running", null);
@@ -140,10 +151,11 @@ GamePlay = function (plugins, settings) {
      * delivery is terminated.
      */
     this.stop = function () {
-        if (!threadActive) {
+        if (!threadsActive) {
             throw new Error('GamePlay daemon is not running');
         }
-        threadActive = false;
+        threadsActive = false;
+        clearInterval(threadInterval);
         this.sendEvent("stop", null);
         eventDeliveryPlugin.handleTick(); // deliver the event right now
     };
@@ -157,7 +169,8 @@ GamePlay = function (plugins, settings) {
         singleTickScheduledPlugins = [];
         subTickScheduledPlugins = [];
         eventDrivenPlugins = {};
-        threadActive = false;
+        uiPlugins = [];
+        threadsActive = false;
         tickDuration = settings.tickDuration;
 
         /**
@@ -196,6 +209,9 @@ GamePlay = function (plugins, settings) {
                 }
             } else if (plugin instanceof EventDrivenPlugin) {
                 registerEventDrivenPlugin(plugin);
+            } else if (plugin instanceof UIPlugin) {
+                registerEventDrivenPlugin(plugin);
+                uiPlugins.push(plugin);
             } else {
                 throw new Error('The provided object ' + plugin +
                         ' is not a valid plugin');

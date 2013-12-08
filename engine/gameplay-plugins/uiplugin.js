@@ -4,7 +4,9 @@ var UIPlugin;
 /**
  * UI Plugin is a UI that provides and renders UI and / or handles user
  * interaction. UI plugins cannot handle ticks as they are executed from a
- * timer scheduled by the <code>requestAnimationFrame</code> API.
+ * timer scheduled by the <code>requestAnimationFrame</code> API. Simply put:
+ * any plugin that needs access to DOM, Window or anything else not available
+ * from a WebWorker's global context must be a UI plugin.
  */
 UIPlugin = function () {
     /**

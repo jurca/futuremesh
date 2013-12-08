@@ -6,30 +6,7 @@ var ResourceManagerPlugin;
  * their distribution to the buildings and units construction plug-in.
  */
 ResourceManagerPlugin = function () {
-    var playerId, resources, updateUI, resourceContainers, initContainers;
-
-    /**
-     * Updates the UI with the current resource stats of the current player.
-     */
-    updateUI = function () {
-        var playerResources, i;
-        playerResources = resources[playerId];
-        for (i = playerResources.length; i--;) {
-            resourceContainers[i].innerHTML = playerResources[i];
-        }
-    };
-
-    /**
-     * Initializes DOM elements used to display the resource stats of the
-     * current player.
-     */
-    initContainers = function () {
-        var i;
-        resourceContainers = [];
-        for (i = 0; i < resources[0].length; i++) {
-            resourceContainers[i] = document.querySelector('#resource-' + i);
-        }
-    };
+    var resources;
 
     /**
      * The event <code>resourceRequest</code> is usually sent by the
@@ -62,7 +39,6 @@ ResourceManagerPlugin = function () {
             dispatch.resources[i] = request.resources[i];
         }
         this.sendEvent('resourceDispatch', dispatch);
-        updateUI();
     };
 
     /**
@@ -80,7 +56,6 @@ ResourceManagerPlugin = function () {
         for (i = gainInfo.resources.length; i--;) {
             playerResources[i] += gainInfo.resources[i];
         }
-        updateUI();
     };
 
     /**
@@ -94,25 +69,6 @@ ResourceManagerPlugin = function () {
      */
     this.onPlayerResourcesInitialization = function (resourceStats) {
         resources = resourceStats;
-        if (playerId !== undefined) {
-            initContainers();
-            updateUI();
-        }
-    };
-
-    /**
-     * The event <code>playerInitialization</code> is sent by the GameLoader
-     * during gameplay initialization. The event contains as data the current
-     * player information.
-     *
-     * @param {Player} player The current player.
-     */
-    this.onPlayerInitialization = function (player) {
-        playerId = player.id;
-        if (resources) {
-            initContainers();
-            updateUI();
-        }
     };
 };
 ResourceManagerPlugin.prototype = new AdvancedEventDrivenPlugin();

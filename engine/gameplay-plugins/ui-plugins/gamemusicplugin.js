@@ -5,9 +5,9 @@ var GameMusicPlugin;
  * The GameMusicPlugin is an event-driven plugin that manages the GameMusic
  * daemon, starting and stopping the in-game music playback and changing music
  * playlists as the game's intensity changes.
- * 
+ *
  * <p>The plugin observes the following events:</p>
- * 
+ *
  * <ul>
  *     <li><code>gameMusicInitialization</code> - has a GameMusic instance as
  *         event data. This event initializes this plugin.</li>
@@ -28,26 +28,23 @@ var GameMusicPlugin;
  */
 GameMusicPlugin = function () {
     var gameMusic;
-    
+
+    // override
+    this.renderFrame = function () {
+        // nothing to do
+    };
+
     this.onGameMusicInitialization = function (gameMusicInstance) {
         gameMusic = gameMusicInstance;
         gameMusic.play();
     };
-    
+
     this.onGameIntensityChange = function (newIntensity) {
         gameMusic.setIntensity(newIntensity);
     };
-    
-    this.onStart = function (tmp) {
-        // When this event is delivered for the first time, gameMusic is not
-        // set yet.
-        if (gameMusic) {
-            gameMusic.play();
-        }
-    };
-    
+
     this.onStop = function (tmp) {
         gameMusic.stop();
     };
 };
-GameMusicPlugin.prototype = new AdvancedEventDrivenPlugin();
+GameMusicPlugin.prototype = new AdvancedUIPlugin();

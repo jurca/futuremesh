@@ -7,113 +7,25 @@ var BuildingsConstructionUIPlugin;
  * once the construction process is finished.
  */
 BuildingsConstructionUIPlugin = function () {
-    var currentPlayerRace, template, buttonsContainer, createButton,
-            createButtons, scaleButtonIcon, instance, playerId, buttons,
-            getConstructionButton;
-
-    instance = this;
-    buttons = {};
+    var currentPlayerRace, template, buttonsContainer, instance, playerId,
+            buttons, uiUpdate;
 
     /**
-     * Scales the building construction button's icon image to fit the button
-     * while preserving the image's aspect ratio.
-     *
-     * @param {Object} building Definition of the building for which
-     *        the button is to be created.
-     * @param {HTMLImageElement} img Image icon of the button.
+     * Constructor.
      */
-    scaleButtonIcon = function (building, img) {
-        var horizontalRatio, verticalRatio, shrinkRatio;
-        if ((building.imageWidth <= template.width) ||
-                (building.imageHeigth <= template.height)) {
-            img.style.width = building.imageWidth + 'px';
-            img.style.height = building.imageHeigth + 'px';
-        } else {
-            // preserve the image's aspect ratio
-            horizontalRatio = building.imageWidth / template.width;
-            verticalRatio = building.imageHeigth / template.height;
-            shrinkRatio = Math.max(horizontalRatio, verticalRatio);
-            img.style.width = building.imageWidth / shrinkRatio + 'px';
-            img.style.height = building.imageHeigth / shrinkRatio + 'px';
+    (function () {
+        instance = this;
+        buttons = {};
+        uiUpdate = [];
+    }.call(this));
+
+    // override
+    this.renderFrame = function () {
+        var i;
+        for (i = uiUpdate.length; i--;) {
+            uiUpdate[i].node.innerHTML = uiUpdate[i].value;
         }
-    };
-
-    /**
-     * Creates a building construction button and adds it to the UI.
-     *
-     * @param {Object} building Definition of the building for which
-     *        the button is to be created.
-     */
-    createButton = function (building) {
-        var node, img, progressInfo;
-        node = document.createElement(template.tag);
-        node.className = template.className;
-        node.innerHTML = template.innerHTML;
-
-        img = node.getElementsByTagName('img')[0];
-        img.src = building.imageData.src;
-        img.alt = building.name;
-
-        progressInfo = node.getElementsByTagName('div')[0];
-        node.getElementsByTagName('div')[2].innerHTML = building.name;
-        node.title = '¢ ' + (building.construction.step[0] *
-                (1000 / building.construction.stepProgress));
-
-        // we have information about image's dimensions, so we can scale it
-        if (building.imageWidth && building.imageHeigth) {
-            scaleButtonIcon(building, img);
-        }
-
-        node.addEventListener('click', function () {
-            if (!progressInfo.innerHTML) {
-                progressInfo.innerHTML = '0 %';
-                instance.sendEvent('enqueueBuildingConstruction', {
-                    player: playerId,
-                    building: building.type
-                });
-            } else if (node.ready) {
-                alert('placing the building is not implemented yet');
-            }
-        }, false);
-        addEventListener('contextmenu', function (event) {
-            var clickedNode;
-            event.preventDefault();
-            clickedNode = getConstructionButton(event.target);
-            if (clickedNode === node) {
-                if (node.ready) {
-                    instance.sendEvent('refundBuildingConstruction', {
-                        player: playerId,
-                        building: building.type
-                    });
-                    node.ready = false;
-                } else {
-                    instance.sendEvent('cancelBuildingConstruction', {
-                        player: playerId,
-                        building: building.type
-                    });
-                }
-                node.progressInfo.innerHTML = "";
-            }
-        });
-
-        node.progressInfo = progressInfo;
-        buttons[building.type] = node;
-        buttonsContainer.appendChild(node);
-    };
-
-    /**
-     * Creates buttons for constructing new buildings in the UI.
-     */
-    createButtons = function () {
-        var building, type, playerRace;
-        building = BuildingsDefinition.getType(0);
-        playerRace = currentPlayerRace;
-        for (type = 0; building;) {
-            if ((building.race !== null) && (building.race === playerRace)) {
-                createButton(building);
-            }
-            building = BuildingsDefinition.getType(++type);
-        }
+        uiUpdate = [];
     };
 
     /**
@@ -139,7 +51,10 @@ BuildingsConstructionUIPlugin = function () {
             } else {
                 progressLabel = Math.floor(progress.progress / 10) + ' %';
             }
-            buildingButton.progressInfo.innerHTML = progressLabel;
+            uiUpdate.push({
+                node: buildingButton.progressInfo,
+                value: progressLabel
+            });
         }
     };
 
@@ -168,7 +83,7 @@ BuildingsConstructionUIPlugin = function () {
     this.onStart = function (tmp) {
         var templateNode;
         templateNode = document.querySelector(
-                '#buildings-buttons .construction-buttons-content *')
+                '#buildings-buttons .construction-buttons-content *');
         buttonsContainer = templateNode.parentNode;
 
         template = {
@@ -196,6 +111,114 @@ BuildingsConstructionUIPlugin = function () {
     };
 
     /**
+     * Scales the building construction button's icon image to fit the button
+     * while preserving the image's aspect ratio.
+     *
+     * @param {Object} building Definition of the building for which
+     *        the button is to be created.
+     * @param {HTMLImageElement} img Image icon of the button.
+     */
+    function scaleButtonIcon(building, img) {
+        var horizontalRatio, verticalRatio, shrinkRatio;
+        if ((building.imageWidth <= template.width) ||
+                (building.imageHeigth <= template.height)) {
+            img.style.width = building.imageWidth + 'px';
+            img.style.height = building.imageHeigth + 'px';
+        } else {
+            // preserve the image's aspect ratio
+            horizontalRatio = building.imageWidth / template.width;
+            verticalRatio = building.imageHeigth / template.height;
+            shrinkRatio = Math.max(horizontalRatio, verticalRatio);
+            img.style.width = building.imageWidth / shrinkRatio + 'px';
+            img.style.height = building.imageHeigth / shrinkRatio + 'px';
+        }
+    }
+
+    /**
+     * Creates a building construction button and adds it to the UI.
+     *
+     * @param {Object} building Definition of the building for which
+     *        the button is to be created.
+     */
+    function createButton(building) {
+        var node, img, progressInfo;
+        node = document.createElement(template.tag);
+        node.className = template.className;
+        node.innerHTML = template.innerHTML;
+
+        img = node.getElementsByTagName('img')[0];
+        img.src = building.imageData.src;
+        img.alt = building.name;
+
+        progressInfo = node.getElementsByTagName('div')[0];
+        node.getElementsByTagName('div')[2].innerHTML = building.name;
+        node.title = '¢ ' + (building.construction.step[0] *
+                (1000 / building.construction.stepProgress));
+
+        // we have information about image's dimensions, so we can scale it
+        if (building.imageWidth && building.imageHeigth) {
+            scaleButtonIcon(building, img);
+        }
+
+        node.addEventListener('click', function () {
+            if (!progressInfo.innerHTML) {
+                uiUpdate.push({
+                    node: progressInfo,
+                    value: "0 %"
+                });
+                instance.sendEvent('enqueueBuildingConstruction', {
+                    player: playerId,
+                    building: building.type
+                });
+            } else if (node.ready) {
+                alert('placing the building is not implemented yet');
+            }
+        }, false);
+        addEventListener('contextmenu', function (event) {
+            var clickedNode;
+            event.preventDefault();
+            clickedNode = getConstructionButton(event.target);
+            if (clickedNode === node) {
+                if (node.ready) {
+                    instance.sendEvent('refundBuildingConstruction', {
+                        player: playerId,
+                        building: building.type
+                    });
+                    node.ready = false;
+                } else {
+                    instance.sendEvent('cancelBuildingConstruction', {
+                        player: playerId,
+                        building: building.type
+                    });
+                }
+                uiUpdate.push({
+                    node: node.progressInfo,
+                    value: ""
+                });
+            }
+        });
+
+        node.progressInfo = progressInfo;
+        buttons[building.type] = node;
+        buttonsContainer.appendChild(node);
+    }
+
+    /**
+     * Creates buttons for constructing new buildings in the UI.
+     */
+    function createButtons() {
+        var building, type, playerRace;
+        building = BuildingsDefinition.getType(0);
+        playerRace = currentPlayerRace;
+        for (type = 0; building;) {
+            if ((building.race !== null) && (building.race === playerRace)) {
+                createButton(building);
+            }
+            building = BuildingsDefinition.getType(++type);
+        }
+    }
+
+    /**
      * Returns the construction button encapsuling the provided clicked HTML
      * element. The method returns <code>null</code> if the clicked element is
      * not encapsulated by a construction button element.
@@ -204,7 +227,7 @@ BuildingsConstructionUIPlugin = function () {
      * @returns {HTMLElement} The construction button element or
      *          <code>null</code>.
      */
-    getConstructionButton = function (clickedNode) {
+    function getConstructionButton(clickedNode) {
         var limit;
         limit = 3;
         while (clickedNode.className !== 'construction-button') {
@@ -217,6 +240,6 @@ BuildingsConstructionUIPlugin = function () {
             }
         }
         return clickedNode;
-    };
+    }
 };
-BuildingsConstructionUIPlugin.prototype = new AdvancedEventDrivenPlugin();
+BuildingsConstructionUIPlugin.prototype = new AdvancedUIPlugin();

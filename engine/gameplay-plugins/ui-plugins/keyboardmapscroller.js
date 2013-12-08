@@ -40,13 +40,13 @@ KeyboardMapScroller = function () {
     }.call(this));
 
     /**
-     * Handles a single game engine's timer tick. The method sends the
+     * Handles a single frame rendering. The method sends the
      * <code>scrollMapView</code> event if the scrolling vector is not a zero
      * vector. The event carries the scrolling vector copy multiplied by the
      * configured scrolling speed (see <code>Settings</code>) as its data.
      */
     // override
-    this.handleTick = function () {
+    this.renderFrame = function () {
         if (vector.x || vector.y) {
             this.sendEvent("scrollMapView", {
                 x: vector.x * speed,
@@ -135,4 +135,4 @@ KeyboardMapScroller = function () {
         event.preventDefault();
     }
 };
-KeyboardMapScroller.prototype = new AdvancedMixedPlugin();
+KeyboardMapScroller.prototype = new AdvancedUIPlugin();

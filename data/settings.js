@@ -47,7 +47,7 @@ Settings.load({
         fadeDuration: 3500,
         volume: 0.7
     },
-    tickDuration: 30, // 33 FPS
+    tickDuration: 30, // 33 ticks per second
     maxTicks: 2,
     gamePlayPlugins: [
         //'Benchmark',
@@ -56,6 +56,7 @@ Settings.load({
         'BuildingsConstructionUIPlugin',
         'UnitsConstructionUIPlugin',
         'ResourceManagerPlugin',
+        'ResourceManagerUIPlugin',
         'BuildingsUnitsConstruction',
         'ViewRendererPlugin',
         'MinimapControlPlugin',
