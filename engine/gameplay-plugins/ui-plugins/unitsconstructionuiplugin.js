@@ -6,76 +6,25 @@ var UnitsConstructionUIPlugin;
  * construction of units.
  */
 UnitsConstructionUIPlugin = function () {
-    var currentPlayerRace, template, buttonsContainer, createButton,
-            createButtons, instance, playerId, buttons, getConstructionButton;
-
-    instance = this;
-    buttons = {};
+    var currentPlayerRace, template, buttonsContainer, instance, playerId,
+            buttons, uiUpdate;
 
     /**
-     * Creates a unit construction button and adds it to the UI.
-     *
-     * @param {Object} unit Definition of the unit for which the button is to
-     *        be created.
+     * Constructor.
      */
-    createButton = function (unit) {
-        var node, img, progressInfo;
-        node = document.createElement(template.tag);
-        node.className = template.className;
-        node.innerHTML = template.innerHTML;
+    (function () {
+        instance = this;
+        buttons = {};
+        uiUpdate = [];
+    }.call(this));
 
-        img = node.getElementsByTagName('img')[0];
-        img.src = unit.imageData[5].src;
-        img.alt = unit.name;
-        img.style.width = Settings.tileWidth + 'px';
-        img.style.height = Settings.tileHeight + 'px';
-
-        progressInfo = node.getElementsByTagName('div')[0];
-        node.getElementsByTagName('div')[2].innerHTML = unit.name;
-        node.title = '¢ ' + (unit.construction.step[0] *
-                (1000 / unit.construction.stepProgress));
-
-        node.addEventListener('click', function () {
-            if (!progressInfo.innerHTML) {
-                progressInfo.innerHTML = '0 %';
-            }
-            instance.sendEvent('enqueueUnitConstruction', {
-                player: playerId,
-                unit: unit.type
-            });
-        }, false);
-        addEventListener('contextmenu', function (event) {
-            var clickedNode;
-            event.preventDefault();
-            clickedNode = getConstructionButton(event.target);
-            if (clickedNode === node) {
-                instance.sendEvent('cancelUnitConstruction', {
-                    player: playerId,
-                    unit: unit.type
-                });
-            }
-        });
-
-        node.progressInfo = progressInfo;
-        buttons[unit.type] = node;
-        buttonsContainer.appendChild(node);
-    };
-
-    /**
-     * Creates buttons for constructing new units in the UI.
-     */
-    createButtons = function () {
-        var unit, type;
-        for (
-            type = 0;
-            unit = UnitsDefinition.getType(type);
-            type++
-        ) {
-            if ((unit.race !== null) &&
-                    (unit.race === currentPlayerRace)) {
-                createButton(unit);
-            }
+    // override
+    this.renderFrame = function () {
+        var i;
+        for (i = uiUpdate.length; i--;) {
+            uiUpdate[i].node.innerHTML = uiUpdate[i].value;
         }
+        uiUpdate = [];
     };
 
     /**
@@ -95,7 +44,10 @@ UnitsConstructionUIPlugin = function () {
             } else if (data.progress >= 1000) {
                 label = "";
             }
-            unitButton.progressInfo.innerHTML = label;
+            uiUpdate.push({
+                node: unitButton.progressInfo,
+                value: label
+            });
         }
     };
 
@@ -152,6 +104,75 @@ UnitsConstructionUIPlugin = function () {
     };
 
     /**
+     * Creates a unit construction button and adds it to the UI.
+     *
+     * @param {Object} unit Definition of the unit for which the button is to
+     *        be created.
+     */
+    function createButton(unit) {
+        var node, img, progressInfo;
+        node = document.createElement(template.tag);
+        node.className = template.className;
+        node.innerHTML = template.innerHTML;
+
+        img = node.getElementsByTagName('img')[0];
+        img.src = unit.imageData[5].src;
+        img.alt = unit.name;
+        img.style.width = Settings.tileWidth + 'px';
+        img.style.height = Settings.tileHeight + 'px';
+
+        progressInfo = node.getElementsByTagName('div')[0];
+        node.getElementsByTagName('div')[2].innerHTML = unit.name;
+        node.title = '¢ ' + (unit.construction.step[0] *
+                (1000 / unit.construction.stepProgress));
+
+        node.addEventListener('click', function () {
+            if (!progressInfo.innerHTML) {
+                uiUpdate.push({
+                    node: progressInfo,
+                    value: "0 %"
+                });
+            }
+            instance.sendEvent('enqueueUnitConstruction', {
+                player: playerId,
+                unit: unit.type
+            });
+        }, false);
+        addEventListener('contextmenu', function (event) {
+            var clickedNode;
+            event.preventDefault();
+            clickedNode = getConstructionButton(event.target);
+            if (clickedNode === node) {
+                instance.sendEvent('cancelUnitConstruction', {
+                    player: playerId,
+                    unit: unit.type
+                });
+            }
+        });
+
+        node.progressInfo = progressInfo;
+        buttons[unit.type] = node;
+        buttonsContainer.appendChild(node);
+    };
+
+    /**
+     * Creates buttons for constructing new units in the UI.
+     */
+    function createButtons() {
+        var unit, type;
+        for (
+            type = 0;
+            unit = UnitsDefinition.getType(type);
+            type++
+        ) {
+            if ((unit.race !== null) &&
+                    (unit.race === currentPlayerRace)) {
+                createButton(unit);
+            }
+        }
+    };
+
+    /**
      * Returns the construction button encapsuling the provided clicked HTML
      * element. The method returns <code>null</code> if the clicked element is
      * not encapsulated by a construction button element.
@@ -160,7 +181,7 @@ UnitsConstructionUIPlugin = function () {
      * @returns {HTMLElement} The construction button element or
      *          <code>null</code>.
      */
-    getConstructionButton = function (clickedNode) {
+    function getConstructionButton(clickedNode) {
         var limit;
         limit = 3;
         while (clickedNode.className !== 'construction-button') {
@@ -175,4 +196,4 @@ UnitsConstructionUIPlugin = function () {
         return clickedNode;
     };
 };
-UnitsConstructionUIPlugin.prototype = new AdvancedEventDrivenPlugin();
+UnitsConstructionUIPlugin.prototype = new AdvancedUIPlugin();

@@ -10,29 +10,22 @@ ViewRendererPlugin = function () {
     var view, map, x, y, borderOffset, viewWidth, viewHeight, viewLayerSize,
             minX, minY, maxX, maxY;
 
-    // public API
+    /**
+     * Constructor.
+     *
+     * @param {Object} pluginSettings Configuration of this plug-in.
+     */
+    (function (pluginSettings) {
+        borderOffset = pluginSettings.borderOffset;
+        x = borderOffset;
+        y = borderOffset;
+        minX = borderOffset;
+        minY = borderOffset;
+    }(Settings.pluginConfiguration.ViewRendererPlugin));
 
     // override
-    this.handleTick = function () {
+    this.renderFrame = function () {
         view.display(x, y);
-    };
-
-    // override
-    this.handleSubTick = function (tickFragment) {
-        // We re-render the screen event though this is just a sub-tick in
-        // order to maintain a steady CPU/GPU load for each frame. Only this
-        // plugin does this because it performs the most intense operations.
-        view.display(x, y);
-    };
-
-    // override
-    this.ignoresExtraTicks = function () {
-        return true;
-    };
-
-    // override
-    this.handlesSubTicks = function () {
-        return true;
     };
 
     /**
@@ -109,18 +102,5 @@ ViewRendererPlugin = function () {
         maxY = viewLayerSize.height - viewHeight - borderOffset;
         this.sendEvent('viewReady', view);
     };
-
-    /**
-     * Constructor.
-     *
-     * @param {Object} pluginSettings Configuration of this plug-in.
-     */
-    (function (pluginSettings) {
-        borderOffset = pluginSettings.borderOffset;
-        x = borderOffset;
-        y = borderOffset;
-        minX = borderOffset;
-        minY = borderOffset;
-    }(Settings.pluginConfiguration.ViewRendererPlugin));
 };
-ViewRendererPlugin.prototype = new AdvancedMixedPlugin();
+ViewRendererPlugin.prototype = new AdvancedUIPlugin();

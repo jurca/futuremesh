@@ -18,6 +18,11 @@ MinimapControlPlugin = function () {
         instance = this;
     }.call(this));
 
+    // override
+    this.renderFrame = function () {
+        // nothing to do
+    };
+
     /**
      * Event handler for the "running" event. The event is sent by the GamePlay
      * class after the "start" event has been delivered.
@@ -62,4 +67,4 @@ MinimapControlPlugin = function () {
         });
     }
 };
-MinimapControlPlugin.prototype = new AdvancedEventDrivenPlugin();
+MinimapControlPlugin.prototype = new AdvancedUIPlugin();

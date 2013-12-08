@@ -9,38 +9,18 @@ var ConstructionButtonsScroller;
  * @constructor
  */
 ConstructionButtonsScroller = function () {
-    var scrollDown1stHandler, scrollUp1stHandler, stopScroll1stHandler,
-            scrolling1st, scrollDown2ndHandler, scrollUp2ndHandler,
-            stopScroll2ndHandler, scrolling2nd, $, scrollSpeed, buttonsStrip1,
-            buttonsStrip2, upButton1, downButton1, upButton2, downButton2;
+    var scrolling1st, scrolling2nd, scrollSpeed, buttonsStrip1, buttonsStrip2,
+            upButton1, downButton1, upButton2, downButton2;
 
-    scrollSpeed = 7; // 7 px per tick
-
-    $ = function (selector) {
-        return document.querySelectorAll(selector);
-    };
-
-    scrollDown1stHandler = function () {
-        scrolling1st = scrollSpeed;
-    };
-    scrollUp1stHandler = function () {
-        scrolling1st = -scrollSpeed;
-    };
-    stopScroll1stHandler = function () {
-        scrolling1st = 0;
-    };
-    scrollDown2ndHandler = function () {
-        scrolling2nd = scrollSpeed;
-    };
-    scrollUp2ndHandler = function () {
-        scrolling2nd = -scrollSpeed;
-    };
-    stopScroll2ndHandler = function () {
-        scrolling2nd = 0;
-    };
+    /**
+     * Constructor.
+     */
+    (function () {
+        scrollSpeed = 5; // 5 px per frame
+    }.call(this));
 
     // override
-    this.handleTick = function () {
+    this.renderFrame = function () {
         if (scrolling1st) {
             buttonsStrip1.scrollTop += scrolling1st;
         }
@@ -96,5 +76,33 @@ ConstructionButtonsScroller = function () {
         downButton2.removeEventListener('mouseup', stopScroll2ndHandler,
                 false);
     };
+
+    function $(selector) {
+        return document.querySelectorAll(selector);
+    }
+
+    function scrollDown1stHandler() {
+        scrolling1st = scrollSpeed;
+    }
+
+    function scrollUp1stHandler() {
+        scrolling1st = -scrollSpeed;
+    }
+
+    function stopScroll1stHandler() {
+        scrolling1st = 0;
+    }
+
+    function scrollDown2ndHandler() {
+        scrolling2nd = scrollSpeed;
+    }
+
+    function scrollUp2ndHandler() {
+        scrolling2nd = -scrollSpeed;
+    }
+
+    function stopScroll2ndHandler() {
+        scrolling2nd = 0;
+    }
 };
-ConstructionButtonsScroller.prototype = new AdvancedMixedPlugin();
+ConstructionButtonsScroller.prototype = new AdvancedUIPlugin();
