@@ -32,7 +32,7 @@ GamePlay = function (plugins, settings) {
     var logicThread, renderingThread, scheduledPlugins, lastTick, tickOverflow,
             eventDeliveryPlugin, eventDrivenPlugins, uiPlugins, eventQueue,
             singleTickScheduledPlugins, threadsActive, tickDuration,
-            subTickScheduledPlugins, threadInterval;
+            threadInterval;
 
     // -------------------- background threads logic --------------------------
 
@@ -53,19 +53,13 @@ GamePlay = function (plugins, settings) {
         tickCount = Math.floor(tickCountReal);
         tickOverflow = tickCountReal - tickCount;
         lastTick = now;
-        if (tickCount) {
-            for (i = Math.min(tickCount, settings.maxTicks); i--;) {
-                for (j = scheduledPlugins.length; j--;) {
-                    scheduledPlugins[j].handleTick();
-                }
+        for (i = Math.min(tickCount, settings.maxTicks); i--;) {
+            for (j = scheduledPlugins.length; j--;) {
+                scheduledPlugins[j].handleTick();
             }
-            for (i = singleTickScheduledPlugins.length; i--;) {
-                singleTickScheduledPlugins[i].handleTick();
-            }
-        } else {
-            for (i = subTickScheduledPlugins.length; i--;) {
-                subTickScheduledPlugins[i].handleSubTick(tickOverflow);
-            }
+        }
+        for (i = singleTickScheduledPlugins.length; i--;) {
+            singleTickScheduledPlugins[i].handleTick();
         }
     };
 
@@ -167,7 +161,6 @@ GamePlay = function (plugins, settings) {
         eventQueue = [];
         scheduledPlugins = [];
         singleTickScheduledPlugins = [];
-        subTickScheduledPlugins = [];
         eventDrivenPlugins = {};
         uiPlugins = [];
         threadsActive = false;
@@ -200,9 +193,6 @@ GamePlay = function (plugins, settings) {
                     singleTickScheduledPlugins.push(plugin);
                 } else {
                     scheduledPlugins.push(plugin);
-                }
-                if (plugin.handlesSubTicks()) {
-                    subTickScheduledPlugins.push(plugin);
                 }
                 if (plugin instanceof MixedPlugin) {
                     registerEventDrivenPlugin(plugin);

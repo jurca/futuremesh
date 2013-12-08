@@ -21,7 +21,7 @@ Benchmark = function () {
      *
      * @type Number
      */
-    frames,
+    ticks,
 
     /**
      * <code>true</code> if the bechmark is counting the rendered frames.
@@ -35,14 +35,14 @@ Benchmark = function () {
      */
     (function () {
         scheduledStart = null;
-        frames = 0;
+        ticks = 0;
         benchmarking = false;
     }.call(this));
 
     // override
     this.handleTick = function () {
         if (benchmarking) {
-            frames++;
+            ticks++;
         }
         if (scheduledStart) {
             return;
@@ -51,25 +51,15 @@ Benchmark = function () {
             benchmarking = true;
             setTimeout(function () {
                 benchmarking = false;
-                alert(frames / 10);
+                alert(ticks / 10);
             }, 10000);
         }, 10000);
-        frames++;
-    };
-
-    // override
-    this.handleSubTick = function () {
-        frames++;
+        ticks++;
     };
 
     // override
     this.ignoresExtraTicks = function () {
         return true; // the renderer ignored extra ticks too
-    };
-
-    // override
-    this.handlesSubTicks = function () {
-        return true;
     };
 };
 Benchmark.prototype = new ScheduledPlugin();
