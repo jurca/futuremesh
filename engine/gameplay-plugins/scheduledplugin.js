@@ -30,19 +30,6 @@ ScheduledPlugin = function () {
     };
 
     /**
-     * Handles a sub-tick occurrence. A sub-tick occurs if the
-     * <code>requestAnimationFrame</code> timer manages to execute the game
-     * logic thread in shorter intervals than is the current tick duration.
-     *
-     * @param {Number} tickFragment The current fragment of tick duration since
-     *        the last occurred tick. The fragment is always within the range
-     *        (0, 1) non-inclusive.
-     */
-    this.handleSubTick = function (tickFragment) {
-        // nothing to do by default
-    };
-
-    /**
      * Returns <code>true</code> if this plugin should not be executed more
      * than once even if there are multiple ticks to handle. This is useful
      * for example for rendering plugins, because rendering is resource-costly
@@ -60,18 +47,6 @@ ScheduledPlugin = function () {
      * more than once even if there are multiple ticks to handle.
      */
     this.ignoresExtraTicks = function () {
-        return false;
-    };
-
-    /**
-     * Returns <code>true</code> if this plugin should be executed event if the
-     * gameplay thread is executed in mid-tick. Such situation may occur if the
-     * <code>requestAnimationFrame</code> timer manages to execute the game
-     * logic thread in shorter intervals that is the current tick duration.
-     *
-     * @returns {Boolean} <code>true</code> if this plugin handles sub-ticks.
-     */
-    this.handlesSubTicks = function () {
         return false;
     };
 
