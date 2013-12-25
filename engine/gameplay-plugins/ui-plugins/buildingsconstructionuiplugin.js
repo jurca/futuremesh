@@ -161,46 +161,81 @@ BuildingsConstructionUIPlugin = function () {
         }
 
         node.addEventListener('click', function () {
-            if (!progressInfo.innerHTML) {
-                uiUpdate.push({
-                    node: progressInfo,
-                    value: "0 %"
-                });
-                instance.sendEvent('enqueueBuildingConstruction', {
-                    player: playerId,
-                    building: building.type
-                });
-            } else if (node.ready) {
-                alert('placing the building is not implemented yet');
-            }
+            handleLeftMouseClick(node, progressInfo, building);
         }, false);
         addEventListener('contextmenu', function (event) {
-            var clickedNode;
-            event.preventDefault();
-            clickedNode = getConstructionButton(event.target);
-            if (clickedNode === node) {
-                if (node.ready) {
-                    instance.sendEvent('refundBuildingConstruction', {
-                        player: playerId,
-                        building: building.type
-                    });
-                    node.ready = false;
-                } else {
-                    instance.sendEvent('cancelBuildingConstruction', {
-                        player: playerId,
-                        building: building.type
-                    });
-                }
-                uiUpdate.push({
-                    node: node.progressInfo,
-                    value: ""
-                });
-            }
+            handleRightMouseClick(event, node, building);
         });
 
         node.progressInfo = progressInfo;
         buttons[building.type] = node;
         buttonsContainer.appendChild(node);
+    }
+
+    /**
+     * Handles an event produced when the user performs a click with the left
+     * mouse button on the building construction button. The method starts the
+     * building construction if the building isn't in construction yet. The
+     * method starts the building placement process if the building has been
+     * fully constructed.
+     * 
+     * @param {HTMLElement} node HTML element containing the button
+     *        representing the construction button.
+     * @param {HTMLElement} progressInfo HTML element to contain the current
+     *        construction progress info.
+     * @param {Building} building Building definition represented by the
+     *        button.
+     */
+    function handleLeftMouseClick(node, progressInfo, building) {
+        if (!progressInfo.innerHTML) {
+            uiUpdate.push({
+                node: progressInfo,
+                value: "0 %"
+            });
+            instance.sendEvent('enqueueBuildingConstruction', {
+                player: playerId,
+                building: building.type
+            });
+        } else if (node.ready) {
+            alert('placing the building is not implemented yet');
+        }
+    }
+
+    /**
+     * Handles an event produced when the user performs a click with the right
+     * mouse button. If the building represented by the button is being built,
+     * the method will cancel the building construction. The method will cause
+     * building construction refund if the building has already been built but
+     * hasn't been placed on the map yet.
+     * 
+     * @param {MouseEvent} event The captured right-mouse-button click event.
+     * @param {HTMLElement} node Root HTML node of the button representing the
+     *        building.
+     * @param {Building} building Building definition represented by the
+     *        button.
+     */
+    function handleRightMouseClick(event, node, building) {
+        var clickedNode;
+        event.preventDefault();
+        clickedNode = getConstructionButton(event.target);
+        if (clickedNode === node) {
+            if (node.ready) {
+                instance.sendEvent('refundBuildingConstruction', {
+                    player: playerId,
+                    building: building.type
+                });
+                node.ready = false;
+            } else {
+                instance.sendEvent('cancelBuildingConstruction', {
+                    player: playerId,
+                    building: building.type
+                });
+            }
+            uiUpdate.push({
+                node: node.progressInfo,
+                value: ""
+            });
+        }
     }
 
     /**
