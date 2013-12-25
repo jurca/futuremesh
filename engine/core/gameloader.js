@@ -190,7 +190,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
                     }, 15);
                     backgroundMusic.stop();
                 }
-            }, 20);
+            }, 5);
         }
     ];
     stepMessages = [
