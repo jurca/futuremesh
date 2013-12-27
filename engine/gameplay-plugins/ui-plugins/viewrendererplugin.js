@@ -8,7 +8,7 @@ var ViewRendererPlugin;
  */
 ViewRendererPlugin = function () {
     var view, map, x, y, borderOffset, viewWidth, viewHeight, viewLayerSize,
-            minX, minY, maxX, maxY;
+            minX, minY, maxX, maxY, sfx;
 
     /**
      * Constructor.
@@ -27,6 +27,14 @@ ViewRendererPlugin = function () {
     this.renderFrame = function () {
         view.display(x, y);
     };
+    
+    this.onLeftMouseButtonBoxSelectProgress = function (data) {
+        sfx.setSelectionBox(data.startX, data.startY, data.endX, data.endY);
+    };
+    
+    this.onLeftMouseButtonBoxSelect = function (data) {
+        sfx.setSelectionBox(0, 0, 0, 0); // hides the selection box
+    };
 
     /**
      * Event listener for the <code>scrollMapView</code> event. The listener
@@ -42,6 +50,10 @@ ViewRendererPlugin = function () {
     this.onScrollMapView = function (vector) {
         x = Math.min(maxX, Math.max(x + vector.x, minX));
         y = Math.min(maxY, Math.max(y + vector.y, minY));
+        this.sendEvent("viewOffsetUpdate", {
+            offsetLeft: x,
+            offsetTop: y
+        });
     };
 
     /**
@@ -59,6 +71,10 @@ ViewRendererPlugin = function () {
         y = Math.floor(viewLayerSize.height * data.y - viewHeight / 2);
         x = Math.min(maxX, Math.max(x, minX));
         y = Math.min(maxY, Math.max(y, minY));
+        this.sendEvent("viewOffsetUpdate", {
+            offsetLeft: x,
+            offsetTop: y
+        });
     };
 
     /**
@@ -72,6 +88,7 @@ ViewRendererPlugin = function () {
         map = data;
         if (view) {
             view.setMap(map);
+            sfx = view.getSfx();
         }
     };
 
@@ -91,6 +108,7 @@ ViewRendererPlugin = function () {
         view.setMinimapSize(minimapSize.width, minimapSize.height);
         if (map) {
             view.setMap(map);
+            sfx = view.getSfx();
         }
         viewWidth = data.view.width;
         viewHeight = data.view.height;
@@ -101,6 +119,22 @@ ViewRendererPlugin = function () {
         maxX = viewLayerSize.width - viewWidth - borderOffset;
         maxY = viewLayerSize.height - viewHeight - borderOffset;
         this.sendEvent('viewReady', view);
+        this.sendEvent("viewOffsetUpdate", {
+            offsetLeft: x,
+            offsetTop: y
+        });
     };
+    
+    this.onStart = function () {
+        addEventListener("selectstart", textSelectionPreventer, false);
+    };
+    
+    this.onStop = function () {
+        removeEventListener("selectstart", textSelectionPreventer);
+    };
+    
+    function textSelectionPreventer(event) {
+        event.preventDefault();
+    }
 };
 ViewRendererPlugin.prototype = new AdvancedUIPlugin();
