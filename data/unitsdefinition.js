@@ -10,6 +10,7 @@ UnitsDefinition = (function () {
             image: 'data/images/units/harvester/?.png',
             speed: 30,
             turnSpeed: 100,
+            hitpoints: 800, // how much damage can the unit take
             colorify: '#ffffff',
             colorifyDistance: 240,
             resource: 1,

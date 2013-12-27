@@ -12,6 +12,7 @@ BuildingsDefinition = (function () {
             imageHeight: undefined,
             width: 3,
             height: 3,
+            hitpoints: 1500, // how much damage can the building take
             passable: false,
             colorify: '#ffffff',
             colorifyDistance: 440,
@@ -34,6 +35,7 @@ BuildingsDefinition = (function () {
             imageHeight: undefined,
             width: 1,
             height: 1,
+            hitpoints: 100, // represents the amount of resource units
             passable: true,
             colorify: '#000000',
             colorifyDistance: 0,
