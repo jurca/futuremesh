@@ -149,6 +149,24 @@ var Unit;
         this.player = player;
 
         /**
+         * The actual number of hitpoints left. The hitpoints represent the
+         * amount of damage the unit can take from other units before it is
+         * destroyed.
+         * 
+         * @type Number
+         */
+        this.hitpoints = definition.hitpoints;
+        
+        /**
+         * The maximum number of hitpoints this unit may have. See the
+         * <code>hitpoints</code> field for more details on how hitpoints are
+         * interpreted and used.
+         * 
+         * @type Number
+         */
+        this.maxHitpoints = definition.hitpoints;
+
+        /**
          * The color in the building's image that should be replaced by the
          * player's color. So far only hex format (#rrggbb or rrggbb is
          * supported).

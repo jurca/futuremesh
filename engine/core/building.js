@@ -89,6 +89,26 @@ var Building;
         this.height = definition.height;
 
         /**
+         * The actual number of hitpoints left. The hitpoints have two usages:
+         * they represent the amount of damage the building can take from units
+         * in case of "ordinary" buildings; or they represent the amount of
+         * resources that can be harvested from the building before depletion
+         * in case of "resource" buildings.
+         * 
+         * @type Number
+         */
+        this.hitpoints = definition.hitpoints;
+        
+        /**
+         * The maximum number of hitpoints this building may have. See the
+         * <code>hitpoints</code> field for more details on how hitpoints are
+         * interpreted and used.
+         * 
+         * @type Number
+         */
+        this.maxHitpoints = definition.hitpoints;
+
+        /**
          * The color in the building's image that should be replaced by the
          * player's color. So far only hex format (#rrggbb or rrggbb is
          * supported).
