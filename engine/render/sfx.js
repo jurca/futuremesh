@@ -2,7 +2,7 @@
 var SFX;
 
 /**
- * Renderer of simple SFX on the map.
+ * Renderer of simple SFX and UI overlays over the main world view.
  */
 SFX = function () {
     var canvas, map, canvasWidth, canvasHeight, tileWidth, tileHeight, context,
@@ -10,7 +10,8 @@ SFX = function () {
             canvasCenterY, buildingsIndex, displayLightSFX,
             displayBuildableTiles, enableBuildOverlay, navigationIndex,
             enableNavigationIndex, inaccessibleColor, accessibleColor,
-            projectiles;
+            projectiles, selectBoxStartX, selectBoxStartY, selectBoxWidth,
+            selectBoxHeight;
 
     depthFactor = Settings.sfx3DLightFactor;
     accessibleColor = Settings.sfxAccessibleTileColor;
@@ -90,12 +91,50 @@ SFX = function () {
         context.globalAlpha = 0.6;
         context.lineWidth = 2; // laser beam width (projectile type 0)
         displayProjectiles(x, y);
+        displaySelectionBox(x, y);
         context.globalAlpha = 0.3;
         displayLightSFX(x, y);
         enableBuildOverlay && displayBuildableTiles(x, y);
         enableNavigationIndex && displayNavigableTiles(x, y);
         context.globalAlpha = 1;
     };
+    
+    /**
+     * Sets the starting and ending coordinates of the unit selection box.
+     * Setting all parameters to <code>0</code> will disable the selection box.
+     * 
+     * @param {Number} startX The X-coordinate of the selection start tile.
+     * @param {Number} startY The Y-coordinate of the selection start tile.
+     * @param {Number} endX The X-coordinate of the selection end tile.
+     * @param {Number} endY The Y-coordinate of the selection end tile.
+     */
+    this.setSelectionBox = function (startX, startY, endX, endY) {
+        selectBoxStartX = startX * tileWidth;
+        selectBoxStartY = startY * tileHeight;
+        selectBoxWidth = (endX - startX + 1.5) * tileWidth;
+        selectBoxHeight = (endY - startY + 1) * tileHeight;
+    };
+
+    /**
+     * Displays the unit group selection box when the user is selecting a group
+     * of units using drag & drop.
+     * 
+     * @param {Number} x Horizontal offset of the world view.
+     * @param {Number} y Vertical offset of the worlds view.
+     */
+    function displaySelectionBox(x, y) {
+        if (!selectBoxStartX) {
+            return;
+        }
+        context.fillStyle = "lightgreen";
+        context.globalAlpha = 0.15;
+        context.fillRect(selectBoxStartX - x, selectBoxStartY - y,
+                selectBoxWidth, selectBoxHeight);
+        context.strokeStyle = "lightgreen";
+        context.globalAlpha = 1;
+        context.strokeRect(selectBoxStartX - x, selectBoxStartY - y,
+                selectBoxWidth, selectBoxHeight);
+    }
 
     /**
      * Displays the projectiles that are present on the map.
@@ -137,6 +176,7 @@ SFX = function () {
     function displayLightSFX(x, y) {
         var mapOffsetX, mapOffsetY, i, j, offsetX, offsetY, shiftX, endX, endY,
                 mapRow, mapTile;
+        context.strokeStyle = "#ffffff";
         y -= tileHeight;
         x -= tileWidth / 2;
         mapOffsetX = Math.floor(x / tileWidth);

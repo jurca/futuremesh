@@ -51,6 +51,16 @@ MainView = function () {
     };
 
     /**
+     * Returns the SFX renderer used to render the special effects and various
+     * UI-related overlays.
+     * 
+     * @return {SFX} The used SFX renderer.
+     */
+    this.getSfx = function () {
+        return sfxLayer;
+    };
+
+    /**
      * Handles a creation of a new building on the map.
      *
      * @param {Building} building Building which was just added to the map.

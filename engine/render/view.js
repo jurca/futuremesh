@@ -16,6 +16,9 @@ View = function () {
     this.setCanvas = function (viewCanvas) {
         mainview = new MainView();
         mainview.setCanvas(viewCanvas);
+        viewCanvas.addEventListener("selectstart", function (event) {
+            event.preventDefault();
+        }, false);
     };
 
     /**
@@ -55,6 +58,16 @@ View = function () {
         minimap.setMainViewBufferSize(mainview.getLayersDimensions());
     };
 
+    /**
+     * Returns the SFX renderer used to render the special effects and various
+     * UI-related overlays.
+     * 
+     * @return {SFX} The used SFX renderer.
+     */
+    this.getSfx = function () {
+        return mainview.getSfx();
+    };
+    
     /**
      * Event handler for changes about buildings - adding or removing of a
      * building.
