@@ -62,7 +62,8 @@ Settings.load({
         'MinimapControlPlugin',
         'KeyboardMapScroller',
         'UnitAI',
-        'MousePlugin'
+        'MousePlugin',
+        'BuildingControl'
     ],
     pluginConfiguration: {
         BuildingsUnitsConstruction: {
