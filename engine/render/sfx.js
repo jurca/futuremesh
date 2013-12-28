@@ -90,7 +90,6 @@ SFX = function () {
      */
     this.display = function (x, y) {
         context.globalAlpha = 0.6;
-        context.lineWidth = 2; // laser beam width (projectile type 0)
         displayProjectiles(x, y);
         displaySelectionBox(x, y);
         displayHealthBars(x, y);
@@ -202,6 +201,7 @@ SFX = function () {
         context.fillRect(selectBoxStartX - x, selectBoxStartY - y,
                 selectBoxWidth, selectBoxHeight);
         context.strokeStyle = "lightgreen";
+        context.lineWidth = 1;
         context.globalAlpha = 1;
         context.strokeRect(selectBoxStartX - x, selectBoxStartY - y,
                 selectBoxWidth, selectBoxHeight);
@@ -217,6 +217,7 @@ SFX = function () {
      */
     function displayProjectiles(x, y) {
         var i, projectile;
+        context.lineWidth = 2; // laser beam width (projectile type 0)
         for (i = projectiles.length; i--;) {
             projectile = projectiles[i];
             switch (projectile.type) {
