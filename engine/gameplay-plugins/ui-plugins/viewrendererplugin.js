@@ -29,6 +29,11 @@ ViewRendererPlugin = function () {
     };
     
     this.onLeftMouseButtonBoxSelectProgress = function (data) {
+        var startX, startY, endX, endY;
+        startX = Math.min(data.startX, data.endX);
+        startY = Math.min(data.startY, data.endY);
+        endX = Math.max(data.startX, data.endX);
+        endY = Math.max(data.startY, data.endY);
         sfx.setSelectionBox(data.startX, data.startY, data.endX, data.endY);
     };
     
