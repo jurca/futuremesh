@@ -28,6 +28,14 @@ ViewRendererPlugin = function () {
         view.display(x, y);
     };
     
+    /**
+     * Handler for the <code>leftMouseButtonBoxSelectProgress</code> event. The
+     * event is triggered when the user is in the progress of drawing a
+     * selection box around the units to select. The handler notifies the SFX
+     * renderer to display the selection box.
+     * 
+     * @param {Object} data Event's details.
+     */
     this.onLeftMouseButtonBoxSelectProgress = function (data) {
         var startX, startY, endX, endY;
         startX = Math.min(data.startX, data.endX);
@@ -37,6 +45,14 @@ ViewRendererPlugin = function () {
         sfx.setSelectionBox(data.startX, data.startY, data.endX, data.endY);
     };
     
+    /**
+     * Handler for the <code>leftMouseButtonBoxSelect</code> event. The event
+     * is triggered when the user has drawn a selection box to select a group
+     * of units. The handler notifies the SFX renderer to hide the selection
+     * box as the selection process is completed now.
+     * 
+     * @param {Object} data The event's details.
+     */
     this.onLeftMouseButtonBoxSelect = function (data) {
         sfx.setSelectionBox(0, 0, 0, 0); // hides the selection box
     };
