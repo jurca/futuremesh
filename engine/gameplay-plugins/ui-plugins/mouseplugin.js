@@ -140,14 +140,14 @@ MousePlugin = function () {
     // override
     this.renderFrame = function () {
         if (moved) {
-            this.sendEvent("mousemove", {
+            this.sendEvent("mouseMove", {
                 x: mouseX,
                 y: mouseY
             });
             moved = false;
         }
         if (movedTile) {
-            this.sendEvent("mousetilemove", {
+            this.sendEvent("mouseTileMove", {
                 x: tileX,
                 y: tileY
             });
