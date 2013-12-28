@@ -35,7 +35,14 @@ UnitAI = function () {
      *
      * @type Array
      */
-    productionBuildings;
+    productionBuildings,
+       
+    /**
+     * SFX renderer.
+     * 
+     * @type SFX
+     */
+    sfx;
 
     // override
     this.handleTick = function () {
@@ -67,6 +74,87 @@ UnitAI = function () {
                     break;
             }
         }
+    };
+
+    /**
+     * Handles the event <code>mouseTileMove</code> sent when the user moves
+     * the mouse cursor to another tile. The handler checks if the mouse is
+     * hovering over a unit and notifies the SFX renderer accordingly.
+     * 
+     * @param {Object} data Details of the event.
+     */
+    this.onMouseTileMove = function (data) {
+        var atTile;
+        atTile = map.getObjectAt(data.x, data.y);
+        if (atTile instanceof Unit) {
+            sfx.setMouseoverUnit(atTile);
+        } else {
+            sfx.setMouseoverUnit(null);
+        }
+    };
+    
+    /**
+     * Handles the <code>leftMouseButtonClick</code> event produced when the
+     * user clicks on a tile using the left mouse button. The handler checks
+     * whether the tile does contain a unit and notifies the SFX renderer if
+     * neccessary.
+     * 
+     * <p>The handler selects the unit if the unit is owned by the player. The
+     * handler issues a move order if the tile is empty and at least one unit
+     * is currently selected by the player. The handler issues an attack order
+     * if the tile contains an enemy unit or building and at least one unit is
+     * selected.</p>
+     * 
+     * @param {Object} data Event details.
+     */
+    this.onLeftMouseButtonClick = function (data) {
+        var atTile;
+        atTile = map.getObjectAt(data.x, data.y);
+        if (atTile instanceof Unit) {
+            // TODO: select if owned, attack if enemy
+            sfx.setSelectedUnits([atTile]);
+        } else {
+            // TODO: execute "move" command if the tile is empty, "attack" if
+            // the tile is occupied by enemy building.
+            sfx.setMouseoverUnit([]);
+        }
+    };
+    
+    /**
+     * Handles the <code>leftMouseButtonBoxSelect</code> received when the user
+     * attempts to select a group of units using drag&drop-creating a select
+     * box. The handler will select all units in the selection area that are
+     * owned by the player.
+     * 
+     * @param {Object} data Event details.
+     */
+    this.onLeftMouseButtonBoxSelect = function (data) {
+        var offsetLeft, offsetTop, x, y, selectedUnits, atTile;
+        offsetLeft = Math.min(data.startX, data.endX);
+        offsetTop = Math.min(data.startY, data.endY);
+        selectedUnits = [];
+        for (y = Math.abs(data.startY - data.endY) + 1; y--;) {
+            for (x = Math.abs(data.startX - data.endX) + 1; x--;) {
+                atTile = map.getObjectAt(x + offsetLeft, y + offsetTop);
+                if (atTile instanceof Unit) {
+                    // TODO: filter out units that are not owned by the player
+                    selectedUnits.push(atTile);
+                }
+            }
+        }
+        if (selectedUnits.length) {
+            sfx.setSelectedUnits(selectedUnits);
+        }
+    };
+    
+    /**
+     * Handles the <code>rightMouseButtonClick</code> event sent when the user
+     * right-click on any tile. The handler deselects any selected units.
+     * 
+     * @param {Object} data The details of the event.
+     */
+    this.onRightMouseButtonClick = function (data) {
+        sfx.setSelectedUnits([]);
     };
 
     /**
@@ -104,6 +192,7 @@ UnitAI = function () {
      */
     this.onViewReady = function (newView) {
         view = newView;
+        sfx = view.getSfx();
         map.getUnits().forEach(function (unit) {
             if (unit.action === 0) { // just created
                 unit.action = 4; // standing still
