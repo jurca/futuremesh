@@ -11,7 +11,7 @@ SFX = function () {
             displayBuildableTiles, enableBuildOverlay, navigationIndex,
             enableNavigationIndex, inaccessibleColor, accessibleColor,
             projectiles, selectBoxStartX, selectBoxStartY, selectBoxWidth,
-            selectBoxHeight;
+            selectBoxHeight, selectedUnits, mouseoverUnit;
 
     depthFactor = Settings.sfx3DLightFactor;
     accessibleColor = Settings.sfxAccessibleTileColor;
@@ -19,6 +19,7 @@ SFX = function () {
     enableBuildOverlay = false;
     enableNavigationIndex = false;
     projectiles = [];
+    selectedUnits = [];
 
     /**
      * Sets the output canvas for rendering.
@@ -79,7 +80,7 @@ SFX = function () {
     this.setDisplayNavigationIndex = function (displayNavigationIndex) {
         enableNavigationIndex = displayNavigationIndex;
     };
-
+    
     /**
      * Displays the SFX of the map on the chosen offset on the provided
      * canvas.
@@ -92,6 +93,7 @@ SFX = function () {
         context.lineWidth = 2; // laser beam width (projectile type 0)
         displayProjectiles(x, y);
         displaySelectionBox(x, y);
+        displayHealthBars(x, y);
         context.globalAlpha = 0.3;
         displayLightSFX(x, y);
         enableBuildOverlay && displayBuildableTiles(x, y);
@@ -114,6 +116,75 @@ SFX = function () {
         selectBoxWidth = (endX - startX + 1.5) * tileWidth;
         selectBoxHeight = (endY - startY + 1) * tileHeight;
     };
+
+    /**
+     * Sets the currently selected units. The SFX renderer will show the
+     * hitpoints of the units as healtbars over the units (for each visible
+     * unit).
+     * 
+     * @param {Array} units The player's currently selected units.
+     */
+    this.setSelectedUnits = function (units) {
+        selectedUnits = units;
+    };
+    
+    /**
+     * Sets the unit over which the mouse cursor is currently located. The SFX
+     * renderer will show the unit's hitpoints as a healthbar over the unit (if
+     * the unit is visible).
+     * 
+     * @param {Unit} unit The unit over which the mouse cursor is currently
+     *        located. Can be <code>null</code> if the mouse cursor is over no
+     *        unit.
+     */
+    this.setMouseoverUnit = function (unit) {
+        mouseoverUnit = unit;
+    };
+
+    /**
+     * Displays the health bars of selected units and the unit under the mouse
+     * cursor.
+     * 
+     * @param {Number} x Horizontal offset of the world view.
+     * @param {Number} y Vertical offset of the world view.
+     */
+    function displayHealthBars(x, y) {
+        var i;
+        for (i = selectedUnits.length; i--;) {
+            displayUnitHealtBar(x, y, selectedUnits[i], true);
+        }
+        if (mouseoverUnit) {
+            displayUnitHealtBar(x, y, mouseoverUnit, false);
+        }
+    }
+
+    /**
+     * Displays the health bar of a single unit.
+     * 
+     * @param {Number} viewX Horizontal offset of the world view.
+     * @param {Number} viewY Vertical offset of the world view.
+     * @param {Unit} unit The unit for which the health bar should be
+     *        displayed.
+     * @param {Boolean} full Whether the healtbar should be fully displayed
+     *        (selected units) or in a striped-down fashion (mouseover units).
+     */
+    function displayUnitHealtBar(viewX, viewY, unit, full) {
+        var x, y, offsetX, barSize;
+        offsetX = (unit.y % 2) * tileWidth / 2;
+        x = unit.x * tileWidth - unit.moveOffsetX - viewX + offsetX;
+        y = unit.y * tileHeight - unit.moveOffsetY - viewY - 2;
+        if ((x < -tileWidth) || (y < -2) || (x >= canvasWidth) ||
+                (y >= canvasHeight)) {
+            return;
+        }
+        if (full) {
+            context.fillStyle = "#ffffff";
+            context.fillRect(x, y, tileWidth, 3);
+        }
+        barSize = (unit.hitpoints / unit.maxHitpoints) * (tileWidth - 2);
+        context.fillStyle = "#00cf00";
+        context.fillRect(x + 1, y + 1, barSize, 1);
+    }
 
     /**
      * Displays the unit group selection box when the user is selecting a group
