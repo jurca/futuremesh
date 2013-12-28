@@ -49,7 +49,21 @@ UnitAI = function () {
      * 
      * @type Number
      */
-    playerId;
+    playerId,
+            
+    /**
+     * The currently selected units.
+     * 
+     * @type Array
+     */
+    selectedUnits;
+    
+    /**
+     * Constructor.
+     */
+    (function () {
+        selectedUnits = [];
+    }.call(this));
 
     // override
     this.handleTick = function () {
@@ -126,22 +140,41 @@ UnitAI = function () {
      * @param {Object} data Event details.
      */
     this.onLeftMouseButtonClick = function (data) {
-        var atTile;
+        var atTile, unit;
         atTile = map.getObjectAt(data.x, data.y);
         if (atTile instanceof Unit) {
             if (atTile.player === playerId) {
                 sfx.setSelectedUnits([atTile]);
+                selectedUnits = [atTile];
             } else {
                 // TODO: attack the enemy
             }
         } else if (atTile instanceof Building) {
             if (atTile.player === playerId) {
                 sfx.setSelectedUnits([]);
+                selectedUnits = [];
             } else {
                 // TODO: attack the enemy
             }
-        } else {
-            // TODO: start unit movement if the tile is passable
+        } else if (navigationIndex[data.y][data.x]) {
+            if (selectedUnits.length === 1) {
+                unit = selectedUnits[0];
+                if (unit.waypoints.length) {
+                    if (unit.waypoints.length > 1) {
+                        unit.waypoints.splice(1, unit.waypoints.length);
+                    }
+                    unit.waypoints[0].x = unit.x;
+                    unit.waypoints[0].y = unit.y;
+                    unit.moveTargetX = unit.x;
+                    unit.moveTargetY = unit.y;
+                }
+                unit.waypoints.push({
+                    x: data.x,
+                    y: data.y
+                });
+            } else if (selectedUnits.length) {
+                // TODO: move the group
+            }
         }
     };
     
@@ -154,23 +187,24 @@ UnitAI = function () {
      * @param {Object} data Event details.
      */
     this.onLeftMouseButtonBoxSelect = function (data) {
-        var offsetLeft, offsetTop, x, y, selectedUnits, atTile;
+        var offsetLeft, offsetTop, x, y, newSelectedUnits, atTile;
         offsetLeft = Math.min(data.startX, data.endX);
         offsetTop = Math.min(data.startY, data.endY);
-        selectedUnits = [];
+        newSelectedUnits = [];
         for (y = Math.abs(data.startY - data.endY) + 1; y--;) {
             for (x = Math.abs(data.startX - data.endX) + 1; x--;) {
                 atTile = map.getObjectAt(x + offsetLeft, y + offsetTop);
                 if (atTile instanceof Unit) {
                     if (atTile.player === playerId) {
-                        selectedUnits.push(atTile);
+                        newSelectedUnits.push(atTile);
                     }
                 }
             }
         }
-        if (selectedUnits.length) {
-            sfx.setSelectedUnits(selectedUnits);
+        if (newSelectedUnits.length) {
+            sfx.setSelectedUnits(newSelectedUnits);
             sfx.setSelectedBuilding(null);
+            selectedUnits = newSelectedUnits;
         }
     };
     
