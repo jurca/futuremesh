@@ -11,7 +11,8 @@ SFX = function () {
             displayBuildableTiles, enableBuildOverlay, navigationIndex,
             enableNavigationIndex, inaccessibleColor, accessibleColor,
             projectiles, selectBoxStartX, selectBoxStartY, selectBoxWidth,
-            selectBoxHeight, selectedUnits, mouseoverUnit;
+            selectBoxHeight, selectedUnits, mouseoverUnit, selectedBuilding,
+            mouseoverBuilding;
 
     depthFactor = Settings.sfx3DLightFactor;
     accessibleColor = Settings.sfxAccessibleTileColor;
@@ -139,6 +140,30 @@ SFX = function () {
     this.setMouseoverUnit = function (unit) {
         mouseoverUnit = unit;
     };
+    
+    /**
+     * Sets the currently selected building in the UI. The building will have
+     * its healthbar fully displayed.
+     * 
+     * @param {Building} building The building that is currently selected. The
+     *        parameter can be <code>null</code> if no building is currently
+     *        selected.
+     */
+    this.setSelectedBuilding = function (building) {
+        selectedBuilding = building;
+    };
+    
+    /**
+     * Sets the building which is currently located under the mouse cursor. The
+     * building will have its healthbar displayed in the simple way.
+     * 
+     * @param {Building} building The building located under the mouse cursor.
+     *        The parameter can be <code>null</code> if no building is under
+     *        the mouse cursor.
+     */
+    this.setMouseoverBuilding = function (building) {
+        mouseoverBuilding = building;
+    };
 
     /**
      * Displays the health bars of selected units and the unit under the mouse
@@ -150,11 +175,47 @@ SFX = function () {
     function displayHealthBars(x, y) {
         var i;
         for (i = selectedUnits.length; i--;) {
-            displayUnitHealtBar(x, y, selectedUnits[i], true);
+            displayUnitHealthBar(x, y, selectedUnits[i], true);
         }
         if (mouseoverUnit) {
-            displayUnitHealtBar(x, y, mouseoverUnit, false);
+            displayUnitHealthBar(x, y, mouseoverUnit, false);
         }
+        if (selectedBuilding) {
+            displayBuildingHealthBar(x, y, selectedBuilding, true);
+        }
+        if (mouseoverBuilding) {
+            displayBuildingHealthBar(x, y, mouseoverBuilding, false);
+        }
+    }
+    
+    /**
+     * Displays the health bar of a single building.
+     * 
+     * @param {Number} viewX Horizontal offset of the world view.
+     * @param {Number} viewY Vertical offset of the world view.
+     * @param {Building} building
+     * @param {Boolean} full Whether the healtbar should be fully displayed
+     *        (selected buildigns) or in a striped-down fashion (mouseover
+     *        buildings).
+     */
+    function displayBuildingHealthBar(viewX, viewY, building, full) {
+        var x, y, offsetX, boxWidth, barSize;
+        offsetX = (building.y % 2) * tileWidth / 2;
+        x = building.x * tileWidth - viewX + offsetX;
+        y = building.y * tileHeight - viewY - 4;
+        if ((x < -tileWidth) || (y < -2) || (x >= canvasWidth) ||
+                (y >= canvasHeight)) {
+            return;
+        }
+        boxWidth = tileWidth * building.width;
+        if (full) {
+            context.fillStyle = "#ffffff";
+            context.fillRect(x, y, boxWidth, 3);
+        }
+        boxWidth -= 2;
+        barSize = (building.hitpoints / building.maxHitpoints) * (boxWidth);
+        context.fillStyle = "#00cf00";
+        context.fillRect(x + 1, y + 1, barSize, 1);
     }
 
     /**
@@ -167,7 +228,7 @@ SFX = function () {
      * @param {Boolean} full Whether the healtbar should be fully displayed
      *        (selected units) or in a striped-down fashion (mouseover units).
      */
-    function displayUnitHealtBar(viewX, viewY, unit, full) {
+    function displayUnitHealthBar(viewX, viewY, unit, full) {
         var x, y, offsetX, barSize;
         offsetX = (unit.y % 2) * tileWidth / 2;
         x = unit.x * tileWidth - unit.moveOffsetX - viewX + offsetX;

@@ -113,10 +113,10 @@ UnitAI = function () {
         if (atTile instanceof Unit) {
             // TODO: select if owned, attack if enemy
             sfx.setSelectedUnits([atTile]);
-        } else {
+        } else if (atTile instanceof Building) {
             // TODO: execute "move" command if the tile is empty, "attack" if
             // the tile is occupied by enemy building.
-            sfx.setMouseoverUnit([]);
+            sfx.setSelectedUnits([]);
         }
     };
     
@@ -144,6 +144,7 @@ UnitAI = function () {
         }
         if (selectedUnits.length) {
             sfx.setSelectedUnits(selectedUnits);
+            sfx.setSelectedBuilding(null);
         }
     };
     
