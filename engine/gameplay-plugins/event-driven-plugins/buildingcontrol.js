@@ -19,7 +19,25 @@ BuildingControl = function () {
      * 
      * @type Map
      */
-    map;
+    map,
+            
+    /**
+     * ID of the current human player.
+     * 
+     * @type Number
+     */
+    playerId;
+    
+    /**
+     * Event handler for the <code>playerInitialization</code>. The event is
+     * sent by the GameLoader utility.
+     *
+     * @param {Player} player The current human player controlling the UI
+     *        repesented as a Player instance.
+     */
+    this.onPlayerInitialization = function (player) {
+        playerId = player.id;
+    };
     
     /**
      * Handler for the <code>mouseTileMove</code> event that occurrs when the
@@ -48,11 +66,14 @@ BuildingControl = function () {
     this.onLeftMouseButtonClick = function (data) {
         var atTile;
         atTile = map.getObjectAt(data.x, data.y);
-        // TODO: filter buildings not owned by this player
         if (atTile instanceof Building) {
-            sfx.setSelectedBuilding(atTile);
+            if (atTile.player === playerId) {
+                sfx.setSelectedBuilding(atTile);
+            }
         } else if (atTile instanceof Unit) {
-            sfx.setSelectedBuilding(null);
+            if (atTile.player === playerId) {
+                sfx.setSelectedBuilding(null);
+            }
         }
     };
     
