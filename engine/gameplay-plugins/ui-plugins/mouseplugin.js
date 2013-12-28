@@ -204,7 +204,7 @@ MousePlugin = function () {
         dragStartTileY = tileY;
         if (event.button === 0) { // left mouse button click
             button = "left";
-        } else if (event.button === 1) { // right mouse button click
+        } else if (event.button === 2) { // right mouse button click
             button = "right";
         }
         instance.sendEvent(button + "MouseDown", {
@@ -226,7 +226,7 @@ MousePlugin = function () {
         mouseDown = false;
         if (event.button === 0) { // left mouse button click
             button = "left";
-        } else if (event.button === 1) { // right mouse button click
+        } else if (event.button === 2) { // right mouse button click
             button = "right";
         }
         if (button) {
