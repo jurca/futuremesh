@@ -42,7 +42,14 @@ UnitAI = function () {
      * 
      * @type SFX
      */
-    sfx;
+    sfx,
+            
+    /**
+     * ID of the current human player.
+     * 
+     * @type Number
+     */
+    playerId;
 
     // override
     this.handleTick = function () {
@@ -76,6 +83,17 @@ UnitAI = function () {
         }
     };
 
+    /**
+     * Event handler for the <code>playerInitialization</code>. The event is
+     * sent by the GameLoader utility.
+     *
+     * @param {Player} player The current human player controlling the UI
+     *        repesented as a Player instance.
+     */
+    this.onPlayerInitialization = function (player) {
+        playerId = player.id;
+    };
+    
     /**
      * Handles the event <code>mouseTileMove</code> sent when the user moves
      * the mouse cursor to another tile. The handler checks if the mouse is
@@ -111,12 +129,19 @@ UnitAI = function () {
         var atTile;
         atTile = map.getObjectAt(data.x, data.y);
         if (atTile instanceof Unit) {
-            // TODO: select if owned, attack if enemy
-            sfx.setSelectedUnits([atTile]);
+            if (atTile.player === playerId) {
+                sfx.setSelectedUnits([atTile]);
+            } else {
+                // TODO: attack the enemy
+            }
         } else if (atTile instanceof Building) {
-            // TODO: execute "move" command if the tile is empty, "attack" if
-            // the tile is occupied by enemy building.
-            sfx.setSelectedUnits([]);
+            if (atTile.player === playerId) {
+                sfx.setSelectedUnits([]);
+            } else {
+                // TODO: attack the enemy
+            }
+        } else {
+            // TODO: start unit movement if the tile is passable
         }
     };
     
@@ -137,8 +162,9 @@ UnitAI = function () {
             for (x = Math.abs(data.startX - data.endX) + 1; x--;) {
                 atTile = map.getObjectAt(x + offsetLeft, y + offsetTop);
                 if (atTile instanceof Unit) {
-                    // TODO: filter out units that are not owned by the player
-                    selectedUnits.push(atTile);
+                    if (atTile.player === playerId) {
+                        selectedUnits.push(atTile);
+                    }
                 }
             }
         }
