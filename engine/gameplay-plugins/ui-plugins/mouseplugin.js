@@ -5,128 +5,128 @@ var MousePlugin;
  * The Mouse Plugin provides integration with the mouse. The plugin observes
  * the current location of the mouse cursor on the screen on calculates over
  * which tile the mouse cursor currently is.
- * 
+ *
  * @constructor
  */
 MousePlugin = function () {
     /**
      * The X-coordinate of the current position of the mouse cursor.
-     * 
+     *
      * @type Number
      */
     var mouseX,
-            
+
     /**
      * The Y-coordinate of the current position of the mouse cursor.
-     * 
+     *
      * @type Number
      */
     mouseY,
-    
+
     /**
      * Set to <code>true</code> if the mouse cursor has been moved since the
      * last frame.
-     * 
+     *
      * @type Boolean
      */
     moved,
-            
+
     /**
      * The X-coordinate of the tile over which the mouse cursor is currently
      * located.
-     * 
+     *
      * @type Number
      */
     tileX,
-    
+
     /**
      * The Y-coordinate of the tile over which the mouse cursor is currently
      * located.
-     * 
+     *
      * @type Number
      */
     tileY,
-    
+
     /**
      * Width of a single tile image on the screen in pixels.
-     * 
+     *
      * @type Number
      */
     tileWidth,
-    
+
     /**
      * Cached half of the tile image's width.
-     * 
+     *
      * @type Number
      */
     tileWidthHalf,
-    
+
     /**
      * Half of the height of the tile image on the screen in pixels.
-     * 
+     *
      * @type Number
      */
     tileHeight,
-    
+
     /**
      * Set to <code>true</code> if the mouse cursor has moved to another tile
      * since the last frame.
-     * 
+     *
      * @type Boolean
      */
     movedTile,
-    
+
     /**
      * Current horizontal offset of the world view in pixels.
-     * 
+     *
      * @type Number
      */
     viewOffsetLeft,
-    
+
     /**
      * Current vertical offset of the world view in pixels.
-     * 
+     *
      * @type Number
      */
     viewOffsetTop,
-            
+
     /**
      * Current instance of this plugin.
-     * 
+     *
      * @type MousePlugin
      */
     instance,
-          
+
     /**
      * The canvas for the main world view.
-     * 
+     *
      * @type HTMLElement
      */
     canvas,
-            
+
     /**
      * Set to <code>true</code> if the left or the right mouse button is down.
-     * 
+     *
      * @type Boolean
      */
     mouseDown,
-            
+
     /**
      * The X-coordinate of the tile the mouse cursor was located at when the
      * user pushed down a mouse button.
-     * 
+     *
      * @type Number
      */
     dragStartTileX,
-    
+
     /**
      * The Y-coordinate of the tile the mouse cursor was located at when the
      * user pushed down a mouse button.
-     * 
+     *
      * @type Number
      */
     dragStartTileY;
-    
+
     /**
      * Constructor.
      */
@@ -136,7 +136,7 @@ MousePlugin = function () {
         tileHeight = TilesDefinition.getType(0).imageData.height / 2 - 1;
         tileWidthHalf = tileWidth / 2;
     }.call(this));
-    
+
     // override
     this.renderFrame = function () {
         if (moved) {
@@ -154,19 +154,19 @@ MousePlugin = function () {
             movedTile = false;
         }
     };
-    
+
     /**
      * Event handler for the <code>viewOffsetUpdate</code> event. The handler
      * updates the view offsets used to calculate over which tile the mouse
      * currently is.
-     * 
+     *
      * @param {Object} data Information about the new view offset.
      */
     this.onViewOffsetUpdate = function (data) {
         viewOffsetLeft = data.offsetLeft;
         viewOffsetTop = data.offsetTop;
     };
-    
+
     /**
      * Event handler for the <code>start</code> event. The handler registers
      * the mouse movement handler with the main view canvas.
@@ -177,7 +177,7 @@ MousePlugin = function () {
         canvas.addEventListener("mousedown", mouseDownHandler);
         addEventListener("mouseup", mouseUpHandler);
     };
-    
+
     /**
      * Event handler for the <code>stop</code> event. The handler unregisters
      * the mouse movement handler from the main view canvas.
@@ -187,11 +187,11 @@ MousePlugin = function () {
         canvas.removeEventListener("mousedown", mouseDownHandler);
         removeEventListener("mouseup", mouseUpHandler);
     };
-    
+
     /**
      * The handler executed when the user pushes a mouse button while over the
      * canvas area.
-     * 
+     *
      * @param {MouseEvent} event The event representing the user's action.
      */
     function mouseDownHandler(event) {
@@ -212,10 +212,10 @@ MousePlugin = function () {
             y: tileY
         });
     }
-    
+
     /**
      * The handler executed when the user releases the pressed mouse button.
-     * 
+     *
      * @param {MouseEvent} event Event representing the user's action.
      */
     function mouseUpHandler(event) {
@@ -245,14 +245,14 @@ MousePlugin = function () {
             }
         }
     }
-    
+
     /**
      * Handles the mouse cursor movement over the main view canvas.
-     * 
+     *
      * @param {MouseEvent} event The mouse move event to process.
      */
     function mouseMoveHandler(event) {
-        var newTileX, newTileY, xShift, yShift, button;
+        var newTileX, newTileY, xShift, yShift;
         mouseX = event.offsetX;
         mouseY = event.offsetY;
         moved = true;
@@ -288,10 +288,10 @@ MousePlugin = function () {
             handleMoveToAnotherTile(event, newTileX, newTileY);
         }
     }
-    
+
     /**
      * Handles movement of the mouse cursor to another tile.
-     * 
+     *
      * @param {MouseEvent} event The event representing the user's action of
      *        moving the mouse cursor.
      * @param {Number} newTileX X-coordinate of the new tile over which the
@@ -301,6 +301,7 @@ MousePlugin = function () {
      */
     function handleMoveToAnotherTile(event, newTileX, newTileY) {
         var button;
+        console.log(newTileX + "\t" + newTileY);
         tileX = newTileX;
         tileY = newTileY;
         movedTile = true;
