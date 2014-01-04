@@ -200,7 +200,8 @@ MiniMap = function () {
      * Renders the changes in the buildings layer.
      */
     renderBuildingsLayer = function () {
-        var i, building, x1, y1, x2, y2, x3, y3, x4, y4;
+        var i, building, x1, y1, x2, y2, x3, y3, x4, y4, buildingType,
+                resource, resourceType;
         for (i = changedBuildings.length; i--;) {
             building = changedBuildings[i];
             buildingsLayerCtx.globalCompositeOperation = building.type ===
@@ -213,7 +214,14 @@ MiniMap = function () {
             y3 = y1 + building.height;
             x4 = x3 + building.width;
             y4 = y3 + Math.floor(building.width / 2);
-            buildingsLayerCtx.fillStyle = building.color;
+            buildingType = BuildingsDefinition.getType(building.type);
+            if (buildingType.resource === null) {
+                buildingsLayerCtx.fillStyle = building.color;
+            } else {
+                resource = buildingType.resource;
+                resourceType = ResourcesDefinition.getType(resource);
+                buildingsLayerCtx.fillStyle = resourceType.minimap;
+            }
             drawTileLine(x1, y1, x2, y2, buildingsLayerCtx);
             drawTileLine(x1, y1, x3, y3, buildingsLayerCtx);
             drawTileLine(x2, y2, x4, y4, buildingsLayerCtx);

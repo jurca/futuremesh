@@ -29,7 +29,7 @@ TilesDefinition = (function () {
             type: 3,
             image: 'data/images/tiles/energy.jpg',
             accessible: false,
-            minimap: 'rgb(200,150,42)',
+            minimap: 'rgb(230,180,52)',
             resource: 0
         }
     ];
