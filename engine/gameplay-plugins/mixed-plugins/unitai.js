@@ -36,28 +36,28 @@ UnitAI = function () {
      * @type Array
      */
     productionBuildings,
-       
+
     /**
      * SFX renderer.
-     * 
+     *
      * @type SFX
      */
     sfx,
-            
+
     /**
      * ID of the current human player.
-     * 
+     *
      * @type Number
      */
     playerId,
-            
+
     /**
      * The currently selected units.
-     * 
+     *
      * @type Array
      */
     selectedUnits;
-    
+
     /**
      * Constructor.
      */
@@ -89,6 +89,7 @@ UnitAI = function () {
                     }
                     break;
                 case 5: // unit is waiting for the tile ahead to be freed up
+                    wait(unit);
                     break;
                 case 6: // unit is turning
                     turnUnit(unit);
@@ -107,12 +108,12 @@ UnitAI = function () {
     this.onPlayerInitialization = function (player) {
         playerId = player.id;
     };
-    
+
     /**
      * Handles the event <code>mouseTileMove</code> sent when the user moves
      * the mouse cursor to another tile. The handler checks if the mouse is
      * hovering over a unit and notifies the SFX renderer accordingly.
-     * 
+     *
      * @param {Object} data Details of the event.
      */
     this.onMouseTileMove = function (data) {
@@ -124,19 +125,19 @@ UnitAI = function () {
             sfx.setMouseoverUnit(null);
         }
     };
-    
+
     /**
      * Handles the <code>leftMouseButtonClick</code> event produced when the
      * user clicks on a tile using the left mouse button. The handler checks
      * whether the tile does contain a unit and notifies the SFX renderer if
      * neccessary.
-     * 
+     *
      * <p>The handler selects the unit if the unit is owned by the player. The
      * handler issues a move order if the tile is empty and at least one unit
      * is currently selected by the player. The handler issues an attack order
      * if the tile contains an enemy unit or building and at least one unit is
      * selected.</p>
-     * 
+     *
      * @param {Object} data Event details.
      */
     this.onLeftMouseButtonClick = function (data) {
@@ -177,13 +178,13 @@ UnitAI = function () {
             }
         }
     };
-    
+
     /**
      * Handles the <code>leftMouseButtonBoxSelect</code> received when the user
      * attempts to select a group of units using drag&drop-creating a select
      * box. The handler will select all units in the selection area that are
      * owned by the player.
-     * 
+     *
      * @param {Object} data Event details.
      */
     this.onLeftMouseButtonBoxSelect = function (data) {
@@ -207,11 +208,11 @@ UnitAI = function () {
             selectedUnits = newSelectedUnits;
         }
     };
-    
+
     /**
      * Handles the <code>rightMouseButtonClick</code> event sent when the user
      * right-click on any tile. The handler deselects any selected units.
-     * 
+     *
      * @param {Object} data The details of the event.
      */
     this.onRightMouseButtonClick = function (data) {
@@ -660,6 +661,18 @@ UnitAI = function () {
             return 0;
         }
         return 1;
+    }
+
+    /**
+     * Handles unit's "wait" action. The method checks whether the tile ahead
+     * of the unit is free and sets the unit's action back to "move" if it is.
+     *
+     * @param {Unit} unit
+     */
+    function wait(unit) {
+        if (checkAheadMovingUnit(unit) === 0) {
+            unit.action = 3;
+        }
     }
 };
 UnitAI.prototype = new AdvancedMixedPlugin();
