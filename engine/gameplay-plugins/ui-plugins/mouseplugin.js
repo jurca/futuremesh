@@ -127,6 +127,8 @@ MousePlugin = function () {
      */
     dragStartTileY;
 
+    var mouse;
+
     /**
      * Constructor.
      */
@@ -135,6 +137,7 @@ MousePlugin = function () {
         tileWidth = TilesDefinition.getType(0).imageData.width - 1;
         tileHeight = TilesDefinition.getType(0).imageData.height / 2 - 1;
         tileWidthHalf = tileWidth / 2;
+        mouse = new Mouse();
     }.call(this));
 
     // override
@@ -165,6 +168,7 @@ MousePlugin = function () {
     this.onViewOffsetUpdate = function (data) {
         viewOffsetLeft = data.offsetLeft;
         viewOffsetTop = data.offsetTop;
+        mouse.setMapOffset(viewOffsetLeft, viewOffsetTop);
     };
 
     /**
@@ -252,15 +256,17 @@ MousePlugin = function () {
      * @param {MouseEvent} event The mouse move event to process.
      */
     function mouseMoveHandler(event) {
-        var newTileX, newTileY, xShift, yShift;
+        var absoluteMouseX, absoluteMouseY, newTileX, newTileY, xShift, yShift;
+        mouse.setCanvasOffset(event.target.offsetLeft, event.target.offsetTop);
         mouseX = event.offsetX;
         mouseY = event.offsetY;
         moved = true;
-        newTileX = mouseX + viewOffsetLeft + tileWidthHalf;
-        newTileX = Math.floor(newTileX / tileWidth);
-        newTileY = Math.floor((mouseY + viewOffsetTop) / tileHeight);
-        xShift = mouseX - newTileX * tileWidth;
-        yShift = mouseY - newTileY * tileHeight;
+        absoluteMouseX = mouseX + viewOffsetLeft;
+        absoluteMouseY = mouseY + viewOffsetTop;
+        newTileX = Math.floor(absoluteMouseX / tileWidth);
+        newTileY = Math.floor(absoluteMouseY / tileHeight);
+        xShift = absoluteMouseX - newTileX * tileWidth;
+        yShift = absoluteMouseY - newTileY * tileHeight;
         if (newTileY % 2) {
             if (xShift >= tileWidthHalf) {
                 xShift -= tileWidthHalf;
@@ -301,7 +307,6 @@ MousePlugin = function () {
      */
     function handleMoveToAnotherTile(event, newTileX, newTileY) {
         var button;
-        console.log(newTileX + "\t" + newTileY);
         tileX = newTileX;
         tileY = newTileY;
         movedTile = true;
