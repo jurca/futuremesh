@@ -178,6 +178,7 @@ MiniMap = function () {
             unitsLayerCtx.fillStyle = unit.color;
             switch (unit.action) {
                 case 2:
+                case 3:
                     unitsLayerCtx.globalCompositeOperation = 'destination-out';
                     unitsLayerCtx.fillRect(unit.lastX * xRatio,
                             unit.lastY * yRatio, xRatioC, yRatioC);
