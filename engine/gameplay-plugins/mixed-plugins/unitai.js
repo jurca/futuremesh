@@ -141,7 +141,7 @@ UnitAI = function () {
      * @param {Object} data Event details.
      */
     this.onLeftMouseButtonClick = function (data) {
-        var atTile, unit;
+        var atTile, buildingType;
         atTile = map.getObjectAt(data.x, data.y);
         if (atTile instanceof Unit) {
             if (atTile.player === playerId) {
@@ -152,30 +152,19 @@ UnitAI = function () {
             }
         } else if (atTile instanceof Building) {
             if (atTile.player === playerId) {
-                sfx.setSelectedUnits([]);
-                selectedUnits = [];
+                buildingType = BuildingsDefinition.getType(atTile.type);
+                if (buildingType.resource === null) {
+                    sfx.setSelectedUnits([]);
+                    selectedUnits = [];
+                } else {
+                    // TODO: should the unit harvest the resource?
+                    issueMoveOrder(data.x, data.y);
+                }
             } else {
                 // TODO: attack the enemy
             }
         } else if (navigationIndex[data.y][data.x]) {
-            if (selectedUnits.length === 1) {
-                unit = selectedUnits[0];
-                if (unit.waypoints.length) {
-                    if (unit.waypoints.length > 1) {
-                        unit.waypoints.splice(1, unit.waypoints.length);
-                    }
-                    unit.waypoints[0].x = unit.x;
-                    unit.waypoints[0].y = unit.y;
-                    unit.moveTargetX = unit.x;
-                    unit.moveTargetY = unit.y;
-                }
-                unit.waypoints.push({
-                    x: data.x,
-                    y: data.y
-                });
-            } else if (selectedUnits.length) {
-                // TODO: move the group
-            }
+            issueMoveOrder(data.x, data.y);
         }
     };
 
@@ -273,6 +262,36 @@ UnitAI = function () {
         map = gameMap;
         navigationIndex = map.getNavigationIndex();
     };
+
+    /**
+     * Issues a move order to the currently selected unit(s).
+     *
+     * @param {Number} x X-coordinate of the tile to which the selected unit(s)
+     *        should move.
+     * @param {Number} y Y-coordinate of the tile to which the selected unit(s)
+     *        should move.
+     */
+    function issueMoveOrder(x, y) {
+        var unit;
+        if (selectedUnits.length === 1) {
+            unit = selectedUnits[0];
+            if (unit.waypoints.length) {
+                if (unit.waypoints.length > 1) {
+                    unit.waypoints.splice(1, unit.waypoints.length);
+                }
+                unit.waypoints[0].x = unit.x;
+                unit.waypoints[0].y = unit.y;
+                unit.moveTargetX = unit.x;
+                unit.moveTargetY = unit.y;
+            }
+            unit.waypoints.push({
+                x: x,
+                y: y
+            });
+        } else if (selectedUnits.length) {
+            // TODO: move the group
+        }
+    }
 
     /**
      * Perform turning of the provided unit on spot (provided that the unit is
