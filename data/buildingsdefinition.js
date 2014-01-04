@@ -19,7 +19,7 @@ BuildingsDefinition = (function () {
             prerequisities: [],
             resource: null,
             race: 0,
-            isCentral: true,
+            isCentral: true, // central buildings produce units
             construction: { // total cost: 500, duration: 100 ticks
                 step: [10],
                 stepProgress: 20, // 50 steps, fully constructed when progress
@@ -40,9 +40,9 @@ BuildingsDefinition = (function () {
             colorify: '#000000',
             colorifyDistance: 0,
             prerequisities: [],
-            resource: 1,
+            resource: 0,
             race: null,
-            isCentral: false,
+            isCentral: false, // central buildings produce units
             construction: null // non-constructable building
         }
     ];
