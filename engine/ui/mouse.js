@@ -4,39 +4,39 @@ var Mouse;
 Mouse = function () {
     var x, y, mapX, mapY, canvasLeftOffset, canvasTopOffset, tileWidth,
             tileHeight, tileWidthHalf, mapXOffset, mapYOffset;
-    
+
     tileWidth = TilesDefinition.getType(0).imageData.width - 1;
     tileHeight = TilesDefinition.getType(0).imageData.height / 2 - 1;
     tileWidthHalf = tileWidth / 2;
     mapXOffset = 0;
     mapYOffset = 0;
-    
+
     this.getX = function () {
         return x;
     };
-    
+
     this.getY = function () {
         return y;
     };
-    
+
     this.getMapX = function () {
         return mapX;
     };
-    
+
     this.getMapY = function () {
         return mapY;
     };
-    
+
     this.setCanvasOffset = function (left, top) {
         canvasLeftOffset = left;
         canvasTopOffset = top;
     };
-    
+
     this.setMapOffset = function (x, y) {
         mapXOffset = x;
         mapYOffset = y;
     };
-    
+
     addEventListener('mousemove', function (e) {
         var xShift, yShift;
         x = e.pageX - canvasLeftOffset + mapXOffset;
