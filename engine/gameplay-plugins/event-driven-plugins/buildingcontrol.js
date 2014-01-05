@@ -160,7 +160,7 @@ BuildingControl = function () {
                     return;
                 }
             }
-            map.getBuildings().push(buildingToPlace);
+            map.updateBuilding(buildingToPlace);
             view.onBuildingChange(buildingToPlace);
             this.sendEvent("buildingPlaced", {
                 building: buildingToPlace
