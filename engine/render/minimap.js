@@ -179,18 +179,18 @@ MiniMap = function () {
             switch (unit.action) {
                 case 2:
                 case 3:
-                    unitsLayerCtx.globalCompositeOperation = 'destination-out';
-                    unitsLayerCtx.fillRect(unit.lastX * xRatio,
-                            unit.lastY * yRatio, xRatioC, yRatioC);
+                    unitsLayerCtx.clearRect(Math.floor(unit.lastX * xRatio),
+                            Math.floor(unit.lastY * yRatio),
+                            Math.ceil(xRatioC), Math.ceil(yRatioC));
                 case 0:
-                    unitsLayerCtx.globalCompositeOperation = 'source-over';
-                    unitsLayerCtx.fillRect(unit.x * xRatio, unit.y * yRatio,
-                            xRatioC, yRatioC);
+                    unitsLayerCtx.fillRect(Math.floor(unit.x * xRatio),
+                            Math.floor(unit.y * yRatio),
+                            Math.ceil(xRatioC), Math.ceil(yRatioC));
                     break;
                 case 1:
-                    unitsLayerCtx.globalCompositeOperation = 'destination-out';
-                    unitsLayerCtx.fillRect(unit.x * xRatio, unit.y * yRatio,
-                            xRatioC, yRatioC);
+                    unitsLayerCtx.clearRect(Math.floor(unit.lastX * xRatio),
+                            Math.floor(unit.lastY * yRatio),
+                            Math.ceil(xRatioC), Math.ceil(yRatioC));
                     break;
             }
         }
