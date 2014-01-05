@@ -5,14 +5,14 @@ var SFX;
  * Renderer of simple SFX and UI overlays over the main world view.
  */
 SFX = function () {
-    var canvas, map, canvasWidth, canvasHeight, tileWidth, tileHeight, context,
-            canvasTileWidth, canvasTileHeight, depthFactor, canvasCenterX,
-            canvasCenterY, buildingsIndex, displayLightSFX,
-            displayBuildableTiles, enableBuildOverlay, navigationIndex,
-            enableNavigationIndex, inaccessibleColor, accessibleColor,
-            projectiles, selectBoxStartX, selectBoxStartY, selectBoxWidth,
-            selectBoxHeight, selectedUnits, mouseoverUnit, selectedBuilding,
-            mouseoverBuilding;
+    var canvas, map, tiles, canvasWidth, canvasHeight, tileWidth, tileHeight,
+            context, canvasTileWidth, canvasTileHeight, depthFactor,
+            canvasCenterX, canvasCenterY, buildingsIndex, enableBuildOverlay,
+            navigationIndex, enableNavigationIndex, inaccessibleColor,
+            accessibleColor, projectiles, selectBoxStartX, selectBoxStartY,
+            selectBoxWidth, selectBoxHeight, selectedUnits, mouseoverUnit,
+            selectedBuilding, mouseoverBuilding, buildingToPlace,
+            buildingPlacementAllowed;
 
     depthFactor = Settings.sfx3DLightFactor;
     accessibleColor = Settings.sfxAccessibleTileColor;
@@ -48,7 +48,8 @@ SFX = function () {
         if (!canvas) {
             throw new Error("cannot set map for SFX before canvas!");
         }
-        map = newMap.getMap();
+        map = newMap;
+        tiles = newMap.getTiles();
         tileWidth = TilesDefinition.getType(0).imageData.width - 1;
         tileHeight = TilesDefinition.getType(0).imageData.height / 2 - 1;
         canvasTileWidth = Math.ceil(canvasWidth / tileWidth);
@@ -81,7 +82,7 @@ SFX = function () {
     this.setDisplayNavigationIndex = function (displayNavigationIndex) {
         enableNavigationIndex = displayNavigationIndex;
     };
-    
+
     /**
      * Displays the SFX of the map on the chosen offset on the provided
      * canvas.
@@ -94,17 +95,18 @@ SFX = function () {
         displayProjectiles(x, y);
         displaySelectionBox(x, y);
         displayHealthBars(x, y);
+        displayBuildingToPlace(x, y);
         context.globalAlpha = 0.3;
         displayLightSFX(x, y);
         enableBuildOverlay && displayBuildableTiles(x, y);
         enableNavigationIndex && displayNavigableTiles(x, y);
         context.globalAlpha = 1;
     };
-    
+
     /**
      * Sets the starting and ending coordinates of the unit selection box.
      * Setting all parameters to <code>0</code> will disable the selection box.
-     * 
+     *
      * @param {Number} startX The X-coordinate of the selection start tile.
      * @param {Number} startY The Y-coordinate of the selection start tile.
      * @param {Number} endX The X-coordinate of the selection end tile.
@@ -121,18 +123,18 @@ SFX = function () {
      * Sets the currently selected units. The SFX renderer will show the
      * hitpoints of the units as healtbars over the units (for each visible
      * unit).
-     * 
+     *
      * @param {Array} units The player's currently selected units.
      */
     this.setSelectedUnits = function (units) {
         selectedUnits = units;
     };
-    
+
     /**
      * Sets the unit over which the mouse cursor is currently located. The SFX
      * renderer will show the unit's hitpoints as a healthbar over the unit (if
      * the unit is visible).
-     * 
+     *
      * @param {Unit} unit The unit over which the mouse cursor is currently
      *        located. Can be <code>null</code> if the mouse cursor is over no
      *        unit.
@@ -140,11 +142,11 @@ SFX = function () {
     this.setMouseoverUnit = function (unit) {
         mouseoverUnit = unit;
     };
-    
+
     /**
      * Sets the currently selected building in the UI. The building will have
      * its healthbar fully displayed.
-     * 
+     *
      * @param {Building} building The building that is currently selected. The
      *        parameter can be <code>null</code> if no building is currently
      *        selected.
@@ -152,11 +154,11 @@ SFX = function () {
     this.setSelectedBuilding = function (building) {
         selectedBuilding = building;
     };
-    
+
     /**
      * Sets the building which is currently located under the mouse cursor. The
      * building will have its healthbar displayed in the simple way.
-     * 
+     *
      * @param {Building} building The building located under the mouse cursor.
      *        The parameter can be <code>null</code> if no building is under
      *        the mouse cursor.
@@ -166,9 +168,68 @@ SFX = function () {
     };
 
     /**
+     * Sets the building about to be placed by the user. The building will be
+     * displayed in a semi-transparent way along with a per-tile grid showing
+     * whether the buidlding can be placed.
+     *
+     * @param {Building} building The building to place on the map.
+     * @param {Boolean} allowed Is it allowed to place the building onto this
+     *        possition if all underlying tiles were free? This can be used to
+     *        restrict the distance from other buildings at which new buildings
+     *        can be placed.
+     */
+    this.setBuildingToPlace = function (building, allowed) {
+        buildingToPlace = building;
+        buildingPlacementAllowed = allowed;
+    };
+
+    /**
+     * Displays the building about to be placed on the map by the user along
+     * with a helping overlay showing whether the building can or cannot be
+     * placed.
+     *
+     * @param {Number} x The horintal offset of the world view in pixels.
+     * @param {Number} y The vertical offset of the world view in pixels.
+     */
+    function displayBuildingToPlace(x, y) {
+        var screenX, screenY, type, tiles, i, tile, atTile;
+        if (!buildingToPlace) {
+            return;
+        }
+        context.globalAlpha = 0.6;
+        screenX = buildingToPlace.x * tileWidth +
+                (tileWidth / 2) * (buildingToPlace.y % 2) - x;
+        screenY = buildingToPlace.y * tileHeight - y;
+        type = BuildingsDefinition.getType(buildingToPlace.type);
+        context.drawImage(type.playerImages[buildingToPlace.player], screenX,
+                screenY - 2);
+        tiles = map.getTilesOccupiedByBuilding(buildingToPlace);
+        context.globalAlpha = 0.3;
+        context.lineWidth = 1;
+        for (i = tiles.length; i--;) {
+            tile = tiles[i];
+            context.fillStyle = "#00cf00";
+            context.strokeStyle = "#007500";
+            if (buildingPlacementAllowed) {
+                atTile = map.getObjectAt(tile.x, tile.y);
+                if (atTile || !map.getNavigationIndex()[tile.y][tile.x]) {
+                    context.fillStyle = "#cf0000";
+                    context.strokeStyle = "#750000";
+                }
+            } else {
+                context.fillStyle = "#cf0000";
+                context.strokeStyle = "#750000";
+            }
+            screenX = tile.x * tileWidth + (tileWidth / 2) * (tile.y % 2) - x;
+            screenY = tile.y * tileHeight - y;
+            displayTileOverlay(screenX, screenY, true);
+        }
+    }
+
+    /**
      * Displays the health bars of selected units and the unit under the mouse
      * cursor.
-     * 
+     *
      * @param {Number} x Horizontal offset of the world view.
      * @param {Number} y Vertical offset of the world view.
      */
@@ -187,10 +248,10 @@ SFX = function () {
             displayBuildingHealthBar(x, y, mouseoverBuilding, false);
         }
     }
-    
+
     /**
      * Displays the health bar of a single building.
-     * 
+     *
      * @param {Number} viewX Horizontal offset of the world view.
      * @param {Number} viewY Vertical offset of the world view.
      * @param {Building} building
@@ -220,7 +281,7 @@ SFX = function () {
 
     /**
      * Displays the health bar of a single unit.
-     * 
+     *
      * @param {Number} viewX Horizontal offset of the world view.
      * @param {Number} viewY Vertical offset of the world view.
      * @param {Unit} unit The unit for which the health bar should be
@@ -249,7 +310,7 @@ SFX = function () {
     /**
      * Displays the unit group selection box when the user is selecting a group
      * of units using drag & drop.
-     * 
+     *
      * @param {Number} x Horizontal offset of the world view.
      * @param {Number} y Vertical offset of the worlds view.
      */
@@ -316,7 +377,7 @@ SFX = function () {
         mapOffsetY = Math.floor(y / tileHeight);
         context.strokeStyle = Settings.sfx3DLightColor;
         for (j = canvasTileHeight + 2; j--;) {
-            mapRow = map[j + mapOffsetY];
+            mapRow = tiles[j + mapOffsetY];
             if (!mapRow) {
                 continue;
             }
@@ -379,16 +440,26 @@ SFX = function () {
      *
      * @param {Number} x The horizontal offset of the tile's position from the
      *        map's top left cornenr.
-     * @param {type} y The vertical offset of the tile's position from the
+     * @param {Number} y The vertical offset of the tile's position from the
      *        map's top left corner.
+     * @param {Boolean} createBorder Should the method also draw a "border"
+     *        around the tile's edges?
      */
-    function displayTileOverlay(x, y) {
+    function displayTileOverlay(x, y, createBorder) {
         context.beginPath();
         context.moveTo(x + (tileWidth / 2), y);
         context.lineTo(x + tileWidth, y + tileHeight);
         context.lineTo(x + (tileWidth / 2), y + (tileHeight * 2));
         context.lineTo(x, y + tileHeight);
         context.fill();
+        if (createBorder) {
+            context.beginPath();
+            context.moveTo(x + (tileWidth / 2), y - 1);
+            context.lineTo(x + tileWidth + 1, y + tileHeight);
+            context.lineTo(x + (tileWidth / 2), y + (tileHeight * 2) + 1);
+            context.lineTo(x - 1, y + tileHeight);
+            context.stroke();
+        }
     }
 
     /**

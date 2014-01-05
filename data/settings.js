@@ -66,6 +66,9 @@ Settings.load({
         'BuildingControl'
     ],
     pluginConfiguration: {
+        BuildingControl: {
+            maxConstructionDistance: 15
+        },
         BuildingsUnitsConstruction: {
             maxQueueLength: 30
         },
