@@ -29,6 +29,27 @@ BuildingsConstructionUIPlugin = function () {
     };
 
     /**
+     * Handler for the <code>buildingPlaced</code> event. The event occurrs
+     * when the user successfully places a newly constructed building on the
+     * map. The handler resets the related building construction button.
+     *
+     * @param {Object} data Event's data.
+     */
+    this.onBuildingPlaced = function (data) {
+        var building, button;
+        building = data.building;
+        if (building.player !== playerId) {
+            return;
+        }
+        button = buttons[building.type];
+        uiUpdate.push({
+            node: button.progressInfo,
+            value: ""
+        });
+        button.ready = false;
+    };
+
+    /**
      * Event handler for the <code>buildingConstructionProgress</code> event.
      * The event is sent by the BuildingsUnitsConstruction plug-in whenever a
      * construction of a building progresses.
@@ -178,7 +199,7 @@ BuildingsConstructionUIPlugin = function () {
      * building construction if the building isn't in construction yet. The
      * method starts the building placement process if the building has been
      * fully constructed.
-     * 
+     *
      * @param {HTMLElement} node HTML element containing the button
      *        representing the construction button.
      * @param {HTMLElement} progressInfo HTML element to contain the current
@@ -197,7 +218,9 @@ BuildingsConstructionUIPlugin = function () {
                 building: building.type
             });
         } else if (node.ready) {
-            alert('placing the building is not implemented yet');
+            instance.sendEvent('startBuildingPlacing', {
+                building: building.type
+            });
         }
     }
 
@@ -207,7 +230,7 @@ BuildingsConstructionUIPlugin = function () {
      * the method will cancel the building construction. The method will cause
      * building construction refund if the building has already been built but
      * hasn't been placed on the map yet.
-     * 
+     *
      * @param {MouseEvent} event The captured right-mouse-button click event.
      * @param {HTMLElement} node Root HTML node of the button representing the
      *        building.
