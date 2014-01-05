@@ -290,7 +290,8 @@ MiniMap = function () {
             fillColor = thisColor;
         }
         if (thisColor === fillColor) {
-            ctx.fillRect(x * xRatio, y * yRatio, xRatioC, yRatioC);
+            ctx.fillRect(Math.floor(x * xRatio), Math.floor(y * yRatio),
+                    Math.ceil(xRatioC), Math.ceil(yRatioC));
             buildingsLayerIndex[x][y] = !buildingsLayerIndex[x][y];
             fill(x - 1, y, ctx, fillColor);
             fill(x + 1, y, ctx, fillColor);
@@ -316,8 +317,8 @@ MiniMap = function () {
         len = Math.sqrt(vx * vx + vy * vy);
         vx /= len;
         vy /= len;
-        ctx.fillRect(xRatio * Math.round(x1), yRatio * Math.round(y1),
-                xRatioC, yRatioC);
+        ctx.fillRect(Math.floor(xRatio * x1), Math.floor(yRatio * y1),
+                Math.ceil(xRatioC), Math.ceil(yRatioC));
         do {
             x1 += vx;
             y1 += vy;
@@ -326,7 +327,8 @@ MiniMap = function () {
             if (buildingsLayerIndex[rx] &&
                     (buildingsLayerIndex[rx][ry] !== undefined)) {
                 buildingsLayerIndex[rx][ry] = true;
-                ctx.fillRect(xRatio * rx, yRatio * ry, xRatioC, yRatioC);
+                ctx.fillRect(Math.floor(xRatio * rx), Math.floor(yRatio * ry),
+                        Math.ceil(xRatioC), Math.ceil(yRatioC));
             }
         } while ((Math.round(x1) !== x2) && (Math.round(y1) !== y2))
     };
