@@ -289,7 +289,7 @@ MiniMap = function () {
         if (fillColor === undefined) {
             fillColor = thisColor;
         }
-        if (thisColor == fillColor) {
+        if (thisColor === fillColor) {
             ctx.fillRect(x * xRatio, y * yRatio, xRatioC, yRatioC);
             buildingsLayerIndex[x][y] = !buildingsLayerIndex[x][y];
             fill(x - 1, y, ctx, fillColor);
@@ -328,7 +328,7 @@ MiniMap = function () {
                 buildingsLayerIndex[rx][ry] = true;
                 ctx.fillRect(xRatio * rx, yRatio * ry, xRatioC, yRatioC);
             }
-        } while ((Math.round(x1) != x2) && (Math.round(y1) != y2))
+        } while ((Math.round(x1) !== x2) && (Math.round(y1) !== y2))
     };
 
     /**
