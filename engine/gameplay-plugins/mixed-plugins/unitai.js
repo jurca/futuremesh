@@ -275,21 +275,79 @@ UnitAI = function () {
         var unit;
         if (selectedUnits.length === 1) {
             unit = selectedUnits[0];
-            if (unit.waypoints.length) {
-                if (unit.waypoints.length > 1) {
-                    unit.waypoints.splice(1, unit.waypoints.length);
-                }
-                unit.waypoints[0].x = unit.x;
-                unit.waypoints[0].y = unit.y;
-                unit.moveTargetX = unit.x;
-                unit.moveTargetY = unit.y;
-            }
+            trimUnitWaypoints(unit);
             unit.waypoints.push({
                 x: x,
                 y: y
             });
         } else if (selectedUnits.length) {
-            // TODO: move the group
+            issueGroupMoveOrder(x, y);
+        }
+    }
+
+    /**
+     * Issues the move order to a group of units. The order is issued to the
+     * currently selected units, which must contain at least 2 units.
+     *
+     * @param {Number} x The X-coordinate of the tile to which the group should
+     *        move.
+     * @param {Number} y The Y-coordinate of the tile to which the group should
+     *        move.
+     */
+    function issueGroupMoveOrder(x, y) {
+        var minX, minY, maxX, maxY, i, unit, centerX, centerY;
+        unit = selectedUnits[selectedUnits.length - 1];
+        minX = unit.x;
+        minY = unit.y;
+        maxX = unit.x;
+        maxY = unit.y;
+        for (i = selectedUnits.length - 1; i--;) {
+            unit = selectedUnits[i];
+            minX = Math.min(minX, unit.x);
+            minY = Math.min(minY, unit.y);
+            maxX = Math.max(maxX, unit.x);
+            maxY = Math.max(maxY, unit.y);
+        }
+        if ((x < minX) || (x > maxX) || (y < minY) || (y > maxY)) {
+            centerX = Math.round((minX + maxX) / 2);
+            centerY = Math.round((minY + maxY) / 2);
+            for (i = selectedUnits.length; i--;) {
+                unit = selectedUnits[i];
+                trimUnitWaypoints(unit);
+                unit.waypoints.push({
+                    x: x + unit.x - centerX,
+                    y: y + unit.y - centerY
+                });
+            }
+        } else {
+            for (i = selectedUnits.length; i--;) {
+                unit = selectedUnits[i];
+                trimUnitWaypoints(unit);
+                unit.waypoints.push({
+                    x: x,
+                    y: y
+                });
+            }
+        }
+    }
+
+    /**
+     * Trims the provided unit's waypoints (if any) to a single one that will
+     * be updated to the unit's current location. This method should be used if
+     * the unit is moving to some arbitrary location and a new move order
+     * should be issued to the unit, canceling the current one.
+     *
+     * @param {Unit} unit The unit that should have its waypoints trimmed.
+     */
+    function trimUnitWaypoints(unit) {
+        if (unit.waypoints.length) {
+            if (unit.waypoints.length > 1) {
+                unit.waypoints.splice(1, unit.waypoints.length);
+            }
+            unit.waypoints[0].x = unit.x;
+            unit.waypoints[0].y = unit.y;
+            unit.moveTargetX = unit.x;
+            unit.moveTargetY = unit.y;
         }
     }
 
