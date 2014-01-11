@@ -556,7 +556,19 @@ UnitAI = function () {
         deltaX += destinationOffset - sourceOffset;
         if (deltaX === 0) {
             if (deltaY > 0) {
+                if ((sourceOffset === 1) && (destinationOffset === 0)) {
+                    return 3; // south-east
+                }
+                if ((sourceOffset === 0) && (destinationOffset === 1)) {
+                    return 5; // south-west
+                }
                 return 4; // south
+            }
+            if ((sourceOffset === 0) && (destinationOffset === 1)) {
+                return 7; // north-west
+            }
+            if ((sourceOffset === 1) && (destinationOffset === 0)) {
+                return 1; // north-east
             }
             return 0; // north
         }
