@@ -151,17 +151,17 @@ UnitAI = function () {
                 // TODO: attack the enemy
             }
         } else if (atTile instanceof Building) {
-            if (atTile.player === playerId) {
-                buildingType = BuildingsDefinition.getType(atTile.type);
-                if (buildingType.resource === null) {
+            buildingType = BuildingsDefinition.getType(atTile.type);
+            if (buildingType.resource === null) {
+                if (atTile.player === playerId) {
                     sfx.setSelectedUnits([]);
                     selectedUnits = [];
                 } else {
-                    // TODO: should the unit harvest the resource?
-                    issueMoveOrder(data.x, data.y);
+                    // TODO: attack the enemy
                 }
             } else {
-                // TODO: attack the enemy
+                // TODO: should the unit harvest the resource?
+                issueMoveOrder(data.x, data.y);
             }
         } else if (navigationIndex[data.y][data.x]) {
             issueMoveOrder(data.x, data.y);
