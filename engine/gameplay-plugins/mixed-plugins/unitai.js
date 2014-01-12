@@ -949,6 +949,11 @@ UnitAI = function () {
                 }
                 return 2;
             }
+            if ((ahead instanceof Building) && (ahead.passable)) {
+                if (navigationIndex[aheadCoordinates.y][aheadCoordinates.x]) {
+                    return 0;
+                }
+            }
             return 1;
         }
         if (navigationIndex[aheadCoordinates.y][aheadCoordinates.x]) {
