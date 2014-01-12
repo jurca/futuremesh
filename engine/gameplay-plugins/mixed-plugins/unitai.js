@@ -56,13 +56,21 @@ UnitAI = function () {
      *
      * @type Array
      */
-    selectedUnits;
+    selectedUnits,
+
+    /**
+     * The current instance of this plugin.
+     *
+     * @type UnitAI
+     */
+    instance;
 
     /**
      * Constructor.
      */
     (function () {
         selectedUnits = [];
+        instance = this;
     }.call(this));
 
     // override
@@ -84,6 +92,19 @@ UnitAI = function () {
                     moveUnit(unit);
                     break;
                 case 4: // standing still
+                    if (unit.harvest) {
+                        if (unit.harvest.type === false) {
+                            unit.harvest = null;
+                        } else if ((unit.x !== unit.harvest.x) ||
+                                    (unit.y !== unit.harvest.y)) {
+                            unit.waypoints.push({
+                                x: unit.harvest.x,
+                                y: unit.harvest.y
+                            });
+                        } else {
+                            harvestResource(unit);
+                        }
+                    }
                     if (unit.waypoints.length) {
                         startMovingUnit(unit);
                     }
@@ -141,7 +162,7 @@ UnitAI = function () {
      * @param {Object} data Event details.
      */
     this.onLeftMouseButtonClick = function (data) {
-        var atTile, buildingType;
+        var atTile, buildingType, i;
         atTile = map.getObjectAt(data.x, data.y);
         if (atTile instanceof Unit) {
             if (atTile.player === playerId) {
@@ -159,11 +180,13 @@ UnitAI = function () {
                 } else {
                     // TODO: attack the enemy
                 }
-            } else {
-                // TODO: should the unit harvest the resource?
-                issueMoveOrder(data.x, data.y);
+            } else if (selectedUnits.length) {
+                issueHarvestOrder(data.x, data.y, atTile, buildingType);
             }
         } else if (navigationIndex[data.y][data.x]) {
+            for (i = selectedUnits.length; i--;) {
+                selectedUnits[i].harvest = null;
+            }
             issueMoveOrder(data.x, data.y);
         }
     };
@@ -206,6 +229,7 @@ UnitAI = function () {
      */
     this.onRightMouseButtonClick = function (data) {
         sfx.setSelectedUnits([]);
+        selectedUnits = [];
     };
 
     /**
@@ -262,6 +286,187 @@ UnitAI = function () {
         map = gameMap;
         navigationIndex = map.getNavigationIndex();
     };
+
+    /**
+     * Handles resource harvesting by the provided unit.
+     *
+     * @param {Unit} unit The unit harvesting the resource.
+     */
+    function harvestResource(unit) {
+        var unitType, maxHarvest, harvestAmount, resourceGain, resourcesGain,
+                i, radius, circumference, angle, x, y, atTile, buildingType;
+        unitType = UnitsDefinition.getType(unit.type);
+        maxHarvest = unitType.harvestSpeed;
+        harvestAmount = Math.min(unit.harvest.hitpoints, maxHarvest);
+        unit.harvest.hitpoints -= harvestAmount;
+        resourceGain = harvestAmount * unitType.harvestEfficiency;
+        resourcesGain = new Array(unitType.resource);
+        for (i = resourcesGain.length; i--;) {
+            resourcesGain[i] = 0;
+        }
+        resourcesGain[unitType.resource] = resourceGain;
+        instance.sendEvent("resourcesGained", {
+            player: unit.player,
+            resources: resourcesGain
+        });
+        if (!unit.harvest.hitpoints) {
+            view.onBuildingChange(unit.harvest);
+            map.removeBuilding(unit.harvest);
+            unit.harvest = null;
+            for (radius = 1; radius < 10; radius++) {
+                circumference = Math.floor(Math.PI * 2 * radius);
+                for (i = circumference; i--;) {
+                    angle = Math.PI * 2 / circumference * i;
+                    x = unit.x + Math.floor(Math.cos(angle) * radius);
+                    y = unit.y + Math.floor(Math.sin(angle) * radius);
+                    atTile = map.getObjectAt(x, y);
+                    if (!(atTile instanceof Building)) {
+                        continue;
+                    }
+                    buildingType = BuildingsDefinition.getType(atTile.type);
+                    if (buildingType.resource !== unitType.resource) {
+                        continue;
+                    }
+                    unit.harvest = atTile;
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Issues the harvest order to the currently selected units.
+     *
+     * @param {Number} x X-coordinate of the tile that was clicked.
+     * @param {Number} y Y-coordinate of the tile that was clicked.
+     * @param {Building} building The building representing the resource to
+     *        harvest.
+     * @param {Object} buildingType Definition of the building's type.
+     */
+    function issueHarvestOrder(x, y, building, buildingType) {
+        var center, i, unit, unitType, realSelectedUnits, atTile, tileX, tileY,
+                usedTiles, requiresAlternative, incompatibleUnits;
+        realSelectedUnits = selectedUnits;
+        usedTiles = [];
+        requiresAlternative = [];
+        incompatibleUnits = [];
+        center = getUnitGroupCenter(realSelectedUnits);
+        for (i = realSelectedUnits.length; i--;) {
+            unit = realSelectedUnits[i];
+            unitType = UnitsDefinition.getType(unit.type);
+            if (unitType.resource === buildingType.resource) {
+                tileX = x + unit.x - center.x;
+                tileY = y + unit.y - center.y;
+                atTile = map.getObjectAt(tileX, tileY);
+                if ((atTile instanceof Building) &&
+                        (atTile.type === building.type)) {
+                    unit.harvest = atTile;
+                    selectedUnits = [unit];
+                    issueMoveOrder(tileX, tileY);
+                    usedTiles.push({
+                        x: tileX,
+                        y: tileY
+                    });
+                } else { // find some alternative
+                    requiresAlternative.push(unit);
+                }
+            } else {
+                incompatibleUnits.push(unit);
+            }
+        }
+        issueHarvestOrderAlternatives(x, y, building, requiresAlternative,
+                center, usedTiles);
+        selectedUnits = incompatibleUnits;
+        issueMoveOrder(x, y);
+        selectedUnits = realSelectedUnits;
+    }
+
+    /**
+     * Issues the harvest order to the remaining harverster units that could
+     * not have been ordered to harvest the resource at the expected location.
+     *
+     * @param {Number} x X-coordinate of the tile that was clicked.
+     * @param {Number} y Y-coordinate of the tile that was clicked.
+     * @param {Building} building The building representing the resource to
+     *        harvest.
+     * @param {Array} requiresAlternative The units that require some other
+     *        than expected tile containing a resource-building to harvest.
+     * @param {Object} center Location of the center of the group of the units.
+     * @param {Array} usedTiles Tiles to which other units will go to harvest
+     *        resources.
+     */
+    function issueHarvestOrderAlternatives(x, y, building, requiresAlternative,
+            center, usedTiles) {
+        var unitCycle, i, unit, tileCenterX, tileCenterY, radius,
+                circumference, j, walkCircle, angle, tileX, tileY, k, tile,
+                atTile;
+        unitCycle: for (i = requiresAlternative.length; i--;) {
+            unit = requiresAlternative[i];
+            tileCenterX = x + unit.x - center.x;
+            tileCenterY = y + unit.y - center.y;
+            for (radius = 1; radius < 5; radius++) {
+                circumference = Math.floor(2 * radius * Math.PI);
+                walkCircle: for (j = circumference; j--;) {
+                    angle = Math.PI * 2 / circumference * j;
+                    tileX = tileCenterX + Math.floor(Math.cos(angle) * radius);
+                    tileY = tileCenterY + Math.floor(Math.sin(angle) * radius);
+                    for (k = usedTiles.length; k--;) {
+                        tile = usedTiles[k];
+                        if ((tile.x === tileX) && (tile.y === tileY)) {
+                            continue walkCircle;
+                        }
+                    }
+                    atTile = map.getObjectAt(tileX, tileY);
+                    if (!(atTile instanceof Building) ||
+                            (atTile.type !== building.type)) {
+                        continue;
+                    }
+                    unit.harvest = atTile;
+                    selectedUnits = [unit];
+                    issueMoveOrder(tileX, tileY);
+                    usedTiles.push({
+                        x: tileX,
+                        y: tileY
+                    });
+                    continue unitCycle;
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the location in (tile coordinates) of the center of the
+     * specified unit group.
+     *
+     * @param {Array} units The group of units.
+     * @return {Object} Location of the group's center. The object has the
+     *         following fields:
+     *         <ul>
+     *             <li><code>x: Number</code> - X-coordinate of the
+     *                 center.</li>
+     *             <li><code>Y: Number</code> - Y-coordinate of the
+     *                 center.</li>
+     *         </ul>
+     */
+    function getUnitGroupCenter(units) {
+        var unit, minX, minY, maxX, maxY, i;
+        unit = selectedUnits[selectedUnits.length - 1];
+        minX = unit.x;
+        minY = unit.y;
+        maxX = unit.x;
+        maxY = unit.y;
+        for (i = units.length - 1; i--;) {
+            unit = units[i];
+            minX = Math.min(minX, unit.x);
+            minY = Math.min(minY, unit.y);
+            maxX = Math.max(maxX, unit.x);
+            maxY = Math.max(maxY, unit.y);
+        }
+        return {
+            x: Math.round((minX + maxX) / 2),
+            y: Math.round((minY + maxY) / 2)
+        };
+    }
 
     /**
      * Issues a move order to the currently selected unit(s).

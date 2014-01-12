@@ -61,13 +61,13 @@ View = function () {
     /**
      * Returns the SFX renderer used to render the special effects and various
      * UI-related overlays.
-     * 
+     *
      * @return {SFX} The used SFX renderer.
      */
     this.getSfx = function () {
         return mainview.getSfx();
     };
-    
+
     /**
      * Event handler for changes about buildings - adding or removing of a
      * building.
@@ -75,10 +75,10 @@ View = function () {
      * @param {Building} building Building which status has changed.
      */
     this.onBuildingChange = function (building) {
-        if (building.type === false) {
-            mainview.onBuildingRemoved(building);
-        } else {
+        if (building.hitpoints) {
             mainview.onBuildingAdded(building);
+        } else {
+            mainview.onBuildingRemoved(building);
         }
         minimap.onBuildingChange(building);
     };

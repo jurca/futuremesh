@@ -94,16 +94,16 @@ var Building;
          * in case of "ordinary" buildings; or they represent the amount of
          * resources that can be harvested from the building before depletion
          * in case of "resource" buildings.
-         * 
+         *
          * @type Number
          */
         this.hitpoints = definition.hitpoints;
-        
+
         /**
          * The maximum number of hitpoints this building may have. See the
          * <code>hitpoints</code> field for more details on how hitpoints are
          * interpreted and used.
-         * 
+         *
          * @type Number
          */
         this.maxHitpoints = definition.hitpoints;

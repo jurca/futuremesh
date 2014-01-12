@@ -167,6 +167,13 @@ var Unit;
         this.maxHitpoints = definition.hitpoints;
 
         /**
+         * The current resource-representing building the unit should harvest.
+         *
+         * @type Building
+         */
+        this.harvest = null;
+
+        /**
          * The color in the building's image that should be replaced by the
          * player's color. So far only hex format (#rrggbb or rrggbb is
          * supported).

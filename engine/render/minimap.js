@@ -205,8 +205,8 @@ MiniMap = function () {
                 resource, resourceType;
         for (i = changedBuildings.length; i--;) {
             building = changedBuildings[i];
-            buildingsLayerCtx.globalCompositeOperation = building.type ===
-                    false ? 'destination-out' : 'source-over';
+            buildingsLayerCtx.globalCompositeOperation = building.hitpoints ?
+                    'source-over' : 'destination-out';
             x1 = building.x;
             y1 = building.y;
             x2 = x1 + building.width;
