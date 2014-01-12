@@ -13,7 +13,10 @@ UnitsDefinition = (function () {
             hitpoints: 800, // how much damage can the unit take
             colorify: '#ffffff',
             colorifyDistance: 240,
-            resource: 1,
+            resource: 0,
+            harvestSpeed: 2, // hitpoints per tick
+            harvestEfficiency: 1.5, // gained resources per tick =
+                                    // harvestSpeed * harvestEfficiency
             race: 0,
             construction: { // total cost: 150, duration: 50 ticks
                 step: [6],
