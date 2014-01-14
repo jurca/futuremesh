@@ -45,6 +45,10 @@ var GameLoader;
  *                 instance as its data. The Player instance contains
  *                 information about the current human player that will control
  *                 the game through the UI.</li>
+ *             <li><code>difficultySet</code> - Event defining the current
+ *                 dificulty level. The dificulty is provided as the event data
+ *                 as a positive integer. The interpretation of the value is up
+ *                 to the AI and the map's scripts.</code>
  *             <li><code>viewInitialization</code> - The event has an object
  *                 bearing the main view rendering canvas and minimap view
  *                 container. The object has the following properties:
@@ -79,6 +83,9 @@ var GameLoader;
  *        value is an array of resource stats for a player. The keys of the
  *        resource stats array correspond to resource types, the values are the
  *        amounts of the resources the given player posseses.
+ * @param {Number} difficulty The gameplay dificulty. The dificulty should be a
+ *        positive integer. The interpretation of the value is up to the AI and
+ *        the map's scripts.
  * @param {HTMLElement} viewCanvas The canvas element used for rendering the
  *        main view.
  * @param {HTMLElement} minimapContainer Container of the minimap-rendering
@@ -86,7 +93,7 @@ var GameLoader;
  */
 GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
         loadingScreen, gameplayScreen, mapFileUrl, currentPlayer,
-        playerResources, viewCanvas, minimapContainer) {
+        playerResources, difficulty, viewCanvas, minimapContainer) {
     var spriteloader, steps, stepMessages, currentStep, performNextStep,
             setProgress, backgroundMusic, map, gamePlay, gameMusic, plugins;
 
@@ -163,6 +170,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             gamePlay.sendEvent('playerResourcesInitialization',
                     playerResources);
             gamePlay.sendEvent('playerInitialization', currentPlayer);
+            gamePlay.sendEvent('difficultySet', difficulty);
             gamePlay.sendEvent('viewInitialization', {
                 view: viewCanvas,
                 minimap: minimapContainer
