@@ -5,16 +5,16 @@ ImgBuilder = function () {
     var $, canvas, context, code, addTiles, addBuildings, addUnits,
             buildSprite, tiles, buildings, units, indexes, buildingOffsets,
             buildingHeights, buildingsStart;
-    
+
     $ = function (selector) {
         return document.querySelectorAll(selector);
     };
-    
+
     canvas = $('canvas')[0];
     context = canvas.getContext('2d');
     code = $('textarea')[0];
     indexes = $('#indexes')[0];
-    
+
     $('button')[0].addEventListener('click', function (e) {
         var loader;
         e.preventDefault();
@@ -32,7 +32,7 @@ ImgBuilder = function () {
         loader.setPathPrefix('../');
         loader.load(BuildingsDefinition, UnitsDefinition, TilesDefinition);
     }, false);
-    
+
     addTiles = function () {
         var i, tile;
         code.value += 'Exporting tiles... ';
@@ -48,7 +48,7 @@ ImgBuilder = function () {
         code.value += 'Done\n';
         setTimeout(addBuildings, 10);
     };
-    
+
     addBuildings = function () {
         var i, building, height, width, x;
         code.value += 'Exporting buildings... ';
@@ -73,13 +73,13 @@ ImgBuilder = function () {
         code.value += 'Done\n';
         setTimeout(addUnits, 10);
     };
-    
+
     addUnits = function () {
-        var i, j, unit;
+        var i, j, unit, unitCount;
         code.value += 'Exporting units... ';
-        for (i = 0; UnitsDefinition.getType(i); i++) {}
+        for (i = 0; UnitsDefinition.getType(i); i++);
         canvas.width = Math.ceil(Settings.tileWidth) * 8;
-        canvas.height = Math.ceil(Settings.tileHeight);
+        canvas.height = Math.ceil(Settings.tileHeight) * i;
         for (i = 0; unit = UnitsDefinition.getType(i); i++) {
             for (j = 0; j < 8; j++) {
                 context.drawImage(unit.imageData[j],
@@ -91,7 +91,7 @@ ImgBuilder = function () {
         code.value += 'Done\n';
         setTimeout(buildSprite, 10);
     };
-    
+
     buildSprite = function () {
         var width, height, img;
         code.value += 'Building sprite... ';
@@ -117,7 +117,7 @@ ImgBuilder = function () {
         }, undefined, 4);
         code.value += 'Done';
     };
-    
+
     code.value += 'Ready.\n';
 };
 
