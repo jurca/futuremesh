@@ -36,7 +36,7 @@ addEventListener('load', function () {
                 Player.getPlayer(0), [
                     [10000] // resources of player 0
                 ],
-                $('#view-canvas')[0], $('#minimap')[0]);
+                1, $('#view-canvas')[0], $('#minimap')[0]);
         loader.load();
     }, 25);
 }, false);
