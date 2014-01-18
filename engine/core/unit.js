@@ -135,6 +135,7 @@ var Unit;
          *     <li>4 - unit is standing still</li>
          *     <li>5 - unit is waiting for the tile ahead to be freed up</li>
          *     <li>6 - unit is turning to a new direction</li>
+         *     <li>7 - unit is attacking its target</li>
          * </ul>
          *
          * @type Number
@@ -283,7 +284,7 @@ var Unit;
          *
          * @type Number
          */
-        this.moveTargetX = null;
+        this.moveTargetY = null;
 
         /**
          * The current waypoints queue. Each waypoint is represented as an
@@ -304,6 +305,46 @@ var Unit;
          * @type Array
          */
         this.waypoints = [];
+
+        /**
+         * The current target to attack.
+         *
+         * @type Building|Unit
+         */
+        this.target = null;
+
+        /**
+         * Timer for slowing down the unit's firing rate. The timer acts as a
+         * "reload timer". The timer is increased each tick by the unit's
+         * firing speed until it reaches 1000. The unit is ready to fire
+         * immediately when the timer is 1000.
+         *
+         * @type Number
+         */
+        this.firingTimer = 1000;
+
+        /**
+         * How fast the firing timer is recharched. The firing speed specifies
+         * the recharge rate per tick.
+         *
+         * @type Number
+         */
+        this.firingSpeed = definition.firingSpeed;
+
+        /**
+         * The amount of hitpoints the unit can take from its target in a
+         * single attack. The unit cannot attack if this field is 0.
+         *
+         * @type Number
+         */
+        this.attackPower = definition.attackPower;
+
+        /**
+         * The range at which the unit may attack in adjusted tile units.
+         *
+         * @type Number
+         */
+        this.attackRange = definition.attackRange;
 
         /**
          * Color used to colorify the unit's graphical representation, defined

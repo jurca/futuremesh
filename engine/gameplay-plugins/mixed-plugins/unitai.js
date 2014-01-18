@@ -79,6 +79,10 @@ UnitAI = function () {
         units = map.getUnits();
         for (i = units.length; i--;) {
             unit = units[i];
+            if (unit.firingTimer < 1000) {
+                unit.firingTimer = Math.min(1000,
+                        unit.firingTimer + unit.firingSpeed);
+            }
             switch (unit.action) {
                 case 0: // just created
                     unit.action = 4;
@@ -92,22 +96,7 @@ UnitAI = function () {
                     moveUnit(unit);
                     break;
                 case 4: // standing still
-                    if (unit.harvest) {
-                        if (unit.harvest.type === false) {
-                            unit.harvest = null;
-                        } else if ((unit.x !== unit.harvest.x) ||
-                                    (unit.y !== unit.harvest.y)) {
-                            unit.waypoints.push({
-                                x: unit.harvest.x,
-                                y: unit.harvest.y
-                            });
-                        } else {
-                            harvestResource(unit);
-                        }
-                    }
-                    if (unit.waypoints.length) {
-                        startMovingUnit(unit);
-                    }
+                    handleStandingStill(unit);
                     break;
                 case 5: // unit is waiting for the tile ahead to be freed up
                     wait(unit);
@@ -115,6 +104,11 @@ UnitAI = function () {
                 case 6: // unit is turning
                     turnUnit(unit);
                     break;
+                case 7:
+                    attackTarget(unit);
+                    break;
+                default:
+                    throw new Error("Unsupported unit action: " + unit.action);
             }
         }
     };
@@ -169,7 +163,7 @@ UnitAI = function () {
                 sfx.setSelectedUnits([atTile]);
                 selectedUnits = [atTile];
             } else {
-                // TODO: attack the enemy
+                issueAttackUnitOrder(atTile);
             }
         } else if (atTile instanceof Building) {
             buildingType = BuildingsDefinition.getType(atTile.type);
@@ -178,7 +172,7 @@ UnitAI = function () {
                     sfx.setSelectedUnits([]);
                     selectedUnits = [];
                 } else {
-                    // TODO: attack the enemy
+                    issueAttackBuildingOrder(atTile);
                 }
             } else if (selectedUnits.length) {
                 issueHarvestOrder(data.x, data.y, atTile, buildingType);
@@ -286,6 +280,121 @@ UnitAI = function () {
         map = gameMap;
         navigationIndex = map.getNavigationIndex();
     };
+
+    /**
+     * Issues an "attack unit" order to the currently selected units.
+     *
+     * @param {Unit} targetUnit The unit to target and attack.
+     */
+    function issueAttackUnitOrder(targetUnit) {
+        var i, unit, moveToX, moveToY;
+        moveToX = targetUnit.x;
+        moveToY = targetUnit.y;
+        for (i = selectedUnits.length; i--;) {
+            unit = selectedUnits[i];
+            if (!unit.attackPower) {
+                continue;
+            }
+            unit.target = targetUnit;
+            unit.moveTargetX = moveToX;
+            unit.moveTargetY = moveToY;
+            unit.waypoints = [{
+                x: moveToX,
+                y: moveToY
+            }];
+        }
+    }
+
+    /**
+     * Makes the provided unit attack its target.
+     *
+     * @param {Unit} unit The unit that should attack its target.
+     */
+    function attackTarget(unit) {
+        var target, projectile, targetX, targetY, distance, unitType, offset;
+        if (unit.firingTimer < 1000) {
+            return;
+        }
+        target = unit.target;
+        if (!target.hitpoints) {
+            unit.target = null;
+            unit.waypoints = [];
+            unit.action = 4; // stand still
+            return;
+        }
+        if (target instanceof Building) {
+            targetX = target.x + Math.floor(target.width / 2);
+            targetY = target.y + Math.floor(target.height / 2);
+        } else { // Unit
+            targetX = target.x;
+            targetY = target.y;
+        }
+        distance = getTargetDistance(unit);
+        if (distance > unit.attackRange) { // target is too far, move closer
+            unit.action = 3; // move
+            return;
+        }
+        unitType = UnitsDefinition.getType(unit.type);
+        offset = unitType.projectileOffsets[unit.direction];
+        projectile = new Projectile(unitType.projectileType,
+                PlayersDefinition.getType(unit.player),
+                unit.x, unit.y, targetX, targetY, offset.x, offset.y, 0.5, 0.5,
+                unitType.projectileDuration, unit.attackPower);
+        map.addProjectile(projectile);
+        unit.firingTimer = 0;
+    };
+
+    /**
+     * Handles the unit's "stand still" action. The method checks whether the
+     * unit should not be performing some other action and modifies the unit's
+     * properties acordingly.
+     *
+     * @param {Unit} unit The unit standing still.
+     */
+    function handleStandingStill(unit) {
+        if (unit.harvest) {
+            if (unit.harvest.type === false) {
+                unit.harvest = null;
+            } else if ((unit.x !== unit.harvest.x) ||
+                    (unit.y !== unit.harvest.y)) {
+                unit.waypoints.push({
+                    x: unit.harvest.x,
+                    y: unit.harvest.y
+                });
+            } else {
+                harvestResource(unit);
+            }
+        }
+        if (unit.waypoints.length) {
+            startMovingUnit(unit);
+        }
+    }
+
+    /**
+     * Issues an attack order to the selected units to attack the specified
+     * building.
+     *
+     * @param {Building} building The building to attack.
+     */
+    function issueAttackBuildingOrder(building) {
+        var i, unit, moveToX, moveToY;
+        moveToX = building.x + Math.floor(building.width / 2) -
+                Math.floor(building.height / 2);
+        moveToY = building.y + Math.floor(building.height / 2);
+        for (i = selectedUnits.length; i--;) {
+            unit = selectedUnits[i];
+            if (!unit.attackPower) {
+                continue;
+            }
+            unit.target = building;
+            unit.moveTargetX = moveToX;
+            unit.moveTargetY = moveToY;
+            unit.waypoints = [{
+                x: moveToX,
+                y: moveToY
+            }];
+        }
+    }
 
     /**
      * Handles resource harvesting by the provided unit.
@@ -485,6 +594,10 @@ UnitAI = function () {
                 x: x,
                 y: y
             });
+            if (unit.target) {
+                unit.target = null;
+                unit.action = 4; // stand still
+            }
         } else if (selectedUnits.length) {
             issueGroupMoveOrder(x, y);
         }
@@ -532,6 +645,13 @@ UnitAI = function () {
                     x: x,
                     y: y
                 });
+            }
+        }
+        for (i = selectedUnits.length; i--;) {
+            unit = selectedUnits[i];
+            if (unit.target) {
+                unit.target = null;
+                unit.action = 4; // stand still
             }
         }
     }
@@ -701,10 +821,23 @@ UnitAI = function () {
      * @param {Unit} unit A currently moving unit to update.
      */
     function moveUnit(unit) {
-        var waypoint;
+        var waypoint, targetDistance;
         unit.setMoveOffset(Math.min(1000, unit.moveOffset + unit.speed));
         if (unit.moveOffset < 1000) {
             return;
+        }
+        if (unit.target) {
+            targetDistance = getTargetDistance(unit);
+            if (targetDistance <= unit.attackRange) {
+                handleTargetProximity(unit);
+            } else if (unit.target instanceof Unit) {
+                unit.moveTargetX = unit.target.x;
+                unit.moveTargetY = unit.target.y;
+                unit.waypoints = [{
+                    x: unit.target.x,
+                    y: unit.target.y
+                }];
+            }
         }
         // have we reached the waypoint?
         while ((unit.x === unit.moveTargetX) &&
@@ -722,6 +855,62 @@ UnitAI = function () {
             }
         }
         startMovingUnitToNextTile(unit);
+    }
+
+    /**
+     * This method should be executed when the unit is in proximity of its
+     * target. The method makes the unit face its target or attack the target
+     * if the unit is facing it already.
+     *
+     * @param {Unit} unit The unit that is in proximity of its target.
+     */
+    function handleTargetProximity(unit) {
+        var target, direction, azimuth, targetX, targetY;
+        target = unit.target;
+        if (target instanceof Building) {
+            targetX = target.x + Math.floor(target.width / 2);
+            targetY = target.y + Math.floor(target.height / 2);
+        } else { // Unit
+            targetX = target.x;
+            targetY = target.y;
+        }
+        direction = getPreferredDirection(unit, targetX, targetY);
+        if (direction !== unit.direction) {
+            azimuth = unit.direction - direction;
+            if (azimuth < -4) {
+                azimuth = 8 + azimuth;
+            }
+            if (azimuth > 4) {
+                azimuth = -(8 - azimuth);
+            }
+            unit.turningAzimuth = -azimuth;
+            unit.turningProgress = 0;
+            unit.action = 6; // turning
+            return;
+        }
+        unit.action = 7; // attacking
+    }
+
+    /**
+     * Returns the adjusted distance of the unit's target.
+     *
+     * @param {Unit} unit The unit.
+     * @return {Number} The distance of the unit's target.
+     */
+    function getTargetDistance(unit) {
+        var centerX, centerY, distanceX, distanceY;
+        if (unit.target instanceof Building) {
+            centerX = unit.target.x + Math.floor(unit.target.width / 2);
+            centerY = unit.target.y + Math.floor(unit.target.height / 2);
+        } else if (unit.target instanceof Unit) {
+            centerX = unit.target.x;
+            centerY = unit.target.y;
+        } else {
+            return Number.POSITIVE_INFINITY;
+        }
+        distanceX = unit.x - centerX;
+        distanceY = unit.y - centerY;
+        return Math.sqrt(Math.pow(distanceY, 2) + Math.pow(distanceX, 2) * 4);
     }
 
     /**
@@ -743,7 +932,15 @@ UnitAI = function () {
      * @param {Unit} unit The traveling unit.
      */
     function startMovingUnitToNextTile(unit) {
-        var targetDirection, azimuth;
+        var targetDirection, azimuth, targetDistance;
+        if (unit.target) {
+            // we might got here after turning to face the target
+            targetDistance = getTargetDistance(unit);
+            if (targetDistance <= unit.attackRange) {
+                handleTargetProximity(unit);
+                return;
+            }
+        }
         // check direction - should we turn ?
         targetDirection = getReasonableDirection(unit, unit.moveTargetX,
                 unit.moveTargetY);

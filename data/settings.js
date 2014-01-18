@@ -63,7 +63,8 @@ Settings.load({
         'KeyboardMapScroller',
         'UnitAI',
         'MousePlugin',
-        'BuildingControl'
+        'BuildingControl',
+        'ProjectileControl'
     ],
     pluginConfiguration: {
         BuildingControl: {
