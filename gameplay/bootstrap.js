@@ -32,7 +32,7 @@ addEventListener('load', function () {
         Player.createGenericPlayers();
         loader = new GameLoader($('#loading-all')[0], $('#loading-current')[0],
                 $('#loading-message')[0], $('#loading-screen')[0],
-                $('#gameplay-screen')[0], 'data/maps/test2.map',
+                $('#gameplay-screen')[0], 'data/maps/tinytest.map',
                 Player.getPlayer(0), [
                     [10000] // resources of player 0
                 ],
