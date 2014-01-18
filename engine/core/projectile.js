@@ -47,11 +47,14 @@ var Projectile;
  * @param {Number} duration The duration of the projectile's presence on the
  *        map. The duration is specified as an integer in "game ticks" (see
  *        <code>Settings</code>).
+ * @param {Number} damage The hitpoints amount that should be subtracted from
+ *        the hitpoints of the unit or building that will be affected by the
+ *        projectile.
  * @constructor
  */
 Projectile = function (type, player, startTileX, startTileY, targetTileX,
         targetTileY, startOffsetX, startOffsetY, targetOffsetX, targetOffsetY,
-        duration) {
+        duration, damage) {
     /**
      * The width of the tile as used by the main view renderers. The width is
      * specified as the number of pixels.
@@ -163,7 +166,8 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
      *
      * @type Number
      */
-    this.startX = (startTileX + startOffsetX) * tileWidth;
+    this.startX = (startTileX + startOffsetX) * tileWidth +
+            (tileWidth / 2) * (startTileY % 2);
 
     /**
      * The Y-coordinate of the projectile's starting position (where the
@@ -179,7 +183,8 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
      *
      * @type Number
      */
-    this.targetX = (targetTileX + targetOffsetX) * tileWidth;
+    this.targetX = (targetTileX + targetOffsetX) * tileWidth +
+            (tileWidth / 2) * (targetTileY % 2);
 
     /**
      * The Y-coordinate of the projectile's target position (where the
@@ -187,7 +192,7 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
      *
      * @type Number
      */
-    this.targetY = (targetTileY + targetOffsetY) *  tileHeight;
+    this.targetY = (targetTileY + targetOffsetY * 2) *  tileHeight;
 
     /**
      * The current progress of the projectile's existence - this includes the
@@ -206,6 +211,14 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
      * @type Number
      */
     this.duration = duration;
+
+    /**
+     * The hitpoints amount that should be subtracted from the hitpoints of the
+     * unit or building that will be affected by the projectile.
+     *
+     * @type Number
+     */
+    this.damage = damage;
 
     /**
      * Serializes this projectile into a JSON-compatible object that can be
@@ -231,7 +244,8 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
                 yOffset: this.targetOffsetY
             },
             progress: this.progress,
-            duration: this.duration
+            duration: this.duration,
+            damage: this.damage
         };
     };
 };
@@ -248,7 +262,7 @@ Projectile.importData = function (data) {
     projectile = new Projectile(data.type, Player.getPlayer(data.player),
             data.start.x, data.start.y, data.target.x, data.target.y,
             data.start.xOffset, data.start.yOffset, data.target.xOffset,
-            data.target.yOffset, data.duration);
+            data.target.yOffset, data.duration, data.damage);
     projectile.progress = data.progress;
     return projectile;
 };
