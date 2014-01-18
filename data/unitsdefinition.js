@@ -30,6 +30,8 @@ UnitsDefinition = (function () {
             projectileType: null,
             projectileDuration: null, // how many ticks for the projectile to
                                       // reach its target
+            visionRange: 12, // the distance at which the units is able to spot
+                             // other units or buildings
             projectileOffsets: [ // start offsets for each of the directions
                 { // north
                     x: 0.5,
@@ -91,6 +93,8 @@ UnitsDefinition = (function () {
             projectileType: 1,
             projectileDuration: 3, // how many ticks for the projectile to
                                    // reach its target
+            visionRange: 12, // the distance at which the units is able to spot
+                             // other units or buildings
             projectileOffsets: [ // start offsets for each of the directions
                 { // north
                     x: 0.5,

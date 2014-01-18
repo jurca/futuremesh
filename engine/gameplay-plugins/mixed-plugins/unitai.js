@@ -317,9 +317,11 @@ UnitAI = function () {
         }
         target = unit.target;
         if (!target.hitpoints) {
-            unit.target = null;
-            unit.waypoints = [];
-            unit.action = 4; // stand still
+            if (!lookForAnotherTarget(unit)) {
+                unit.target = null;
+                unit.waypoints = [];
+                unit.action = 4; // stand still
+            }
             return;
         }
         if (target instanceof Building) {
@@ -343,6 +345,56 @@ UnitAI = function () {
         map.addProjectile(projectile);
         unit.firingTimer = 0;
     };
+
+    /**
+     * Looks around the provided unit for the nearest suitable target to attack
+     * within the unit's vision range. The method issues an attack order if
+     * such target is found.
+     *
+     * @param {Unit} unit The unit looking for another target.
+     * @return {Boolean} <code>true</code> if a target has been found.
+     */
+    function lookForAnotherTarget(unit) {
+        var radius, circumference, angle, x, y, atTile, buildingType, selected,
+                i, unitType;
+        unitType = UnitsDefinition.getType(unit.type);
+        for (radius = 1; radius < unitType.visionRange; radius++) {
+            circumference = Math.floor(Math.PI * 2 * radius);
+            for (i = circumference; i--;) {
+                angle = Math.PI * 2 / circumference * i;
+                x = unit.x + Math.floor(Math.cos(angle) * radius);
+                y = unit.y + Math.floor(Math.sin(angle) * radius);
+                atTile = map.getObjectAt(x, y);
+                if (!atTile) {
+                    continue;
+                }
+                if (atTile instanceof Building) {
+                    if (atTile.player === unit.player) {
+                        continue;
+                    }
+                    buildingType = BuildingsDefinition.getType(atTile.type);
+                    if (buildingType.resource !== null) {
+                        continue;
+                    }
+                    selected = selectedUnits;
+                    selectedUnits = [unit];
+                    issueAttackBuildingOrder(atTile);
+                    selectedUnits = selected;
+                    return true;
+                } else { // Unit
+                    if (atTile.player === unit.player) {
+                        continue;
+                    }
+                    selected = selectedUnits;
+                    selectedUnits = [unit];
+                    issueAttackUnitOrder(atTile);
+                    selectedUnits = selected;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Handles the unit's "stand still" action. The method checks whether the
@@ -848,9 +900,11 @@ UnitAI = function () {
                 unit.moveTargetX = waypoint.x;
                 unit.moveTargetY = waypoint.y;
             } else {
-                unit.action = 4; // stand still
-                unit.moveTargetX = null;
-                unit.moveTargetY = null;
+                if (!unit.target && !lookForAnotherTarget(unit)) {
+                    unit.action = 4; // stand still
+                    unit.moveTargetX = null;
+                    unit.moveTargetY = null;
+                }
                 return;
             }
         }
