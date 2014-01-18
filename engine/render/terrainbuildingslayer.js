@@ -160,9 +160,9 @@ window.TerrainBuildingsLayer = function () {
     this.onBuildingAdded = function (building) {
         var type, x, y;
         type = BuildingsDefinition.getType(building.type);
-        x = (tileWidth / 2) * (building.y % 2) + tileWidth * building.x;
-        y = tileHeight * building.y;
-        bufferContext.drawImage(type.playerImages[building.player], x, y - 2);
+        x = (tileWidth / 2) * (building.y % 2) + tileWidth * building.x - 1;
+        y = tileHeight * building.y - 1;
+        bufferContext.drawImage(type.playerImages[building.player], x, y);
     };
 
     /**
