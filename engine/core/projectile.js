@@ -13,6 +13,7 @@ var Projectile;
  *            <li><code>0</code> - laser projectile. A continuos beam of light
  *                that hits the target immediately and disappears almost
  *                immediately afterwards.</li>
+ *            <li><code>1</code> - small bullet.</li>
  *        </ul>
  * @param {Player} player The player that owns the unit or building that has
  *        fired the projectile.

@@ -91,8 +91,8 @@ SFX = function () {
      * @param {Number} y Y offset for rendering.
      */
     this.display = function (x, y) {
-        context.globalAlpha = 0.6;
         displayProjectiles(x, y);
+        context.globalAlpha = 0.6;
         displaySelectionBox(x, y);
         displayHealthBars(x, y);
         displayBuildingToPlace(x, y);
@@ -338,12 +338,14 @@ SFX = function () {
      *        left corner in pixels.
      */
     function displayProjectiles(x, y) {
-        var i, projectile;
+        var i, projectile, rangeX, rangeY, progress, progressX, progressY,
+                screenX, screenY;
         context.lineWidth = 2; // laser beam width (projectile type 0)
         for (i = projectiles.length; i--;) {
             projectile = projectiles[i];
             switch (projectile.type) {
                 case 0:
+                    context.globalAlpha = 0.6;
                     context.strokeStyle = projectile.player.color;
                     context.beginPath();
                     context.moveTo(projectile.startX - x,
@@ -351,6 +353,21 @@ SFX = function () {
                     context.lineTo(projectile.targetX - x,
                             projectile.targetY - y);
                     context.stroke();
+                    break;
+                case 1:
+                    context.globalAlpha = 1;
+                    context.fillStyle = projectile.player.color;
+                    rangeX = projectile.targetX - projectile.startX;
+                    rangeY = projectile.targetY - projectile.startY;
+                    progress = projectile.progress;
+                    progressX = rangeX / projectile.duration * progress;
+                    progressY = rangeY / projectile.duration * progress;
+                    screenX = projectile.startX + progressX - x;
+                    screenY = projectile.startY + progressY - y;
+                    context.beginPath();
+                    context.arc(screenX, screenY, 1, 0, Math.PI * 2, false);
+                    context.closePath();
+                    context.fill();
                     break;
                 default:
                     throw new Error("Unsupported projectile type: " +
