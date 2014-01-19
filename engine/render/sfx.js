@@ -201,8 +201,8 @@ SFX = function () {
                 (tileWidth / 2) * (buildingToPlace.y % 2) - x;
         screenY = buildingToPlace.y * tileHeight - y;
         type = BuildingsDefinition.getType(buildingToPlace.type);
-        context.drawImage(type.playerImages[buildingToPlace.player], screenX,
-                screenY - 2);
+        context.drawImage(type.playerImages[buildingToPlace.player],
+                screenX - 1, screenY - 1);
         tiles = map.getTilesOccupiedByBuilding(buildingToPlace);
         context.globalAlpha = 0.3;
         context.lineWidth = 1;
