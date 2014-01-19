@@ -341,6 +341,7 @@ UnitAI = function () {
                     }
                     selected = selectedUnits;
                     selectedUnits = [unit];
+                    unit.action = 4; // standing still
                     issueAttackBuildingOrder(atTile);
                     selectedUnits = selected;
                     return true;
@@ -350,6 +351,7 @@ UnitAI = function () {
                     }
                     selected = selectedUnits;
                     selectedUnits = [unit];
+                    unit.action = 4; // standing still
                     issueAttackUnitOrder(atTile);
                     selectedUnits = selected;
                     return true;
