@@ -256,7 +256,8 @@ UnitAI = function () {
      * @param {Unit} unit The unit that should attack its target.
      */
     function attackTarget(unit) {
-        var target, projectile, targetX, targetY, distance, unitType, offset;
+        var target, projectile, targetX, targetY, distance, unitType, offsets,
+                offset, i;
         if (unit.firingTimer < 1000) {
             return;
         }
@@ -282,12 +283,15 @@ UnitAI = function () {
             return;
         }
         unitType = UnitsDefinition.getType(unit.type);
-        offset = unitType.projectileOffsets[unit.direction];
-        projectile = new Projectile(unitType.projectileType,
-                PlayersDefinition.getType(unit.player),
-                unit.x, unit.y, targetX, targetY, offset.x, offset.y, 0.5, 0.5,
-                unitType.projectileDuration, unit, unit.attackPower);
-        map.addProjectile(projectile);
+        offsets = unitType.projectileOffsets[unit.direction];
+        for (i = offsets.length; i--;) {
+            offset = offsets[i];
+            projectile = new Projectile(unitType.projectileType,
+                    PlayersDefinition.getType(unit.player),
+                    unit.x, unit.y, targetX, targetY, offset.x, offset.y, 0.5,
+                    0.5, unitType.projectileDuration, unit, unit.attackPower);
+            map.addProjectile(projectile);
+        }
         unit.firingTimer = 0;
     };
 
