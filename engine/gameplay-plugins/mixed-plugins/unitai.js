@@ -994,10 +994,12 @@ UnitAI = function () {
                 atTile = map.getObjectAt(x, y);
                 if ((atTile instanceof Unit) && !atTile.target) {
                     if (atTile.player !== movedUnit.player) {
-                        unitType = UnitsDefinition.getType(atTile.type);
-                        if (unitType.visionRange >= radius) {
-                            selectedUnits = [atTile];
-                            issueAttackUnitOrder(movedUnit);
+                        if (atTile.action === 4) { // standing still
+                            unitType = UnitsDefinition.getType(atTile.type);
+                            if (unitType.visionRange >= radius) {
+                                selectedUnits = [atTile];
+                                issueAttackUnitOrder(movedUnit);
+                            }
                         }
                     }
                 }
