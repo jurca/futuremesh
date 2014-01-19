@@ -91,7 +91,7 @@ UnitsDefinition = (function () {
             attackRange: 8, // the range (in adjusted tile units) at which the
                             // unit may attack its target.
             projectileType: 1,
-            projectileDuration: 3, // how many ticks for the projectile to
+            projectileDuration: 5, // how many ticks for the projectile to
                                    // reach its target
             visionRange: 12, // the distance at which the units is able to spot
                              // other units or buildings
