@@ -64,7 +64,8 @@ Settings.load({
         'UnitAI',
         'MousePlugin',
         'BuildingControl',
-        'ProjectileControl'
+        'ProjectileControl',
+        'UnitControl'
     ],
     pluginConfiguration: {
         BuildingControl: {
