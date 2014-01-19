@@ -99,21 +99,45 @@ UnitAI = function () {
         }
     };
 
+    /**
+     * Event handler for the <code>issueAttackUnitOrder</code> event. The
+     * handler issues the attack order to the specified units.
+     *
+     * @param {Object} data Event's data.
+     */
     this.onIssueAttackUnitOrder = function (data) {
         selectedUnits = data.units;
         issueAttackUnitOrder(data.target);
     };
 
+    /**
+     * Event handler for the <code>issueAttackBuildingOrder</code> event. The
+     * handler issues the attack order to the specified units.
+     *
+     * @param {Object} data Event's data.
+     */
     this.onIssueAttackBuildingOrder = function (data) {
         selectedUnits = data.units;
         issueAttackBuildingOrder(data.target);
     };
 
+    /**
+     * Event handler for the <code>issueHarvestOrder</code> event. The handler
+     * issues the harvest order to the specified units.
+     *
+     * @param {Object} data Event's data.
+     */
     this.onIssueHarvestOrder = function (data) {
         selectedUnits = data.units;
         issueHarvestOrder(data.x, data.y, data.target, data.type);
     };
 
+    /**
+     * Event handler for the <code>issueMoveOrder</code> event. The handler
+     * issues the move order to the specified units.
+     *
+     * @param {Object} data Event's data.
+     */
     this.onIssueMoveOrder = function (data) {
         selectedUnits = data.units;
         issueMoveOrder(data.x, data.y);
@@ -174,6 +198,24 @@ UnitAI = function () {
     };
 
     /**
+     * Filters dead units from the provided array.
+     *
+     * @param {Array} units The units to filter.
+     * @return {Array} Units that are not dead yet.
+     */
+    function filterDeadUnits(units) {
+        var result, i, length;
+        result = [];
+        length = units.length;
+        for (i = 0; i < length; i++) {
+            if (units[i].hitpoints) {
+                result.push(units[i]);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Issues an "attack unit" order to the currently selected units.
      *
      * @param {Unit} targetUnit The unit to target and attack.
@@ -182,6 +224,7 @@ UnitAI = function () {
         var i, unit, moveToX, moveToY;
         moveToX = targetUnit.x;
         moveToY = targetUnit.y;
+        selectedUnits = filterDeadUnits(selectedUnits);
         for (i = selectedUnits.length; i--;) {
             unit = selectedUnits[i];
             if (!unit.attackPower) {
@@ -325,6 +368,7 @@ UnitAI = function () {
         moveToX = building.x + Math.floor(building.width / 2) -
                 Math.floor(building.height / 2);
         moveToY = building.y + Math.floor(building.height / 2);
+        selectedUnits = filterDeadUnits(selectedUnits);
         for (i = selectedUnits.length; i--;) {
             unit = selectedUnits[i];
             if (!unit.attackPower) {
@@ -399,6 +443,7 @@ UnitAI = function () {
     function issueHarvestOrder(x, y, building, buildingType) {
         var center, i, unit, unitType, realSelectedUnits, atTile, tileX, tileY,
                 usedTiles, requiresAlternative, incompatibleUnits;
+        selectedUnits = filterDeadUnits(selectedUnits);
         realSelectedUnits = selectedUnits;
         usedTiles = [];
         requiresAlternative = [];
@@ -531,6 +576,7 @@ UnitAI = function () {
      */
     function issueMoveOrder(x, y) {
         var unit;
+        selectedUnits = filterDeadUnits(selectedUnits);
         if (selectedUnits.length === 1) {
             unit = selectedUnits[0];
             trimUnitWaypoints(unit);
