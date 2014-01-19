@@ -980,7 +980,7 @@ UnitAI = function () {
      * @param {Unit} movedUnit The unit that has just moved to another tile.
      */
     function notifyNearUnitsAboutUnitMovement(movedUnit) {
-        var radius, circumference, i, angle, x, y, atTile;
+        var radius, circumference, i, angle, x, y, atTile, unitType;
         for (radius = 1; radius < maximumVisionRange; radius++) {
             circumference = Math.floor(Math.PI * 2 * radius);
             for (i = circumference; i--;) {
@@ -990,8 +990,11 @@ UnitAI = function () {
                 atTile = map.getObjectAt(x, y);
                 if ((atTile instanceof Unit) && !atTile.target) {
                     if (atTile.player !== movedUnit.player) {
-                        selectedUnits = [atTile];
-                        issueAttackUnitOrder(movedUnit);
+                        unitType = UnitsDefinition.getType(atTile.type);
+                        if (unitType.visionRange >= radius) {
+                            selectedUnits = [atTile];
+                            issueAttackUnitOrder(movedUnit);
+                        }
                     }
                 }
             }
