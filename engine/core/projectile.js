@@ -48,6 +48,7 @@ var Projectile;
  * @param {Number} duration The duration of the projectile's presence on the
  *        map. The duration is specified as an integer in "game ticks" (see
  *        <code>Settings</code>).
+ * @param {Unit} firedBy The unit that has fired the projectile.
  * @param {Number} damage The hitpoints amount that should be subtracted from
  *        the hitpoints of the unit or building that will be affected by the
  *        projectile.
@@ -55,7 +56,7 @@ var Projectile;
  */
 Projectile = function (type, player, startTileX, startTileY, targetTileX,
         targetTileY, startOffsetX, startOffsetY, targetOffsetX, targetOffsetY,
-        duration, damage) {
+        duration, firedBy, damage) {
     /**
      * The width of the tile as used by the main view renderers. The width is
      * specified as the number of pixels.
@@ -212,6 +213,13 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
      * @type Number
      */
     this.duration = duration;
+
+    /**
+     * The unit that has fired the projectile.
+     *
+     * @type Unit
+     */
+    this.firedBy = firedBy;
 
     /**
      * The hitpoints amount that should be subtracted from the hitpoints of the

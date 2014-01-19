@@ -20,7 +20,21 @@ ProjectileControl = function () {
      *
      * @type View
      */
-    view;
+    view,
+
+    /**
+     * The current instance of this plugin.
+     *
+     * @type ProjectileControl
+     */
+    instance;
+
+    /**
+     * Constructor.
+     */
+    (function () {
+        instance = this;
+    }.call(this));
 
     // override
     this.handleTick = function () {
@@ -94,6 +108,13 @@ ProjectileControl = function () {
                 atTile.action = 1; // destroyed
                 map.updateUnit(atTile);
                 view.onUnitChange(atTile);
+            }
+        } else if (atTile instanceof Unit) {
+            if ((atTile.player !== projectile.player.id) && !atTile.target) {
+                instance.sendEvent("issueAttackUnitOrder", {
+                    units: [atTile],
+                    target: projectile.firedBy
+                });
             }
         }
     }

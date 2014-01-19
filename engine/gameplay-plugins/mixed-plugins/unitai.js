@@ -233,7 +233,7 @@ UnitAI = function () {
         projectile = new Projectile(unitType.projectileType,
                 PlayersDefinition.getType(unit.player),
                 unit.x, unit.y, targetX, targetY, offset.x, offset.y, 0.5, 0.5,
-                unitType.projectileDuration, unit.attackPower);
+                unitType.projectileDuration, unit, unit.attackPower);
         map.addProjectile(projectile);
         unit.firingTimer = 0;
     };
