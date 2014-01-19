@@ -111,10 +111,12 @@ ProjectileControl = function () {
             }
         } else if (atTile instanceof Unit) {
             if ((atTile.player !== projectile.player.id) && !atTile.target) {
-                instance.sendEvent("issueAttackUnitOrder", {
-                    units: [atTile],
-                    target: projectile.firedBy
-                });
+                if (atTile.action === 4) { // standing still
+                    instance.sendEvent("issueAttackUnitOrder", {
+                        units: [atTile],
+                        target: projectile.firedBy
+                    });
+                }
             }
         }
     }
