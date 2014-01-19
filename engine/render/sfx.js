@@ -261,6 +261,9 @@ SFX = function () {
      */
     function displayBuildingHealthBar(viewX, viewY, building, full) {
         var x, y, offsetX, boxWidth, barSize;
+        if (!building.hitpoints) {
+            return;
+        }
         offsetX = (building.y % 2) * tileWidth / 2;
         x = building.x * tileWidth - viewX + offsetX;
         y = building.y * tileHeight - viewY - 4;
@@ -272,6 +275,8 @@ SFX = function () {
         if (full) {
             context.fillStyle = "#ffffff";
             context.fillRect(x, y, boxWidth, 3);
+            context.fillStyle = "#444444";
+            context.fillRect(x + 1, y + 1, boxWidth - 2, 1);
         }
         boxWidth -= 2;
         barSize = (building.hitpoints / building.maxHitpoints) * (boxWidth);
@@ -291,6 +296,9 @@ SFX = function () {
      */
     function displayUnitHealthBar(viewX, viewY, unit, full) {
         var x, y, offsetX, barSize;
+        if (!unit.hitpoints) {
+            return;
+        }
         offsetX = (unit.y % 2) * tileWidth / 2;
         x = unit.x * tileWidth - unit.moveOffsetX - viewX + offsetX;
         y = unit.y * tileHeight - unit.moveOffsetY - viewY - 2;
@@ -301,6 +309,8 @@ SFX = function () {
         if (full) {
             context.fillStyle = "#ffffff";
             context.fillRect(x, y, tileWidth, 3);
+            context.fillStyle = "#444444";
+            context.fillRect(x + 1, y + 1, tileWidth - 2, 1);
         }
         barSize = (unit.hitpoints / unit.maxHitpoints) * (tileWidth - 2);
         context.fillStyle = "#00cf00";
