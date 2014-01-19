@@ -257,7 +257,7 @@ UnitAI = function () {
      */
     function attackTarget(unit) {
         var target, projectile, targetX, targetY, distance, unitType, offsets,
-                offset, i;
+                offset, i, tile;
         if (unit.firingTimer < 1000) {
             return;
         }
@@ -271,8 +271,9 @@ UnitAI = function () {
             return;
         }
         if (target instanceof Building) {
-            targetX = target.x + Math.floor(target.width / 2);
-            targetY = target.y + Math.floor(target.height / 2);
+            tile = getBuildingTargetTile(target);
+            targetX = tile.x;
+            targetY = tile.y;
         } else { // Unit
             targetX = target.x;
             targetY = target.y;
@@ -294,6 +295,19 @@ UnitAI = function () {
         }
         unit.firingTimer = 0;
     };
+
+    /**
+     * Returns the coordinates of the tile that should be attacked by a unit
+     * attacking the provided building.
+     *
+     * @param {Building} building The building to be attacked.
+     */
+    function getBuildingTargetTile(building) {
+        return {
+            x: building.x + building.width - Math.ceil(building.height / 2),
+            y: building.y + Math.ceil(building.height / 2)
+        };
+    }
 
     /**
      * Looks around the provided unit for the nearest suitable target to attack
@@ -378,10 +392,10 @@ UnitAI = function () {
      * @param {Building} building The building to attack.
      */
     function issueAttackBuildingOrder(building) {
-        var i, unit, moveToX, moveToY;
-        moveToX = building.x + Math.floor(building.width / 2) -
-                Math.floor(building.height / 2);
-        moveToY = building.y + Math.floor(building.height / 2);
+        var i, unit, moveToX, moveToY, tile;
+        tile = getBuildingTargetTile(building);
+        moveToX = tile.x;
+        moveToY = tile.y;
         selectedUnits = filterDeadUnits(selectedUnits);
         for (i = selectedUnits.length; i--;) {
             unit = selectedUnits[i];
@@ -871,11 +885,12 @@ UnitAI = function () {
      * @param {Unit} unit The unit that is in proximity of its target.
      */
     function handleTargetProximity(unit) {
-        var target, direction, azimuth, targetX, targetY;
+        var target, direction, azimuth, targetX, targetY, tile;
         target = unit.target;
         if (target instanceof Building) {
-            targetX = target.x + Math.floor(target.width / 2);
-            targetY = target.y + Math.floor(target.height / 2);
+            tile = getBuildingTargetTile(target);
+            targetX = tile.x;
+            targetY = tile.y;
         } else { // Unit
             targetX = target.x;
             targetY = target.y;
@@ -904,10 +919,11 @@ UnitAI = function () {
      * @return {Number} The distance of the unit's target.
      */
     function getTargetDistance(unit) {
-        var centerX, centerY, distanceX, distanceY;
+        var centerX, centerY, distanceX, distanceY, tile;
         if (unit.target instanceof Building) {
-            centerX = unit.target.x + Math.floor(unit.target.width / 2);
-            centerY = unit.target.y + Math.floor(unit.target.height / 2);
+            tile = getBuildingTargetTile(unit.target);
+            centerX = tile.x;
+            centerY = tile.y;
         } else if (unit.target instanceof Unit) {
             centerX = unit.target.x;
             centerY = unit.target.y;
