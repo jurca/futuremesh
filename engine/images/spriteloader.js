@@ -51,7 +51,7 @@ SpriteLoader = function () {
      * @see #addObserver({Function} observer)
      */
     this.load = function () {
-        var xhr;
+        var xhr, time;
         tileWidth = Math.ceil(Settings.tileWidth);
         tileHeight = Math.ceil(Settings.tileHeight);
         baseUrl = baseUrl || getBaseURL();
@@ -71,7 +71,8 @@ SpriteLoader = function () {
                 }
             }
         };
-        xhr.open('GET', baseUrl + 'data/sprite.json', true);
+        time = (new Date()).getTime();
+        xhr.open('GET', baseUrl + 'data/sprite.json?time=' + time, true);
         xhr.send(null);
     };
 
@@ -201,7 +202,7 @@ SpriteLoader = function () {
         for (i = scripts.length; i--;) {
             if (scripts[i].src.match(/^.*spriteloader[.]js/)) {
                 url = scripts[i].src;
-                url = url.substring(0, url.indexOf('spriteloader.js'));
+                url = url.substring(0, url.indexOf('futuremesh.js'));
                 url = url.replace(/js\/$/, '');
                 return url;
             }
