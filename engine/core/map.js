@@ -198,10 +198,10 @@ Map = function () {
      * @param {Number} y The y-coordinate.
      */
     this.getObjectAt = function (x, y) {
-        if (units[y][x]) {
+        if (units[y] && units[y][x]) {
             return units[y][x];
         }
-        return buildings[y][x];
+        return buildings[y] && buildings[y][x];
     };
 
     /**
