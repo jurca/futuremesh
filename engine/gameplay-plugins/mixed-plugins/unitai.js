@@ -895,7 +895,7 @@ UnitAI = function () {
             targetX = target.x;
             targetY = target.y;
         }
-        direction = getPreferredDirection(unit, targetX, targetY);
+        direction = getPreferredTargetDirection(unit, targetX, targetY);
         if (direction !== unit.direction) {
             azimuth = unit.direction - direction;
             if (azimuth < -4) {
@@ -910,6 +910,37 @@ UnitAI = function () {
             return;
         }
         unit.action = 7; // attacking
+    }
+
+    /**
+     * Calculates the direction the unit should be heading when attacking a
+     * target at the specified coordinates.
+     *
+     * @param {Unit} unit The attacking unit.
+     * @param {Number} targetX X-coordinate of the target's location.
+     * @param {Number} targetY Y-coordinate of the target's location.
+     * @return {Number} The direction the unit should be facing.
+     */
+    function getPreferredTargetDirection(unit, targetX, targetY) {
+        var deltaX, deltaY, distance, angle, normalized;
+        deltaX = targetX - unit.x;
+        deltaY = targetY - unit.y;
+        if (unit.y % 2) {
+            deltaX -= 0.5;
+        }
+        if (targetY % 2) {
+            deltaY += 0.5;
+        }
+        deltaX /= 0.7;
+        distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        deltaX /= distance;
+        deltaY /= distance;
+        angle = Math.acos(deltaX);
+        if (deltaY > 0) {
+            angle = Math.PI * 2 - angle;
+        }
+        normalized = Math.round(angle / (Math.PI * 2) * 8) % 8;
+        return ((7 - normalized) + 3) % 8;
     }
 
     /**
