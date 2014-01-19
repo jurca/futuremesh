@@ -33,38 +33,38 @@ UnitsDefinition = (function () {
             visionRange: 12, // the distance at which the units is able to spot
                              // other units or buildings
             projectileOffsets: [ // start offsets for each of the directions
-                { // north
+                [{ // north
                     x: 0.5,
                     y: 0.5
-                },
-                { // north-east
+                }],
+                [{ // north-east
                     x: 0.5,
                     y: 0.5
-                },
-                { // east
+                }],
+                [{ // east
                     x: 0.5,
                     y: 0.5
-                },
-                { // south-east
+                }],
+                [{ // south-east
                     x: 0.5,
                     y: 0.5
-                },
-                { // south
+                }],
+                [{ // south
                     x: 0.5,
                     y: 0.5
-                },
-                { // south-west
+                }],
+                [{ // south-west
                     x: 0.5,
                     y: 0.5
-                },
-                { // west
+                }],
+                [{ // west
                     x: 0.5,
                     y: 0.5
-                },
-                { // north-west
+                }],
+                [{ // north-west
                     x: 0.5,
                     y: 0.5
-                }
+                }]
             ],
             race: 0,
             construction: { // total cost: 150, duration: 50 ticks
@@ -96,38 +96,38 @@ UnitsDefinition = (function () {
             visionRange: 12, // the distance at which the units is able to spot
                              // other units or buildings
             projectileOffsets: [ // start offsets for each of the directions
-                { // north
+                [{ // north
                     x: 0.5,
                     y: 0.3
-                },
-                { // north-east
+                }],
+                [{ // north-east
                     x: 0.7,
                     y: 0.4
-                },
-                { // east
+                }],
+                [{ // east
                     x: 0.8,
                     y: 0.6
-                },
-                { // south-east
+                }],
+                [{ // south-east
                     x: 0.7,
                     y: 0.8
-                },
-                { // south
+                }],
+                [{ // south
                     x: 0.5,
                     y: 0.85
-                },
-                { // south-west
+                }],
+                [{ // south-west
                     x: 0.3,
                     y: 0.8
-                },
-                { // west
+                }],
+                [{ // west
                     x: 0.2,
                     y: 0.6
-                },
-                { // north-west
+                }],
+                [{ // north-west
                     x: 0.3,
                     y: 0.4
-                }
+                }]
             ],
             race: 0,
             construction: { // total cost: 100, duration: 20 ticks
