@@ -77,6 +77,11 @@ Settings.load({
         KeyboardMapScroller: {
             scrollSpeed: 30
         },
+        UnitAI: {
+            maximumVisionRange: 12 // maximum vision range of all units. this
+                                   // affects the range at which trespassing
+                                   // units are engaged
+        },
         ViewRendererPlugin: {
             borderOffset: 30, // pixels
             minimap: {

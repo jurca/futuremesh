@@ -49,14 +49,24 @@ UnitAI = function () {
      *
      * @type UnitAI
      */
-    instance;
+    instance,
+
+    /**
+     * Maximum vision range of all units.
+     *
+     * @type Number
+     */
+    maximumVisionRange;
 
     /**
      * Constructor.
      */
     (function () {
+        var configuration;
         selectedUnits = [];
         instance = this;
+        configuration = Settings.pluginConfiguration.UnitAI;
+        maximumVisionRange = configuration.maximumVisionRange;
     }.call(this));
 
     // override
@@ -959,6 +969,33 @@ UnitAI = function () {
         map.updateUnit(unit);
         view.onUnitChange(unit);
         unit.action = 3;
+        notifyNearUnitsAboutUnitMovement(unit);
+    }
+
+    /**
+     * Notifies the units in proximity of the provided unit about the provided
+     * unit's movement. This will make the notified units attack the
+     * trespassing enemy unit.
+     *
+     * @param {Unit} movedUnit The unit that has just moved to another tile.
+     */
+    function notifyNearUnitsAboutUnitMovement(movedUnit) {
+        var radius, circumference, i, angle, x, y, atTile;
+        for (radius = 1; radius < maximumVisionRange; radius++) {
+            circumference = Math.floor(Math.PI * 2 * radius);
+            for (i = circumference; i--;) {
+                angle = Math.PI * 2 / circumference * i;
+                x = Math.round(Math.cos(angle) * radius) + movedUnit.x;
+                y = Math.round(Math.sin(angle) * radius) + movedUnit.y;
+                atTile = map.getObjectAt(x, y);
+                if ((atTile instanceof Unit) && !atTile.target) {
+                    if (atTile.player !== movedUnit.player) {
+                        selectedUnits = [atTile];
+                        issueAttackUnitOrder(movedUnit);
+                    }
+                }
+            }
+        }
     }
 
     /**
