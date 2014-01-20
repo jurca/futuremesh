@@ -1202,7 +1202,10 @@ UnitAI = function () {
                 }
             }
         }
-        return navigationIndex[coordinates.y][coordinates.x];
+        if (navigationIndex[coordinates.y]) {
+            return navigationIndex[coordinates.y][coordinates.x];
+        }
+        return false;
     }
 
     /**
