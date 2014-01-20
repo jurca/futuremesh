@@ -847,6 +847,13 @@ UnitAI = function () {
             return;
         }
         if (unit.target) {
+            if (!unit.target.hitpoints) {
+                if (!lookForAnotherTarget(unit)) {
+                    unit.action = 4;
+                    unit.waypoints = [];
+                }
+                return;
+            }
             targetDistance = getTargetDistance(unit);
             if (targetDistance <= unit.attackRange) {
                 handleTargetProximity(unit);
