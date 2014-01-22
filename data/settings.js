@@ -65,11 +65,13 @@ Settings.load({
         'MousePlugin',
         'BuildingControl',
         'ProjectileControl',
-        'UnitControl'
+        'UnitControl',
+        'SellRepairButtons'
     ],
     pluginConfiguration: {
         BuildingControl: {
-            maxConstructionDistance: 15
+            maxConstructionDistance: 15,
+            sellRefundFactor: 0.5
         },
         BuildingsUnitsConstruction: {
             maxQueueLength: 30

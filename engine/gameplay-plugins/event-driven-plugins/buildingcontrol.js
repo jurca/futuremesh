@@ -56,16 +56,86 @@ BuildingControl = function () {
      *
      * @type Number
      */
-    maxConstructionDistance;
+    maxConstructionDistance,
+
+    /**
+     * Whether or not a sell mode is active.
+     *
+     * @type Boolean
+     */
+    sellActive,
+
+    /**
+     * Whether or not a repair mode is active.
+     *
+     * @type Boolean
+     */
+    repairActive,
+
+    /**
+     * Factor modifying the amount of resources refunded when a building is
+     * sold. The construction resources are multiplied by this factor and then
+     * refunded to the user.
+     *
+     * @type Number
+     */
+    sellRefundFactor,
+
+    /**
+     * The current instance of this plugin.
+     *
+     * @type BuildingControl
+     */
+    instance;
 
     /**
      * Constructor.
      */
     (function () {
         var pluginConfiguration;
+        instance = this;
         pluginConfiguration = Settings.pluginConfiguration.BuildingControl;
         maxConstructionDistance = pluginConfiguration.maxConstructionDistance;
+        sellActive = false;
+        repairActive = false;
+        sellRefundFactor = pluginConfiguration.sellRefundFactor;
     }.call(this));
+
+    /**
+     * Event handler for the <code>sellModeSwitch</code> event. The handler
+     * updates the repair and sell flags and disables the building to place (if
+     * set).
+     */
+    this.onSellModeSwitch = function () {
+        if (sellActive) {
+            sellActive = false;
+        } else {
+            sellActive = true;
+            repairActive = false;
+        }
+        if (buildingToPlace) {
+            sfx.setBuildingToPlace(null, false);
+            buildingToPlace = null;
+        }
+    };
+
+    /**
+     * Event handler for the <code>repairModeSwitch</code> event. The handler
+     * updates the repair and sell flags and disables the building to place (if
+     * set).
+     */
+    this.onRepairModeSwitch = function () {
+        if (repairActive) {
+            repairActive = false;
+        } else {
+            repairActive = true;
+            sellActive = false;
+        }
+        if (buildingToPlace) {
+            sfx.setBuildingToPlace(null, false);
+            buildingToPlace = null;
+        }
+    };
 
     /**
      * Event handler for the <code>startBuildingPlacing</code> event. The event
@@ -147,6 +217,10 @@ BuildingControl = function () {
      */
     this.onLeftMouseButtonClick = function (data) {
         var atTile, definition, tiles, i, tile, index;
+        if (sellActive) {
+            handleBuildingSell(data.x, data.y);
+            return;
+        }
         if (buildingToPlace) {
             if (!buildingPlacementAllowed) {
                 return;
@@ -192,7 +266,11 @@ BuildingControl = function () {
      * @param {Object} data Event's details.
      */
     this.onRightMouseButtonClick = function (data) {
-        if (buildingToPlace) {
+        if (sellActive) {
+            this.sendEvent("sellModeSwitch");
+        } else if (repairActive) {
+            this.sendEvent("repairModeSwitch");
+        } else if (buildingToPlace) {
             sfx.setBuildingToPlace(null, false);
             buildingToPlace = null;
         } else {
@@ -220,5 +298,40 @@ BuildingControl = function () {
         view = newView;
         sfx = newView.getSfx();
     };
+
+    /**
+     * Handles a left mouse click in "sell building" mode.
+     *
+     * @param {Number} x The X-coordinate of the tile that was clicked.
+     * @param {Number} y The Y-coordinate of the tile that was clicked.
+     */
+    function handleBuildingSell(x, y) {
+        var atTile, definition, resources, construction, i, steps, resource;
+        atTile = map.getObjectAt(x, y);
+        if (!(atTile instanceof Building)) {
+            return;
+        }
+        if (atTile.player !== playerId) {
+            return;
+        }
+        definition = BuildingsDefinition.getType(atTile.type);
+        if (definition.resource !== null) {
+            return;
+        }
+        atTile.hitpoints = 0;
+        view.onBuildingChange(atTile);
+        map.removeBuilding(atTile);
+        resources = [];
+        construction = definition.construction;
+        steps = Math.ceil(1000 / construction.stepProgress);
+        for (i = construction.step.length; i--;) {
+            resource = construction.step[i] * steps * sellRefundFactor;
+            resources.unshift(resource);
+        }
+        instance.sendEvent('resourcesGained', {
+            player: playerId,
+            resources: resources
+        });
+    }
 };
 BuildingControl.prototype = new AdvancedEventDrivenPlugin();
