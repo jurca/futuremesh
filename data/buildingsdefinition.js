@@ -25,6 +25,10 @@ BuildingsDefinition = (function () {
                 stepProgress: 20, // 50 steps, fully constructed when progress
                                   // is 1000
                 stepDuration: 1   // number of ticks, +1 for resource request
+            },
+            repair: {
+                hitpoints: 10,
+                resources: [5]
             }
         },
         {
@@ -43,7 +47,8 @@ BuildingsDefinition = (function () {
             resource: 0,
             race: null,
             isCentral: false, // central buildings produce units
-            construction: null // non-constructable building
+            construction: null, // non-constructable building
+            repair: null
         }
     ];
 

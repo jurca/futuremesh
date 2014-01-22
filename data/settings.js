@@ -66,7 +66,8 @@ Settings.load({
         'BuildingControl',
         'ProjectileControl',
         'UnitControl',
-        'SellRepairButtons'
+        'SellRepairButtons',
+        'BuildingRepairer'
     ],
     pluginConfiguration: {
         BuildingControl: {

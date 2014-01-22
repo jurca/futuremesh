@@ -221,6 +221,10 @@ BuildingControl = function () {
             handleBuildingSell(data.x, data.y);
             return;
         }
+        if (repairActive) {
+            handleBuildingRepair(data.x, data.y);
+            return;
+        }
         if (buildingToPlace) {
             if (!buildingPlacementAllowed) {
                 return;
@@ -298,6 +302,30 @@ BuildingControl = function () {
         view = newView;
         sfx = newView.getSfx();
     };
+
+    /**
+     * Handles a left mouse click in "repair building" mode.
+     *
+     * @param {Number} x The X-coordinate of the tile that was clicked.
+     * @param {Number} y The Y-coordinate of the tile that was clicked.
+     */
+    function handleBuildingRepair(x, y) {
+        var atTile, definition;
+        atTile = map.getObjectAt(x, y);
+        if (!(atTile instanceof Building)) {
+            return;
+        }
+        if (atTile.player !== playerId) {
+            return;
+        }
+        definition = BuildingsDefinition.getType(atTile.type);
+        if (definition.resource !== null) {
+            return;
+        }
+        instance.sendEvent('repairBuilding', {
+            building: atTile
+        });
+    }
 
     /**
      * Handles a left mouse click in "sell building" mode.
