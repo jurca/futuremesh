@@ -243,6 +243,9 @@ BuildingControl = function () {
             this.sendEvent("buildingPlaced", {
                 building: buildingToPlace
             });
+            instance.sendEvent("buildingCreated", {
+                building: buildingToPlace
+            });
             sfx.setBuildingToPlace(null, false);
             buildingToPlace = null;
             return;
@@ -322,7 +325,7 @@ BuildingControl = function () {
         if (definition.resource !== null) {
             return;
         }
-        instance.sendEvent('repairBuilding', {
+        instance.sendEvent("repairBuilding", {
             building: atTile
         });
     }
@@ -356,9 +359,12 @@ BuildingControl = function () {
             resource = construction.step[i] * steps * sellRefundFactor;
             resources.unshift(resource);
         }
-        instance.sendEvent('resourcesGained', {
+        instance.sendEvent("resourcesGained", {
             player: playerId,
             resources: resources
+        });
+        instance.sendEvent("buildingDestroyed", {
+            building: atTile
         });
     }
 };

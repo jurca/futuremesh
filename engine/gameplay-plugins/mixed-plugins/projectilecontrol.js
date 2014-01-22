@@ -104,10 +104,16 @@ ProjectileControl = function () {
             if (atTile instanceof Building) {
                 map.removeBuilding(atTile);
                 view.onBuildingChange(atTile);
+                instance.sendEvent("buildingDestroyed", {
+                    building: atTile
+                });
             } else { // Unit
                 atTile.action = 1; // destroyed
                 map.updateUnit(atTile);
                 view.onUnitChange(atTile);
+                instance.sendEvent("unitDestroyed", {
+                    unit: atTile
+                });
             }
         } else if (atTile instanceof Unit) {
             if ((atTile.player !== projectile.player.id) && !atTile.target) {
