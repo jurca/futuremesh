@@ -178,6 +178,9 @@ UnitAI = function () {
         unit = new Unit(position.x, position.y, direction, unitType, player);
         map.updateUnit(unit);
         view.onUnitChange(unit);
+        instance.sendEvent("unitCreated", {
+            unit: unit
+        });
     };
 
     /**
