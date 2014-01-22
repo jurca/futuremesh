@@ -325,6 +325,9 @@ BuildingControl = function () {
         if (definition.resource !== null) {
             return;
         }
+        if (atTile.hitpoints === definition.hitpoints) {
+            return;
+        }
         instance.sendEvent("repairBuilding", {
             building: atTile
         });
