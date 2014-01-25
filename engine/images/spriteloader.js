@@ -149,13 +149,15 @@ SpriteLoader = function () {
      * progress is set to 1 upon completion (the loading process has finished).
      */
     extractBuildings = function () {
-        var i, building, starts, heights, startY;
+        var i, building, starts, heights, startY, startX;
         starts = indexes.buildings.ends;
         starts.unshift(0);
         heights = indexes.buildings.heights;
+        startX = 0;
         startY = indexes.buildings.start;
         for (i = 0; building = BuildingsDefinition.getType(i); i++) {
-            building.imageData = extractImage(starts[i], startY,
+            startX += starts[i];
+            building.imageData = extractImage(startX, startY,
                     starts[i + 1], heights[i]);
             building.playerImages = colorifier.colorifyForPlayers(
                     building.imageData, building.colorify,
