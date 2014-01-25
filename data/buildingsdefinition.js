@@ -49,6 +49,33 @@ BuildingsDefinition = (function () {
             isCentral: false, // central buildings produce units
             construction: null, // non-constructable building
             repair: null
+        },
+        {
+            type: 2,
+            name: 'Power plant',
+            image: 'data/images/buildings/power-plant.png',
+            imageWidth: undefined,
+            imageHeight: undefined,
+            width: 2,
+            height: 2,
+            hitpoints: 500, // how much damage can the building take
+            passable: false,
+            colorify: '#ffffff',
+            colorifyDistance: 440,
+            prerequisities: [0],
+            resource: null,
+            race: 0,
+            isCentral: false, // central buildings produce units
+            construction: { // total cost: 250, duration: 100 ticks
+                step: [10],
+                stepProgress: 40, // 25 steps, fully constructed when progress
+                                  // is 1000
+                stepDuration: 1   // number of ticks, +1 for resource request
+            },
+            repair: {
+                hitpoints: 10,
+                resources: [3]
+            }
         }
     ];
 
