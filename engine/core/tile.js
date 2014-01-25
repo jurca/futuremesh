@@ -35,6 +35,13 @@ Tile = function (type) {
     this.accessible = definition.accessible;
     
     /**
+     * True if the tile can be build upon, otherwise false.
+     * 
+     * @type Boolean
+     */
+    this.buildable = definition.buildable;
+    
+    /**
      * The representation of the tile in the minimap specified as a
      * CSS-compatible color definition.
      *

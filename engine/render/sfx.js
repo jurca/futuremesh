@@ -31,9 +31,9 @@ SFX = function () {
         canvas = newCanvas;
         canvasWidth = canvas.width;
         canvasHeight = canvas.height;
-        context = canvas.getContext('2d');
+        context = canvas.getContext("2d");
         context.strokeStyle = Settings.sfx3DLightColor;
-        context.lineCap = 'round';
+        context.lineCap = "round";
         canvasCenterX = canvasWidth / 2;
         canvasCenterY = canvasHeight / 2;
     };
@@ -215,7 +215,7 @@ SFX = function () {
             context.strokeStyle = "#007500";
             if (buildingPlacementAllowed) {
                 atTile = map.getObjectAt(tile.x, tile.y);
-                if (atTile || !map.getNavigationIndex()[tile.y][tile.x]) {
+                if (atTile || !map.getTiles()[tile.y][tile.x].buildable) {
                     context.fillStyle = "#cf0000";
                     context.strokeStyle = "#750000";
                 }

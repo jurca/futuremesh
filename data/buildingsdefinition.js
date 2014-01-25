@@ -29,7 +29,8 @@ BuildingsDefinition = (function () {
             repair: {
                 hitpoints: 10,
                 resources: [5]
-            }
+            },
+            placementValidator: null
         },
         {
             type: 1,
@@ -48,7 +49,8 @@ BuildingsDefinition = (function () {
             race: null,
             isCentral: false, // central buildings produce units
             construction: null, // non-constructable building
-            repair: null
+            repair: null,
+            placementValidator: null
         },
         {
             type: 2,
@@ -75,6 +77,18 @@ BuildingsDefinition = (function () {
             repair: {
                 hitpoints: 10,
                 resources: [3]
+            },
+            placementValidator: function (tilesCoords, map) {
+                var i, tileCoord, tiles, tile;
+                tiles = map.getTiles();
+                for (i = tilesCoords.length; i--;) {
+                    tileCoord = tilesCoords[i];
+                    tile = tiles[tileCoord.y][tileCoord.x];
+                    if (tile.type === 3) {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
     ];
