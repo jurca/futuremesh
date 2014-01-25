@@ -169,7 +169,7 @@ BuildingControl = function () {
      */
     this.onMouseTileMove = function (data) {
         var atTile, definition, allowed, i, buildings, centerX, centerY,
-                building, distance;
+                building, distance, tiles;
         atTile = map.getObjectAt(data.x, data.y);
         if (atTile instanceof Building) {
             definition = BuildingsDefinition.getType(atTile.type);
@@ -209,6 +209,13 @@ BuildingControl = function () {
                     break;
                 }
             }
+            if (allowed) {
+                definition = BuildingsDefinition.getType(buildingToPlace.type);
+                if (definition.placementValidator) {
+                    tiles = map.getTilesOccupiedByBuilding(buildingToPlace);
+                    allowed = definition.placementValidator(tiles, map);
+                }
+            }
             buildingPlacementAllowed = allowed;
             sfx.setBuildingToPlace(buildingToPlace, allowed);
         }
@@ -222,7 +229,7 @@ BuildingControl = function () {
      * @param {Object} data Event's details.
      */
     this.onLeftMouseButtonClick = function (data) {
-        var atTile, definition, tiles, i, tile, index;
+        var atTile, definition, tiles, i, tile, tileDetails;
         if (sellActive) {
             handleBuildingSell(data.x, data.y);
             return;
@@ -236,11 +243,11 @@ BuildingControl = function () {
                 return;
             }
             tiles = map.getTilesOccupiedByBuilding(buildingToPlace);
-            index = map.getNavigationIndex();
+            tileDetails = map.getTiles();
             for (i = tiles.length; i--;) {
                 tile = tiles[i];
                 atTile = map.getObjectAt(tile.x, tile.y);
-                if (atTile || !index[tile.y][tile.x]) {
+                if (atTile || !tileDetails[tile.y][tile.x].buildable) {
                     return;
                 }
             }
