@@ -7,8 +7,62 @@ var BuildingsConstructionUIPlugin;
  * once the construction process is finished.
  */
 BuildingsConstructionUIPlugin = function () {
-    var currentPlayerRace, template, buttonsContainer, instance, playerId,
-            buttons, uiUpdate;
+    /**
+     * The current technological race of the player.
+     * 
+     * @type Number
+     */
+    var currentPlayerRace,
+            
+    /**
+     * A "template" describing how the construction button should be created.
+     * 
+     * @type Object
+     */
+    template,
+
+    /**
+     * Container element for construction buttons.
+     * 
+     * @type HTMLElement
+     */
+    buttonsContainer,
+    
+    /**
+     * The current instance of this plugin.
+     * 
+     * @type BuildingsConstructionUIPlugin
+     */
+    instance,
+
+    /**
+     * The ID of the current player.
+     * 
+     * @type Number
+     */
+    playerId,
+    
+    /**
+     * Map of building types to the HTML elements representing the construction
+     * buttons.
+     * 
+     * @type Object
+     */
+    buttons,
+    
+    /**
+     * Updates that should be done to the UI in the next frame.
+     * 
+     * @type Array
+     */
+    uiUpdate,
+    
+    /**
+     * The current map.
+     * 
+     * @type Map
+     */
+    map;
 
     /**
      * Constructor.
@@ -27,16 +81,56 @@ BuildingsConstructionUIPlugin = function () {
         }
         uiUpdate = [];
     };
+    
+    /**
+     * Event handler for the <code>gameMapInitialization</code> event. The
+     * handler sets the internal map reference.
+     *
+     * @param {Map} gameMap The current game map.
+     */
+    this.onGameMapInitialization = function (gameMap) {
+        map = gameMap;
+    };
+    
+    /**
+     * Event handler for the <code>buildingDestroyed</code> event. The handler
+     * updates the construction buttons so that only buildings with satisfied
+     * prerequisities may be constructed.
+     * 
+     * @param {type} building
+     */
+    this.onBuildingDestroyed = function (building) {
+        var type, definition, prerequisities, ownedTypes;
+        building = building.building;
+        if (building.player !== playerId) {
+            return;
+        }
+        ownedTypes = getBuildingTypesOwnedByPlayer();
+        for (type in buttons) {
+            if (!buttons.hasOwnProperty(type)) {
+                continue;
+            }
+            definition = BuildingsDefinition.getType(type);
+            prerequisities = definition.prerequisities;
+            if (hasSatisfiedRequirements(prerequisities, ownedTypes)) {
+                buttons[type].style.display = "";
+            } else {
+                buttons[type].style.display = "none";
+            }
+        }
+    };
 
     /**
      * Handler for the <code>buildingPlaced</code> event. The event occurrs
      * when the user successfully places a newly constructed building on the
-     * map. The handler resets the related building construction button.
+     * map. The handler resets the related building construction button. The
+     * handler also updates the construction buttons so that only buildings
+     * with satisfied prerequisities may be constructed.
      *
      * @param {Object} data Event's data.
      */
     this.onBuildingPlaced = function (data) {
-        var building, button;
+        var building, button, type, definition, prerequisities, ownedTypes;
         building = data.building;
         if (building.player !== playerId) {
             return;
@@ -47,6 +141,19 @@ BuildingsConstructionUIPlugin = function () {
             value: ""
         });
         button.ready = false;
+        ownedTypes = getBuildingTypesOwnedByPlayer();
+        for (type in buttons) {
+            if (!buttons.hasOwnProperty(type)) {
+                continue;
+            }
+            definition = BuildingsDefinition.getType(type);
+            prerequisities = definition.prerequisities;
+            if (hasSatisfiedRequirements(prerequisities, ownedTypes)) {
+                buttons[type].style.display = "";
+            } else {
+                buttons[type].style.display = "none";
+            }
+        }
     };
 
     /**
@@ -160,8 +267,10 @@ BuildingsConstructionUIPlugin = function () {
      *
      * @param {Object} building Definition of the building for which
      *        the button is to be created.
+     * @param {Array} ownedTypes Types of buildings owned by the current
+     *        player.
      */
-    function createButton(building) {
+    function createButton(building, ownedTypes) {
         var node, img, progressInfo;
         node = document.createElement(template.tag);
         node.className = template.className;
@@ -189,8 +298,50 @@ BuildingsConstructionUIPlugin = function () {
         });
 
         node.progressInfo = progressInfo;
+        node.style.display =
+                hasSatisfiedRequirements(building.prerequisities, ownedTypes) ?
+                "" : "none";
         buttons[building.type] = node;
         buttonsContainer.appendChild(node);
+    }
+    
+    /**
+     * Tests whether the provided array of owned types of buildings contains
+     * all types in the specified prerequisities array.
+     * 
+     * @param {Array} prerequisities Types of buildings that the player must
+     *        own.
+     * @param {Array} ownedTypes Types of buildings that the player owns.
+     * @return {Boolean} <code>true</code> if the prerequisities are satisfied.
+     */
+    function hasSatisfiedRequirements(prerequisities, ownedTypes) {
+        var i;
+        for (i = prerequisities.length; i--;) {
+            if (ownedTypes.indexOf(prerequisities[i]) === -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Returns the types of the buildings the player currently owns.
+     * 
+     * @return {Array} Types of buildings the player currently owns.
+     */
+    function getBuildingTypesOwnedByPlayer() {
+        var types, i, buildings;
+        types = [];
+        buildings = map.getBuildings();
+        for (i = buildings.length; i--;) {
+            if (buildings[i].player !== playerId) {
+                continue;
+            }
+            if (types.indexOf(buildings[i].type) === -1) {
+                types.push(buildings[i].type);
+            }
+        }
+        return types;
     }
 
     /**
@@ -265,12 +416,13 @@ BuildingsConstructionUIPlugin = function () {
      * Creates buttons for constructing new buildings in the UI.
      */
     function createButtons() {
-        var building, type, playerRace;
+        var building, type, playerRace, ownedTypes;
         building = BuildingsDefinition.getType(0);
         playerRace = currentPlayerRace;
+        ownedTypes = getBuildingTypesOwnedByPlayer();
         for (type = 0; building;) {
             if ((building.race !== null) && (building.race === playerRace)) {
-                createButton(building);
+                createButton(building, ownedTypes);
             }
             building = BuildingsDefinition.getType(++type);
         }
