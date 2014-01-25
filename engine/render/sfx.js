@@ -269,6 +269,9 @@ SFX = function () {
         }
         offsetX = (building.y % 2) * tileWidth / 2;
         x = building.x * tileWidth - viewX + offsetX;
+        if (!(building.width % 2)) {
+            x -= tileWidth / 2;
+        }
         y = building.y * tileHeight - viewY - 4;
         if ((x < -tileWidth) || (y < -2) || (x >= canvasWidth) ||
                 (y >= canvasHeight)) {
