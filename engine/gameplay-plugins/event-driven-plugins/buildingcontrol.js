@@ -182,6 +182,12 @@ BuildingControl = function () {
         if (buildingToPlace) {
             buildingToPlace.x = data.x - Math.floor(buildingToPlace.width / 2);
             buildingToPlace.y = data.y - Math.ceil(buildingToPlace.height / 2);
+            if (!(buildingToPlace.width % 2)) {
+                buildingToPlace.x++;
+                if (data.y % 2) {
+                    buildingToPlace.x++;
+                }
+            }
             allowed = false;
             buildings = map.getBuildings();
             for (i = buildings.length; i--;) {

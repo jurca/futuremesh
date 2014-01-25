@@ -199,6 +199,9 @@ SFX = function () {
         context.globalAlpha = 0.6;
         screenX = buildingToPlace.x * tileWidth +
                 (tileWidth / 2) * (buildingToPlace.y % 2) - x;
+        if (!(buildingToPlace.width % 2)) {
+            screenX -= tileWidth / 2;
+        }
         screenY = buildingToPlace.y * tileHeight - y;
         type = BuildingsDefinition.getType(buildingToPlace.type);
         context.drawImage(type.playerImages[buildingToPlace.player],

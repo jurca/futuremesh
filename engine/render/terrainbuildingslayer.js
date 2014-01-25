@@ -161,6 +161,9 @@ window.TerrainBuildingsLayer = function () {
         var type, x, y;
         type = BuildingsDefinition.getType(building.type);
         x = (tileWidth / 2) * (building.y % 2) + tileWidth * building.x - 1;
+        if (!(building.width % 2)) {
+            x -= tileWidth / 2;
+        }
         y = tileHeight * building.y - 1;
         bufferContext.drawImage(type.playerImages[building.player], x, y);
     };
