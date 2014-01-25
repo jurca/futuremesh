@@ -71,7 +71,8 @@ UnitsDefinition = (function () {
                 step: [6],
                 stepProgress: 40, // 25 steps (1000 is complete construction)
                 stepDuration: 1   // +1 for resource request
-            }
+            },
+            prerequisities: []
         },
         {
             type: 1,
@@ -134,7 +135,8 @@ UnitsDefinition = (function () {
                 step: [10],
                 stepProgress: 100, // 10 steps (1000 is complete construction)
                 stepDuration: 1   // +1 for resource request
-            }
+            },
+            prerequisities: []
         },
         {
             type: 2,
@@ -197,7 +199,8 @@ UnitsDefinition = (function () {
                 step: [15],
                 stepProgress: 100, // 10 steps (1000 is complete construction)
                 stepDuration: 2   // +1 for resource request
-            }
+            },
+            prerequisities: [2]
         }
     ];
 

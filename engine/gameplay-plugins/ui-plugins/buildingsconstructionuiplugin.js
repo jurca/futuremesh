@@ -75,9 +75,23 @@ BuildingsConstructionUIPlugin = function () {
 
     // override
     this.renderFrame = function () {
-        var i;
+        var i, update;
         for (i = uiUpdate.length; i--;) {
-            uiUpdate[i].node.innerHTML = uiUpdate[i].value;
+            update = uiUpdate[i];
+            switch (update.command) {
+                case 0: // update innerHTML
+                    update.node.innerHTML = update.value;
+                    break;
+                case 1: // show
+                    update.node.style.display = "";
+                    break;
+                case 2: // hide
+                    update.node.style.display = "none";
+                    break;
+                default:
+                    throw new Error("Unknown update command: " +
+                            uiUpdate.command);
+            }
         }
         uiUpdate = [];
     };
@@ -113,9 +127,15 @@ BuildingsConstructionUIPlugin = function () {
             definition = BuildingsDefinition.getType(type);
             prerequisities = definition.prerequisities;
             if (hasSatisfiedRequirements(prerequisities, ownedTypes)) {
-                buttons[type].style.display = "";
+                uiUpdate.push({
+                    command: 1,
+                    node: buttons[type]
+                });
             } else {
-                buttons[type].style.display = "none";
+                uiUpdate.push({
+                    command: 2,
+                    node: buttons[type]
+                });
             }
         }
     };
@@ -137,6 +157,7 @@ BuildingsConstructionUIPlugin = function () {
         }
         button = buttons[building.type];
         uiUpdate.push({
+            command: 0,
             node: button.progressInfo,
             value: ""
         });
@@ -149,9 +170,15 @@ BuildingsConstructionUIPlugin = function () {
             definition = BuildingsDefinition.getType(type);
             prerequisities = definition.prerequisities;
             if (hasSatisfiedRequirements(prerequisities, ownedTypes)) {
-                buttons[type].style.display = "";
+                uiUpdate.push({
+                    command: 1,
+                    node: buttons[type]
+                });
             } else {
-                buttons[type].style.display = "none";
+                uiUpdate.push({
+                    command: 2,
+                    node: buttons[type]
+                });
             }
         }
     };
@@ -180,6 +207,7 @@ BuildingsConstructionUIPlugin = function () {
                 progressLabel = Math.floor(progress.progress / 10) + ' %';
             }
             uiUpdate.push({
+                command: 0,
                 node: buildingButton.progressInfo,
                 value: progressLabel
             });
@@ -361,6 +389,7 @@ BuildingsConstructionUIPlugin = function () {
     function handleLeftMouseClick(node, progressInfo, building) {
         if (!progressInfo.innerHTML) {
             uiUpdate.push({
+                command: 0,
                 node: progressInfo,
                 value: "0 %"
             });
@@ -406,6 +435,7 @@ BuildingsConstructionUIPlugin = function () {
                 });
             }
             uiUpdate.push({
+                command: 0,
                 node: node.progressInfo,
                 value: ""
             });
