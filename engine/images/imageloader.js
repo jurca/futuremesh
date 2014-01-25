@@ -217,22 +217,14 @@ ImageLoader = function () {
     transformBuildingImage = function (source, width, height) {
         var canvas, context, data, offset;
         canvas = document.createElement('canvas');
-        canvas.width = 140 + Math.ceil(Settings.tileWidth * width);
-        canvas.height = 500 + Math.ceil(Settings.tileHeight * height);
+        offset = Settings.tileWidth / 2 * height;
+        canvas.width = offset + Math.ceil(Settings.tileWidth / 2 * width);
+        canvas.height = Math.ceil(Settings.tileHeight * height);
         context = canvas.getContext('2d');
+        context.translate(offset, 0);
         context.scale(1, Settings.heightScale);
         context.rotate(45 * Math.PI / 180);
-        context.drawImage(source, 7 * Settings.tileSize, 0);
-        // don't ask... untransformed images shouldn't be used anyways
-        offset = (Math.SQRT2 / 2) *
-                (Math.ceil((width - 1) / 2) * (Settings.tileWidth + 10));
-        data = context.getImageData(84 - offset, 99 * Settings.heightScale,
-                Settings.tileWidth * width, Settings.tileHeight * height);
-        canvas = document.createElement('canvas');
-        canvas.width = data.width;
-        canvas.height = data.height;
-        context = canvas.getContext('2d');
-        context.putImageData(data, 0, 0);
+        context.drawImage(source, 0, 0);
         data = new Image();
         data.src = canvas.toDataURL();
         return data;
