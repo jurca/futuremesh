@@ -302,7 +302,7 @@ BuildingControl = function () {
      * Handler for the <code>gameMapInitialization</code> event. The handler
      * sets the map reference.
      *
-     * @param {type} gameMap
+     * @param {Map} gameMap The current game map.
      */
     this.onGameMapInitialization = function (gameMap) {
         map = gameMap;

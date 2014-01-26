@@ -30,7 +30,9 @@ BuildingsDefinition = (function () {
                 hitpoints: 10,
                 resources: [5]
             },
-            placementValidator: null
+            placementValidator: null,
+            powerRequirement: 0  // negative = generates power,
+                                 // positive = consumes power
         },
         {
             type: 1,
@@ -50,7 +52,9 @@ BuildingsDefinition = (function () {
             isCentral: false, // central buildings produce units
             construction: null, // non-constructable building
             repair: null,
-            placementValidator: null
+            placementValidator: null,
+            powerRequirement: 0  // negative = generates power,
+                                 // positive = consumes power
         },
         {
             type: 2,
@@ -89,7 +93,9 @@ BuildingsDefinition = (function () {
                     }
                 }
                 return false;
-            }
+            },
+            powerRequirement: -100  // negative = generates power,
+                                    // positive = consumes power
         }
     ];
 
