@@ -43,20 +43,54 @@ BuildingsUnitsConstruction = function () {
      *
      * @type Object
      */
-    var constructionQueues = {}, instance, maxQueueLength;
+    var constructionQueues = {},
+            
+    /**
+     * The current instance of this plugin.
+     * 
+     * @type BuildingsUnitsConstruction
+     */
+    instance,
+    
+    /**
+     * Maximum length of unit construction queue for each unit and player.
+     * 
+     * @type Number
+     */        
+    maxQueueLength,
+            
+    /**
+     * Extra ticks to wait before each resource request when the player does
+     * not have enough power.
+     * 
+     * @type Number
+     */
+    unpoweredConstructionDelay,
+            
+    /**
+     * Map of player IDs to extraneous power production.
+     * 
+     * @type Object
+     */
+    powerLevels;
 
     /**
      * Constructor.
      */
     (function () {
+        var configuration;
         instance = this;
-        maxQueueLength = Settings.pluginConfiguration.
-                BuildingsUnitsConstruction.maxQueueLength;
+        configuration = Settings.pluginConfiguration;
+        configuration = configuration.BuildingsUnitsConstruction;
+        maxQueueLength = configuration.maxQueueLength;
+        unpoweredConstructionDelay = configuration.unpoweredConstructionDelay;
+        powerLevels = {};
     }.call(this));
 
     // override
     this.handleTick = function () {
-        var playerId, buildingsTasks, buildingType, unitsTasks, unitType;
+        var playerId, buildingsTasks, buildingType, unitsTasks, unitType,
+                definition, powerRequirement;
         for (playerId in constructionQueues) {
             if (!constructionQueues.hasOwnProperty(playerId)) {
                 continue;
@@ -75,9 +109,9 @@ BuildingsUnitsConstruction = function () {
                     buildingsTasks[buildingType].stepTimeout--;
                     continue;
                 }
-                this.sendEvent('resourceRequest', {
+                this.sendEvent("resourceRequest", {
                     target: buildingType,
-                    targetType: 'building',
+                    targetType: "building",
                     player: playerId,
                     resources: buildingsTasks[buildingType].definition.
                             construction.step
@@ -98,9 +132,14 @@ BuildingsUnitsConstruction = function () {
                     unitsTasks[unitType].stepTimeout--;
                     continue;
                 }
-                this.sendEvent('resourceRequest', {
+                definition = UnitsDefinition.getType(unitType);
+                powerRequirement = Math.max(0, definition.powerRequirement);
+                if (powerRequirement > powerLevels[playerId]) {
+                    continue; // not enough power to construct this unit
+                }
+                this.sendEvent("resourceRequest", {
                     target: unitType,
-                    targetType: 'unit',
+                    targetType: "unit",
                     player: playerId,
                     resources: unitsTasks[unitType].definition.construction.
                             step
@@ -108,6 +147,16 @@ BuildingsUnitsConstruction = function () {
                 unitsTasks[unitType].waitingForResources = true;
             }
         }
+    };
+    
+    /**
+     * Event handler for the <code>energyLevelUpdate</code> event. The handler
+     * will update the powerLevels map.
+     * 
+     * @param {Object} data Event's data.
+     */
+    this.onEnergyLevelUpdate = function (data) {
+        powerLevels[data.player] = data.level;
     };
 
     /**
@@ -277,6 +326,12 @@ BuildingsUnitsConstruction = function () {
                 enqueued: 0
             };
         }
+        instance.sendEvent('unitConstructionProgress', {
+            player: data.player,
+            unit: data.unit,
+            progress: units[data.unit].progress,
+            enqueued: units[data.unit].enqueued
+        });
     };
 
     /**
@@ -336,6 +391,9 @@ BuildingsUnitsConstruction = function () {
                         buildingTask.definition.construction.stepProgress;
                 buildingTask.stepTimeout =
                         buildingTask.definition.construction.stepDuration;
+                if (powerLevels[data.player] < 0) {
+                    buildingTask.stepTimeout += unpoweredConstructionDelay;
+                }
                 instance.sendEvent('buildingConstrucionProgress', {
                     player: data.player,
                     building: data.target,

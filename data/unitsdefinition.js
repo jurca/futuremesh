@@ -72,7 +72,9 @@ UnitsDefinition = (function () {
                 stepProgress: 40, // 25 steps (1000 is complete construction)
                 stepDuration: 1   // +1 for resource request
             },
-            prerequisities: []
+            prerequisities: [],
+            powerRequirement: 20  // negative = generates power,
+                                  // positive = consumes power
         },
         {
             type: 1,
@@ -136,7 +138,9 @@ UnitsDefinition = (function () {
                 stepProgress: 100, // 10 steps (1000 is complete construction)
                 stepDuration: 1   // +1 for resource request
             },
-            prerequisities: []
+            prerequisities: [],
+            powerRequirement: 15  // negative = generates power,
+                                  // positive = consumes power
         },
         {
             type: 2,
@@ -200,7 +204,9 @@ UnitsDefinition = (function () {
                 stepProgress: 100, // 10 steps (1000 is complete construction)
                 stepDuration: 2   // +1 for resource request
             },
-            prerequisities: [2]
+            prerequisities: [2],
+            powerRequirement: 25  // negative = generates power,
+                                  // positive = consumes power
         }
     ];
 

@@ -67,7 +67,9 @@ Settings.load({
         'ProjectileControl',
         'UnitControl',
         'SellRepairButtons',
-        'BuildingRepairer'
+        'BuildingRepairer',
+        'PowerManagement',
+        'PowerLevelUI'
     ],
     pluginConfiguration: {
         BuildingControl: {
@@ -75,10 +77,14 @@ Settings.load({
             sellRefundFactor: 0.5
         },
         BuildingsUnitsConstruction: {
-            maxQueueLength: 30
+            maxQueueLength: 30,
+            unpoweredConstructionDelay: 4
         },
         KeyboardMapScroller: {
             scrollSpeed: 30
+        },
+        PowerLevelUI: {
+            heightFactor: 5
         },
         UnitAI: {
             maximumVisionRange: 12 // maximum vision range of all units. this
