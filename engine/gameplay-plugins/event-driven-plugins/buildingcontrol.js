@@ -105,8 +105,10 @@ BuildingControl = function () {
      * Event handler for the <code>sellModeSwitch</code> event. The handler
      * updates the repair and sell flags and disables the building to place (if
      * set).
+     * 
+     * @param {Object} data Event's details.
      */
-    this.onSellModeSwitch = function () {
+    this.onSellModeSwitch = function (data) {
         if (sellActive) {
             sellActive = false;
         } else {
@@ -117,14 +119,19 @@ BuildingControl = function () {
             sfx.setBuildingToPlace(null, false);
             buildingToPlace = null;
         }
+        if (data && data.placeBuilding) {
+            buildingToPlace = data.placeBuilding;
+        }
     };
 
     /**
      * Event handler for the <code>repairModeSwitch</code> event. The handler
      * updates the repair and sell flags and disables the building to place (if
      * set).
+     * 
+     * @param {Object} data Event's details.
      */
-    this.onRepairModeSwitch = function () {
+    this.onRepairModeSwitch = function (data) {
         if (repairActive) {
             repairActive = false;
         } else {
@@ -134,6 +141,9 @@ BuildingControl = function () {
         if (buildingToPlace) {
             sfx.setBuildingToPlace(null, false);
             buildingToPlace = null;
+        }
+        if (data && data.placeBuilding) {
+            buildingToPlace = data.placeBuilding;
         }
     };
 
@@ -146,6 +156,16 @@ BuildingControl = function () {
      * @param {Object} details Event details.
      */
     this.onStartBuildingPlacing = function (details) {
+        if (sellActive) {
+            this.sendEvent("sellModeSwitch", {
+                placeBuilding: new Building(0, 0, details.building, playerId)
+            });
+        }
+        if (repairActive) {
+            this.sendEvent("repairModeSwitch", {
+                placeBuilding: new Building(0, 0, details.building, playerId)
+            });
+        }
         buildingToPlace = new Building(0, 0, details.building, playerId);
     };
 
