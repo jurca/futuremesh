@@ -38,6 +38,7 @@
         <script type="text/javascript" src="engine/gameplay-plugins/ui-plugins/sellrepairbuttons.js"></script>
         <script type="text/javascript" src="engine/gameplay-plugins/event-driven-plugins/buildingcontrol.js"></script>
         <script type="text/javascript" src="engine/gameplay-plugins/event-driven-plugins/unitcontrol.js"></script>
+        <script type="text/javascript" src="engine/gameplay-plugins/event-driven-plugins/powermanagement.js"></script>
         <!-- /remove these lines once finished -->
 
         <!-- bootstrap -->
@@ -68,7 +69,13 @@
                 <div id="button-sell"><div></div></div>
                 <div class="middle-right-shade slim"></div>
 
-                <div id="power-level"><div id="power-level-overlay"></div></div>
+                <div id="power-level-wrapper">
+                    <div id="power-level-content">
+                        <div id="power-level-production"></div>
+                        <div id="power-level-marker"></div>
+                        <div id="power-level-consumption"></div>
+                    </div>
+                </div>
 
                 <div class="construction-buttons" id="buildings-buttons">
                     <div class="construction-buttons-scrolling">

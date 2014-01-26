@@ -127,20 +127,40 @@ body {
     background: center center no-repeat url('ui-images/button-sell.png');
 }
 
-#power-level {
+#power-level-wrapper {
     width: 20px;
     height: 320px;
     float: left;
-    background: linear-gradient(left, #450000, #a90000, #450000);
-    background: -webkit-linear-gradient(left, #450000, #a90000, #450000);
+    background: linear-gradient(left, #050505, #696969, #050505);
+    background: -webkit-linear-gradient(left, #050505, #696969, #050505);
+    position: relative;
 }
 
-#power-level-overlay {
+#power-level-content {
     width: 20px;
-    height: 20%;
-    float: left;
-    background: linear-gradient(left, #777777, #bbbbbb, #777777);
-    background: -webkit-linear-gradient(left, #777777, #bbbbbb, #777777);
+    position: absolute;
+    bottom: 0;
+}
+
+#power-level-production {
+    width: 20px;
+    height: 45px;
+    background: linear-gradient(left, #007700, #00bb00, #007700);
+    background: -webkit-linear-gradient(left, #007700, #00bb00, #007700);
+}
+
+#power-level-marker {
+    width: 20px;
+    height: 5px;
+    background: linear-gradient(left, #987700, #d8bb00, #987700);
+    background: -webkit-linear-gradient(left, #987700, #d8bb00, #987700);
+}
+
+#power-level-consumption {
+    width: 20px;
+    height: 70px;
+    background: linear-gradient(left, #450000, #a90000, #450000);
+    background: -webkit-linear-gradient(left, #450000, #a90000, #450000);
 }
 
 .construction-buttons {
