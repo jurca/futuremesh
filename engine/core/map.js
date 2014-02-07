@@ -366,6 +366,10 @@ Map = function () {
             projectiles: projectiles
         };
     };
+    
+    this.toPackedJson = function () {
+        // return as tighly-packed array of arrays, ints and strings
+    };
 
     /**
      * Creates map from provided data. The data should be a result of the
@@ -509,4 +513,8 @@ Map = function () {
             }
         }
     }
+};
+
+Map.fromPackedJson = function (data) {
+    // see toPackedJson
 };
