@@ -206,8 +206,28 @@ var Building;
                 x: this.x,
                 y: this.y,
                 type: this.type,
-                player: this.player
+                player: this.player,
+                hitpoints: this.hitpoints,
+                isSelectedUnitProductionBuilding:
+                        this.isSelectedUnitProductionBuilding
             };
+        };
+        
+        /**
+         * Returns a compact serialized JSON-compatible representation of this
+         * building. The returned array contains unsigned 16-bit integers.
+         * 
+         * @return {Array} Compact serialized representation of this building.
+         */
+        this.toPackedJson = function () {
+            return [
+                this.x,
+                this.y,
+                this.type,
+                this.player,
+                this.hitpoints,
+                this.isSelectedUnitProductionBuilding ? 1 : 0
+            ];
         };
     };
 
@@ -216,8 +236,29 @@ var Building;
      * the exportData method.
      *
      * @param {Object} data The data from the exportData method.
+     * @returns {Building} Deserialized building.
      */
     Building.importData = function (data) {
-        return new Building(data.x, data.y, data.type, data.player);
+        var building;
+        building = new Building(data.x, data.y, data.type, data.player);
+        building.hitpoints = data.hitpoints;
+        building.isSelectedUnitProductionBuilding =
+                data.isSelectedUnitProductionBuilding;
+        return building;
+    };
+    
+    /**
+     * Creates a new building from the provided data. The data should be a
+     * result of the toPackedJson method.
+     * 
+     * @param {Array} data Serialized packed representation of a building.
+     * @returns {Building} Deserialized building.
+     */
+    Building.fromPackedJson = function (data) {
+        var building;
+        building = new Building(data[0], data[1], data[2], data[3]);
+        building.hitpoints = data[4];
+        building.isSelectedUnitProductionBuilding = !!data[5];
+        return building;
     };
 }());

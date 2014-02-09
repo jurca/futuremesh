@@ -254,8 +254,38 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
             },
             progress: this.progress,
             duration: this.duration,
+            firedBy: this.firedBy ? {
+                x: this.firedBy.x,
+                y: this.firedBy.y
+            } : null,
             damage: this.damage
         };
+    };
+    
+    /**
+     * Returns a compact serialized JSON-compatible representation of this
+     * projectile. The returned array contains unsigned 16-bit integers.
+     * 
+     * @return {Array} Compact serialized representation of this projectile.
+     */
+    this.toPackedJson = function () {
+        return [
+            this.type,
+            this.player.id,
+            this.startTileX,
+            this.startTileY,
+            Math.round(this.startOffsetX * 1000),
+            Math.round(this.startOffsetY * 1000),
+            this.targetTileX,
+            this.targetTileY,
+            Math.round(this.targetOffsetX * 1000),
+            Math.round(this.targetOffsetY * 1000),
+            this.progress,
+            this.duration,
+            Math.max(0, this.damage + 500),
+            this.firedBy.x,
+            this.firedBy.y
+        ];
     };
 };
 
@@ -264,14 +294,35 @@ Projectile = function (type, player, startTileX, startTileY, targetTileX,
  * method to the Projectile's <code>exportData()</code> method.
  *
  * @param {Object} data The data object containing the projectile's details.
- * @returns {Projectile} The imported projectile.
+ * @param {Map} map The map to which the projectile is being added. Tha map
+ *        must already have all units added to it.
+ * @return {Projectile} The imported projectile.
  */
-Projectile.importData = function (data) {
+Projectile.importData = function (data, map) {
     var projectile;
     projectile = new Projectile(data.type, Player.getPlayer(data.player),
             data.start.x, data.start.y, data.target.x, data.target.y,
             data.start.xOffset, data.start.yOffset, data.target.xOffset,
-            data.target.yOffset, data.duration, data.damage);
+            data.target.yOffset, data.duration,
+            map.getObjectAt(data.firedBy.x, data.firedBy.y), data.damage);
     projectile.progress = data.progress;
+    return projectile;
+};
+
+/**
+ * Creates new projectile from provided data. The data should be a result of
+ * the exportData method.
+ * 
+ * @param {Array} data Serialized data to load.
+ * @param {Map} map The map to which the projectile is being added. Tha map
+ *        must already have all units added to it.
+ * @return {Projectile}
+ */
+Projectile.fromPackedJson = function (data, map) {
+    var projectile;
+    projectile = new Projectile(data[0], Player.getPlayer(data[1]), data[2],
+            data[3], data[6], data[7], data[4], data[5], data[8], data[9],
+            data[11], map.getObjectAt(data[13], data[14]), data[12] - 500);
+    projectile.progress = data[10];
     return projectile;
 };
