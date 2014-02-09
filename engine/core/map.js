@@ -7,7 +7,12 @@ var Map;
  */
 Map = function () {
     var tiles, buildings, buildingsList, units, unitsList, navigationIndex,
-            projectiles;
+            projectiles, name;
+
+    /**
+     * Map's name.
+     */
+    name = "unnamed map";
 
     /**
      * Two-dimensional array of tiles on the map. The first index is vertical
@@ -56,6 +61,24 @@ Map = function () {
      * instance of the <code>Projectile</code> class.
      */
     projectiles = [];
+
+    /**
+     * Sets the map's name.
+     * 
+     * @param {string} newName The new name of the map.
+     */
+    this.setName = function (newName) {
+        name = newName;
+    };
+    
+    /**
+     * Returns the map's name.
+     * 
+     * @returns {string} Map's name.
+     */
+    this.getName = function () {
+        return name;
+    };
 
     /**
      * Updates the building's status on the map (e.g. adding to the map or
@@ -360,6 +383,8 @@ Map = function () {
             projectileData.unshift(projectiles[i].exportData());
         }
         return {
+            name: name,
+            version: 0.9,
             tiles: data,
             buildings: buildingData,
             units: unitsData,
@@ -378,7 +403,14 @@ Map = function () {
      * @param {Object} data The data from the exportData method.
      */
     this.importData = function (data) {
-        var i, j, mapRow, dataRow;
+        var i, j, mapRow, dataRow, unit, action, projectile;
+        if (data.version < 0.9) {
+            throw new Error("Cannot import map of version older than 0.9");
+        }
+        if (data.version > 0.9) {
+            throw new Error("Cannot import map of version greater than 0.9");
+        }
+        name = data.name;
         tiles = [];
         for (i = data.tiles.length; i--;) {
             mapRow = [];
@@ -395,13 +427,19 @@ Map = function () {
         }
         unitsList = [];
         for (i = data.units.length; i--;) {
-            this.updateUnit(Unit.importData(data.units[i]));
+            unit = Unit.importData(data.units[i], this);
+            action = unit.action;
+            unit.action = 0;
+            this.updateUnit(unit);
+            unit.action = action;
+        }
+        for (i = data.units.length; i--;) {
+            Unit.finishImport(unitsList[i], data.units[i].target, this);
         }
         projectiles = [];
-        if (data.projectiles instanceof Array) {
-            for (i = data.projectiles.length; i--;) {
-                this.addProjectile(Projectile.importData(data.projectiles[i]));
-            }
+        for (i = data.projectiles.length; i--;) {
+            projectile = Projectile.importData(data.projectiles[i], this);
+            this.addProjectile(projectile);
         }
     };
 

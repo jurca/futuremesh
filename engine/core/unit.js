@@ -537,21 +537,165 @@ var Unit;
             return {
                 x: this.x,
                 y: this.y,
+                lastX: this.lastX,
+                lastY: this.lastY,
                 direction: this.direction,
                 type: this.type,
-                player: this.player
+                action: this.action,
+                player: this.player,
+                hitpoints: this.hitpoints,
+                maxHitpoints: this.maxHitpoints,
+                harvest: this.harvest ? {
+                    x: this.harvest.x,
+                    y: this.harvest.y
+                } : null,
+                moveOffset: this.moveOffset,
+                turningAzimuth: this.turningAzimuth,
+                turningProgress: this.turningProgress,
+                waypoints: JSON.parse(JSON.stringify(this.waypoints)),
+                target: this.target ? {
+                    x: this.target.x,
+                    y: this.target.y
+                } : null,
+                firingTimer: this.firingTimer
             };
+        };
+        
+        /**
+         * Returns a compact serialized JSON-compatible representation of this
+         * unit. The returned array contains unsigned 16-bit integers.
+         * 
+         * @return {Array} Compact serialized representation of this unit.
+         */
+        this.toPackedJson = function () {
+            var data, i, length, flags;
+            length = this.waypoints.length;
+            data = [
+                this.x,
+                this.y,
+                this.lastX,
+                this.lastY,
+                this.direction,
+                this.type,
+                this.player,
+                this.hitpoints,
+                this.maxHitpoints,
+                this.moveOffset,
+                this.turningAzimuth + 8,
+                this.turningProgress,
+                this.firingTimer
+            ];
+            flags = (this.harvest ? 1 : 0) + (this.target ? 2 : 0);
+            data.push(flags);
+            if (this.harvest) {
+                data.push(this.harvest.x, this.harvest.y);
+            }
+            if (this.target) {
+                data.push(this.target.x, this.target.y);
+            }
+            for (i = 0; i < length; i++) {
+                data.push(this.waypoints[i].x, this.waypoints[i].y);
+            }
+            return data;
         };
     };
 
     /**
      * Creates new unit from provided data. The data should be a result of the
-     * exportData method.
+     * exportData method. The method does not deserialize the target field of
+     * the unit because that cannot be done before all units are deserialized.
+     * Please use the finisheImport method for that.
      *
      * @param {Object} data The data from the exportData method.
+     * @param {Map} map The map into which the unit is being deserialized. The
+     *        map must have its buildings already deserialized.
+     * @return {Unit} Almost completely deserialized unit.
      */
-    Unit.importData = function (data) {
-        return new Unit(data.x, data.y, data.direction, data.type,
+    Unit.importData = function (data, map) {
+        var unit;
+        unit = new Unit(data.x, data.y, data.direction, data.type,
                 data.player);
+        unit.lastX = data.lastX;
+        unit.lastY = data.lastY;
+        unit.action = data.action;
+        unit.hitpoints = data.hitpoints;
+        unit.maxHitpoints = data.maxHitpoints;
+        if (data.harvest) {
+            unit.harvest = map.getObjectAt(data.harvest.x, data.harvest.y);
+        }
+        unit.setMoveOffset(data.moveOffset);
+        unit.turningAzimuth = data.turningAzimuth;
+        unit.turningProgress = data.turningProgress;
+        unit.waypoints = data.waypoints;
+        if (data.waypoints.length) {
+            unit.moveTargetX = data.waypoints[0].x;
+            unit.moveTargetY = data.waypoints[1].y;
+        }
+        unit.firingTimer = data.firingTimer;
+        return unit;
+    };
+    
+    /**
+     * Creates a new unit from the provided data. The data should be a result
+     * of the toPackedJson method. The method does not deserialize the target
+     * field of the unit because that cannot be done before all units are
+     * deserialized. Please use the finisheImport method for that.
+     * 
+     * @param {Array} data The serialized unit data.
+     * @param {Map} map The map to which the unit is being deserialized.
+     * @return {Unit} Almost completely deserialized unit.
+     */
+    Unit.fromPackedJson = function (data, map) {
+        var unit, offset;
+        unit = new Unit(data[0], data[1], data[4], data[5], data[6]);
+        unit.lastX = data[2];
+        unit.lastY = data[3];
+        unit.hitpoints = data[7];
+        unit.maxHitpoints = data[8];
+        unit.setMoveOffset(data[9]);
+        unit.turningAzimuth = data[10] - 8;
+        unit.turningProgress = data[11];
+        unit.firingTimer = data[12];
+        offset = 14;
+        if (data[13] % 2) {
+            unit.harvest = map.getObjectAt(data[offset], data[offset + 1]);
+            offset += 2;
+        }
+        if (data[13] > 1) {
+            offset += 2;
+        }
+        while (offset < data.length) {
+            unit.waypoints.push({
+                x: data[offset],
+                y: data[offset]
+            });
+            offset += 2;
+        }
+        if (unit.waypoints.length) {
+            unit.moveTargetX = unit.waypoints[0].x;
+            unit.moveTargetY = unit.waypoints[1].y;
+        }
+        return unit;
+    };
+    
+    /**
+     * Finishes the import of the provided data to the specified map. This
+     * method should be invoked after all partially deserialized units have
+     * been added to the speciifed map. This method deserialized the target
+     * field.
+     * 
+     * @param {Unit} unit The unit to finish importing.
+     * @param {Array|Object} target Array of object specifying the target's
+     *        location.
+     * @param {Map} map The map to which the unit has been added.
+     */
+    Unit.finishImport = function (unit, target, map) {
+        if (target) {
+            if (target instanceof Array) {
+                unit.target = map.getObjectAt(target[0], target[1]);
+            } else {
+                unit.target = map.getObjectAt(target.x, target.y);
+            }
+        }
     };
 }());

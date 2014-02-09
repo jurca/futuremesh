@@ -81,17 +81,42 @@ Tile = function (type) {
             lightSfx: this.lightSfx
         };
     };
+    
+    /**
+     * Returns a compact serialized JSON-compatible representation of this
+     * tile. The returned array contains unsigned 16-bit integers.
+     * 
+     * @return {Array} Compact serialized representation of this tile.
+     */
+    this.toPackedJson = function () {
+        return [this.type, this.lightSfx];
+    };
 };
 
 /**
- * Creates new tile from provided data. The data should be a result of the
+ * Creates a new tile from provided data. The data should be a result of the
  * exportData method.
  *
  * @param {Object} data The data from the exportData method.
+ * @return {Tile} Deserialized tile.
  */
 Tile.importData = function (data) {
     var tile;
     tile = new Tile(data.type);
     tile.lightSfx = data.lightSfx;
+    return tile;
+};
+
+/**
+ * Creates a new tile from the provided data. The data should be a result of
+ * the toPackedJson method.
+ * 
+ * @param {Array} data Serialized packed representation of a tile.
+ * @return {Tile} Deserialized tile.
+ */
+Tile.fromPackedJson = function (data) {
+    var tile;
+    tile = new Tile(data[0]);
+    tile.lightSfx = data[1];
     return tile;
 };
