@@ -138,8 +138,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
                 }
                 if (xhr.status === 200) {
                     compressor = new MapCompressor();
-                    map = new Map();
-                    map.importData(compressor.decompress(xhr.responseText, 3));
+                    map = compressor.decompress(xhr.responseText);
                     performNextStep();
                 } else {
                     throw new Error('Cannot load map file: ' + mapFileUrl);
