@@ -234,7 +234,7 @@ Map = function () {
      */
     this.setTiles = function (newTiles) {
         tiles = newTiles;
-        createIndex();
+        createIndexes();
     };
 
     /**
@@ -383,8 +383,8 @@ Map = function () {
             projectileData.unshift(projectiles[i].exportData());
         }
         return {
-            name: name,
             version: 0.9,
+            name: name,
             width: width,
             height: height,
             tiles: tilesData,
@@ -394,8 +394,51 @@ Map = function () {
         };
     };
     
+    /**
+     * Returns a compact serialized JSON-compatible representation of this
+     * map. The returned array contains unsigned 16-bit integers and array
+     * containg unsigned 16-bit integers (recursively).
+     * 
+     * @return {Array}
+     */
     this.toPackedJson = function () {
-        // return as tighly-packed array of arrays, ints and strings
+        var width, height, encodedName, i, tilesData, tilesRow, x, y,
+                buildingsData, unitsData, projectilesData;
+        encodedName = [];
+        for (i = 0; i < name.length; i++) {
+            encodedName.push(name.charCodeAt(i));
+        }
+        width = tiles[0].length;
+        height = tiles.length;
+        tilesData = [];
+        for (y = 0; y < height; y++) {
+            tilesRow = tiles[y];
+            for (x = 0; x < width; x++) {
+                tilesData.push(tilesRow[x].toPackedJson());
+            }
+        }
+        buildingsData = [];
+        for (i = buildingsList.length; i--;) {
+            buildingsData.unshift(buildingsList[i].toPackedJson());
+        }
+        unitsData = [];
+        for (i = unitsList.length; i--;) {
+            unitsData.unshift(unitsList[i].toPackedJson());
+        }
+        projectilesData = [];
+        for (i = projectiles.length; i--;) {
+            projectilesData.unshift(projectiles[i].toPackedJson());
+        }
+        return [
+            90,
+            encodedName,
+            width,
+            height,
+            tilesData,
+            buildingsData,
+            unitsData,
+            projectilesData
+        ];
     };
 
     /**
@@ -556,6 +599,60 @@ Map = function () {
     }
 };
 
+/**
+ * Creates a new map from the provided data. The data should be a result of the
+ * toPackedJson method.
+ * 
+ * @param {Array} data Data to deserialize.
+ * @returns {Map} Loaded map.
+ */
 Map.fromPackedJson = function (data) {
-    // see toPackedJson
+    var map, name, width, height, tilesData, x, y, tilesRow, tiles,
+            buildingsData, i, unitsData, units, offset, target,
+            projectilesData;
+    if (data[0] < 90) {
+        throw new Error("Cannot import map of version older than 0.9");
+    }
+    if (data[0] > 90) {
+        throw new Error("Cannot import map of version greater than 0.9");
+    }
+    map = new Map();
+    name = String.fromCharCode.apply(null, data[1]);
+    map.setName(name);
+    width = data[2];
+    height = data[3];
+    tilesData = data[4];
+    tiles = new Array(height);
+    for (y = 0; y < height; y++) {
+        tilesRow = new Array(width);
+        for (x = 0; x < width; x++) {
+            tilesRow[x] = Tile.fromPackedJson(tilesData[y * width + x]);
+        }
+        tiles[y] = tilesRow;
+    }
+    map.setTiles(tiles);
+    buildingsData = data[5];
+    for (i = 0; i < buildingsData.length; i++) {
+        map.updateBuilding(Building.fromPackedJson(buildingsData[i]));
+    }
+    unitsData = data[6];
+    for (i = 0; i < unitsData.length; i++) {
+        map.updateUnit(Unit.fromPackedJson(unitsData[i], map));
+    }
+    units = map.getUnits();
+    for (i = unitsData.length; i--;) {
+        if (unitsData[i][13] > 1) {
+            offset = 14;
+            if (unitsData[i][13] % 2) {
+                offset += 2;
+            }
+            target = unitsData[i].slice(offset, offset + 2);
+            Unit.finishImport(units[i], target, this);
+        }
+    }
+    projectilesData = data[7];
+    for (i = 0; i < projectilesData.length; i++) {
+        map.addProjectile(Projectile.fromPackedJson(projectilesData[i], map));
+    }
+    return map;
 };

@@ -10,10 +10,11 @@ var MapEditorMainMenu;
  * @param {Number} defaultMapHeight The default height of a new map in tiles.
  */
 MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
-    var $, compressor, fileName;
+    var $, compressor, fileName, compressionLevel;
 
     compressor = new MapCompressor();
     fileName = null; // the name of the file the map was loaded from/saved to
+    compressionLevel = 1;
 
     $ = function (selector) {
         return document.getElementById(selector);
@@ -75,8 +76,9 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         modal.appendChild(message);
         modal.center();
         setTimeout(function () {
-            var data, url, mapData;
-            mapData = compressor.compress(mapEditor.getMap());
+            var data, url, map, mapData;
+            map = mapEditor.getMap();
+            mapData = compressor.compress(map, compressionLevel);
             data = 'name=' + fileName + '&data=' + encodeURIComponent(mapData);
             url = 'cgi-bin/savemap.php';
             Ajax.post(url, data, function () {
@@ -115,8 +117,9 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                     modal.appendChild(loadingMessage);
                     modal.center();
                     setTimeout(function () {
-                        var data, url, mapData;
-                        mapData = compressor.compress(mapEditor.getMap());
+                        var data, url, mapData, map;
+                        map = mapEditor.getMap();
+                        mapData = compressor.compress(map, compressionLevel);
                         data = 'name=' + file + '&data=' +
                                 encodeURIComponent(mapData);
                         url = 'cgi-bin/savemap.php';
@@ -191,14 +194,15 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
     }, false);
 
     $('menu-export').addEventListener('click', function () {
-        var modal, textarea;
+        var modal, textarea, map;
         modal = new Modal('Export map', true);
         textarea = document.createElement('textarea');
         textarea.cols = 40;
         textarea.rows = 6;
         modal.appendChild(textarea);
         modal.center();
-        textarea.value = compressor.compress(mapEditor.getMap());
+        map = mapEditor.getMap();
+        textarea.value = compressor.compress(map, compressionLevel);
     }, false);
 
     $('menu-import').addEventListener('click', function () {
