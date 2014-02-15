@@ -75,9 +75,9 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         modal.appendChild(message);
         modal.center();
         setTimeout(function () {
-            var data, url;
-            data = 'name=' + fileName + '&data=' + encodeURIComponent(
-                    compressor.compress(mapEditor.getMap().exportData(), 3));
+            var data, url, mapData;
+            mapData = compressor.compress(mapEditor.getMap());
+            data = 'name=' + fileName + '&data=' + encodeURIComponent(mapData);
             url = 'cgi-bin/savemap.php';
             Ajax.post(url, data, function () {
                 modal.close();
@@ -115,10 +115,10 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                     modal.appendChild(loadingMessage);
                     modal.center();
                     setTimeout(function () {
-                        var data, url;
+                        var data, url, mapData;
+                        mapData = compressor.compress(mapEditor.getMap());
                         data = 'name=' + file + '&data=' +
-                                encodeURIComponent(compressor.compress(
-                                mapEditor.getMap().exportData(), 3));
+                                encodeURIComponent(mapData);
                         url = 'cgi-bin/savemap.php';
                         Ajax.post(url, data, function () {
                             modal.close();
@@ -167,8 +167,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                             Ajax.get('data/maps/' + file + '?time=' + time,
                             function (data) {
                                 var map;
-                                map = new Map();
-                                map.importData(compressor.decompress(data, 3));
+                                map = compressor.decompress(data);
                                 mapEditor.setMap(map);
                                 fileName = file;
                                 $('menu-save').className = '';
@@ -199,8 +198,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         textarea.rows = 6;
         modal.appendChild(textarea);
         modal.center();
-        textarea.value = compressor.compress(mapEditor.getMap().exportData(),
-                3);
+        textarea.value = compressor.compress(mapEditor.getMap());
     }, false);
 
     $('menu-import').addEventListener('click', function () {
@@ -220,8 +218,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         modal.center();
         form.setHandler(function (data) {
             var map;
-            map = new Map;
-            map.importData(compressor.decompress(data.data, 3));
+            map = compressor.decompress(data.data);
             mapEditor.setMap(map);
             modal.close();
         });

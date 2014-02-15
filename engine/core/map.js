@@ -359,16 +359,16 @@ Map = function () {
      *         JSON-serializable.
      */
     this.exportData = function () {
-        var i, j, data, mapRow, dataRow, buildingData, unitsData,
-                projectileData;
-        data = [];
-        for (i = tiles.length; i--;) {
-            mapRow = tiles[i];
-            dataRow = [];
-            for (j = mapRow.length; j--;) {
-                dataRow.unshift(mapRow[j].exportData());
+        var i, tilesData, mapRow, buildingData, unitsData, projectileData,
+                width, height, x, y;
+        tilesData = [];
+        width = tiles[0].length;
+        height = tiles.length;
+        for (y = 0; y < height; y++) {
+            mapRow = tiles[y];
+            for (x = 0; x < width; x++) {
+                tilesData.push(mapRow[x].exportData());
             }
-            data.unshift(dataRow);
         }
         buildingData = [];
         for (i = buildingsList.length; i--;) {
@@ -385,7 +385,9 @@ Map = function () {
         return {
             name: name,
             version: 0.9,
-            tiles: data,
+            width: width,
+            height: height,
+            tiles: tilesData,
             buildings: buildingData,
             units: unitsData,
             projectiles: projectiles
@@ -403,7 +405,7 @@ Map = function () {
      * @param {Object} data The data from the exportData method.
      */
     this.importData = function (data) {
-        var i, j, mapRow, dataRow, unit, action, projectile;
+        var i, x, y, mapRow, unit, action, projectile, width, height;
         if (data.version < 0.9) {
             throw new Error("Cannot import map of version older than 0.9");
         }
@@ -411,14 +413,15 @@ Map = function () {
             throw new Error("Cannot import map of version greater than 0.9");
         }
         name = data.name;
+        width = data.width;
+        height = data.height;
         tiles = [];
-        for (i = data.tiles.length; i--;) {
+        for (y = 0; y < height; y++) {
             mapRow = [];
-            dataRow = data.tiles[i];
-            for (j = dataRow.length; j--;) {
-                mapRow.unshift(Tile.importData(dataRow[j]));
+            for (x = 0; x < width; x++) {
+                mapRow.push(Tile.importData(data.tiles[y * width + x]));
             }
-            tiles.unshift(mapRow);
+            tiles.push(mapRow);
         }
         buildingsList = [];
         createIndexes();
