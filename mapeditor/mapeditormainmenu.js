@@ -10,11 +10,14 @@ var MapEditorMainMenu;
  * @param {Number} defaultMapHeight The default height of a new map in tiles.
  */
 MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
-    var $, compressor, fileName, compressionLevel;
+    var $, compressor, fileName, compressionLevel, textCompressionLevel,
+            base64;
 
     compressor = new MapCompressor();
     fileName = null; // the name of the file the map was loaded from/saved to
-    compressionLevel = 1;
+    compressionLevel = 2; // compression to use for binary storage
+    textCompressionLevel = 2; // compression for producing text representation
+    base64 = new Base64();
 
     $ = function (selector) {
         return document.getElementById(selector);
@@ -165,9 +168,10 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                         modal.appendChild(loadingMessage);
                         modal.center();
                         setTimeout(function () {
-                            var time;
+                            var time, url;
                             time = (new Date()).getTime();
-                            Ajax.get('data/maps/' + file + '?time=' + time,
+                            url = 'cgi-bin/loadmap.php?name=' + file;
+                            Ajax.get(url + '&time=' + time,
                             function (data) {
                                 var map;
                                 map = compressor.decompress(data);
@@ -202,7 +206,7 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
         modal.appendChild(textarea);
         modal.center();
         map = mapEditor.getMap();
-        textarea.value = compressor.compress(map, compressionLevel);
+        textarea.value = compressor.compress(map, textCompressionLevel);
     }, false);
 
     $('menu-import').addEventListener('click', function () {
