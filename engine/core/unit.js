@@ -652,7 +652,7 @@ var Unit;
         unit.lastY = data[3];
         unit.hitpoints = data[7];
         unit.maxHitpoints = data[8];
-        unit.setMoveOffset(data[9]);
+        unit.setMoveOffset(1000 - data[9]);
         unit.turningAzimuth = data[10] - 8;
         unit.turningProgress = data[11];
         unit.firingTimer = data[12];
