@@ -33,7 +33,7 @@ addEventListener('load', function () {
         loader = new GameLoader($('#loading-all')[0], $('#loading-current')[0],
                 $('#loading-message')[0], $('#loading-screen')[0],
                 $('#gameplay-screen')[0],
-                'cgi-bin/loadmap.php?name=tinytest.map', Player.getPlayer(0), [
+                'data/maps/tinytest.map', Player.getPlayer(0), [
                     [10000] // resources of player 0
                 ],
                 1, $('#view-canvas')[0], $('#minimap')[0]);

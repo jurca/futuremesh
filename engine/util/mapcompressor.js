@@ -25,7 +25,7 @@ MapCompressor = function () {
      * @return {string} The compressed map.
      */
     this.compress = function (map, level) {
-        var serialized;
+        var serialized, compressed, i, positionValue, high, low;
         switch (level) {
             case 0:
                 return JSON.stringify(map.exportData());
@@ -37,6 +37,16 @@ MapCompressor = function () {
                 serialized = serializeMapData(map.toPackedJson());
                 return "2" + JSON.stringify(serialized);
                 break;
+            case 3:
+                serialized = serializeMapData(map.toPackedJson());
+                compressed = "3";
+                for (i = 0; i < serialized.length; i++) {
+                    positionValue = serialized[i];
+                    high = Math.floor(positionValue / 256);
+                    low = positionValue % 256;
+                    compressed += String.fromCharCode(high, low);
+                }
+                return compressed;
             default:
                 throw new Error("Unsupported compression level: " + level);
         }
@@ -51,8 +61,17 @@ MapCompressor = function () {
      * @return {Map} The decompressed map.
      */
     this.decompress = function (mapData) {
-        var data, map;
-        if (mapData.charAt(0) === "2") {
+        var data, map, decodedMap, i, positionValue, nextInsertPosition;
+        if (mapData.charAt(0) === "3") {
+            decodedMap = new Array(Math.floor((mapData.length - 1) / 2));
+            nextInsertPosition = 0;
+            for (i = 1; i < mapData.length; i += 2) {
+                positionValue = mapData.charCodeAt(i) * 256 +
+                        mapData.charCodeAt(i + 1);
+                decodedMap[nextInsertPosition++] = positionValue;
+            }
+            data = deserializeMapData(decodedMap);
+        } else if (mapData.charAt(0) === "2") {
             data = deserializeMapData(JSON.parse(mapData.substring(1)));
         } else {
             data = JSON.parse(mapData);
@@ -64,7 +83,7 @@ MapCompressor = function () {
         map.importData(data);
         return map;
     };
-    
+
     /**
      * Deserializes an array of arrays and 16-bit unsigned integers
      * representing map data from the provided serialized string form.
@@ -73,7 +92,7 @@ MapCompressor = function () {
      * @return {Array} Deserialized packed map data.
      */
     function deserializeMapData(mapData) {
-        var deserialized, offset, width, height, i, unit, index, size;
+        var deserialized, offset, width, height, i, index, size;
         deserialized = new Array(8);
         // version
         deserialized[0] = mapData[0];

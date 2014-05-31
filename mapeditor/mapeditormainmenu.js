@@ -10,14 +10,12 @@ var MapEditorMainMenu;
  * @param {Number} defaultMapHeight The default height of a new map in tiles.
  */
 MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
-    var $, compressor, fileName, compressionLevel, textCompressionLevel,
-            base64;
+    var $, compressor, fileName, compressionLevel, textCompressionLevel;
 
     compressor = new MapCompressor();
     fileName = null; // the name of the file the map was loaded from/saved to
-    compressionLevel = 2; // compression to use for binary storage
+    compressionLevel = 3; // compression to use for binary storage
     textCompressionLevel = 2; // compression for producing text representation
-    base64 = new Base64();
 
     $ = function (selector) {
         return document.getElementById(selector);
@@ -170,20 +168,22 @@ MapEditorMainMenu = function (mapEditor, defaultMapWidth, defaultMapHeight) {
                         setTimeout(function () {
                             var time, url;
                             time = (new Date()).getTime();
-                            url = 'cgi-bin/loadmap.php?name=' + file;
-                            Ajax.get(url + '&time=' + time,
-                            function (data) {
-                                var map;
-                                map = compressor.decompress(data);
-                                mapEditor.setMap(map);
-                                fileName = file;
-                                $('menu-save').className = '';
-                                modal.close();
-                            },
-                            function () {
-                                modal.close();
-                                new Alert('Cannot load file ' + file);
-                            });
+                            url = 'data/maps/' + file + "?time=" + time;
+                            Ajax.get(
+                                url,
+                                function (data) {
+                                    var map;
+                                    map = compressor.decompress(data);
+                                    mapEditor.setMap(map);
+                                    fileName = file;
+                                    $('menu-save').className = '';
+                                    modal.close();
+                                },
+                                function () {
+                                    modal.close();
+                                    new Alert('Cannot load file ' + file);
+                                }
+                            );
                         }, 25);
                     }
                 });
