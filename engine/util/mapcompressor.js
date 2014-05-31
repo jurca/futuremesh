@@ -17,6 +17,7 @@ MapCompressor = function () {
      *            <li><code>1</code> - simple compression.</li>
      *            <li><code>2</code> - like compression 1 but serialized into a
      *                single linear array of 16-bit unsigned integers.</li>
+     *            <li><code>3</code> - binary-encoded level 2 compression.</li>
      *        </ul>
      *        Please note that while higher compression levels provide better
      *        results, each level is more CPU-demanding than the previous one.
