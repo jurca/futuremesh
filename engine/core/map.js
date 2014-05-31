@@ -402,8 +402,7 @@ Map = function () {
      * @return {Array}
      */
     this.toPackedJson = function () {
-        var width, height, encodedName, i, tilesData, tilesRow, x, y,
-                buildingsData, unitsData, projectilesData;
+        var width, height, encodedName, i, tilesData, tilesRow, x, y;
         encodedName = [];
         for (i = 0; i < name.length; i++) {
             encodedName.push(name.charCodeAt(i));
@@ -417,6 +416,25 @@ Map = function () {
                 tilesData.push(tilesRow[x].toPackedJson());
             }
         }
+
+        return [
+            90,
+            encodedName,
+            width,
+            height,
+            tilesData
+        ].concat(this.createSavePoint().slice(1));
+    };
+
+    /**
+     * Creates a save point capturing the current state of the dynamic
+     * properties (e.g. buildings, units, ...) of this map.
+     *
+     * @returns {(number|Array)[]} A save point capturing the current state of
+     *          the dynamic properties of this map.
+     */
+    this.createSavePoint = function () {
+        var i, buildingsData, unitsData, projectilesData;
         buildingsData = [];
         for (i = buildingsList.length; i--;) {
             buildingsData.unshift(buildingsList[i].toPackedJson());
@@ -431,10 +449,6 @@ Map = function () {
         }
         return [
             90,
-            encodedName,
-            width,
-            height,
-            tilesData,
             buildingsData,
             unitsData,
             projectilesData
@@ -486,6 +500,56 @@ Map = function () {
         for (i = data.projectiles.length; i--;) {
             projectile = Projectile.importData(data.projectiles[i], this);
             this.addProjectile(projectile);
+        }
+    };
+
+    /**
+     * Loads the state of the dynamic properties of this map from the provided
+     * save point.
+     *
+     * @param {(number|Array)[]} savePoint Save point to load.
+     */
+    this.loadSavePoint = function (savePoint) {
+        var buildingsData, unitsData, projectilesData, i, offset, target;
+        if (savePoint[0] < 90) {
+            throw new Error("Cannot load save point of format older than 0.9");
+        }
+        if (savePoint[0] > 90) {
+            throw new Error("Cannot load save point of format newer than 0.9");
+        }
+        this.getBuildings().forEach(function (building) {
+            this.removeBuilding(building);
+        }, this);
+        this.getUnits().forEach(function (unit) {
+            unit.action = 1; // destroyed
+            this.updateUnit(unit);
+        }, this);
+        this.getProjectiles().forEach(function (projectile, index) {
+            this.removeProjectile(index);
+        }, this);
+        buildingsData = savePoint[1];
+        for (i = 0; i < buildingsData.length; i++) {
+            this.updateBuilding(Building.fromPackedJson(buildingsData[i]));
+        }
+        unitsData = savePoint[2];
+        for (i = 0; i < unitsData.length; i++) {
+            this.updateUnit(Unit.fromPackedJson(unitsData[i], this));
+        }
+        units = this.getUnits();
+        for (i = unitsData.length; i--;) {
+            if (unitsData[i][13] > 1) {
+                offset = 14;
+                if (unitsData[i][13] % 2) {
+                    offset += 2;
+                }
+                target = unitsData[i].slice(offset, offset + 2);
+                Unit.finishImport(units[i], target, this);
+            }
+        }
+        projectilesData = savePoint[3];
+        for (i = 0; i < projectilesData.length; i++) {
+            this.addProjectile(
+                Projectile.fromPackedJson(projectilesData[i], this));
         }
     };
 
@@ -608,8 +672,7 @@ Map = function () {
  */
 Map.fromPackedJson = function (data) {
     var map, name, width, height, tilesData, x, y, tilesRow, tiles,
-            buildingsData, i, unitsData, units, offset, target,
-            projectilesData;
+            buildingsData, unitsData, projectilesData;
     if (data[0] < 90) {
         throw new Error("Cannot import map of version older than 0.9");
     }
@@ -632,27 +695,8 @@ Map.fromPackedJson = function (data) {
     }
     map.setTiles(tiles);
     buildingsData = data[5];
-    for (i = 0; i < buildingsData.length; i++) {
-        map.updateBuilding(Building.fromPackedJson(buildingsData[i]));
-    }
     unitsData = data[6];
-    for (i = 0; i < unitsData.length; i++) {
-        map.updateUnit(Unit.fromPackedJson(unitsData[i], map));
-    }
-    units = map.getUnits();
-    for (i = unitsData.length; i--;) {
-        if (unitsData[i][13] > 1) {
-            offset = 14;
-            if (unitsData[i][13] % 2) {
-                offset += 2;
-            }
-            target = unitsData[i].slice(offset, offset + 2);
-            Unit.finishImport(units[i], target, this);
-        }
-    }
     projectilesData = data[7];
-    for (i = 0; i < projectilesData.length; i++) {
-        map.addProjectile(Projectile.fromPackedJson(projectilesData[i], map));
-    }
+    map.loadSavePoint([90, buildingsData, unitsData, projectilesData]);
     return map;
 };
