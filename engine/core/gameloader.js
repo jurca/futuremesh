@@ -144,7 +144,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
                     throw new Error('Cannot load map file: ' + mapFileUrl);
                 }
             };
-            xhr.open('GET', mapFileUrl + '&time=' + (new Date()).getTime(),
+            xhr.open('GET', mapFileUrl + '?time=' + (new Date()).getTime(),
                     true); // add timestamp to avoid the browser's cache
             xhr.send(null);
         },
@@ -173,7 +173,7 @@ GameLoader = function (progressbarAll, progressbarCurrent, progressMessage,
             gamePlay.sendEvent('viewInitialization', {
                 view: viewCanvas,
                 minimap: minimapContainer
-            });;
+            });
 
             gamePlay.start();
 
