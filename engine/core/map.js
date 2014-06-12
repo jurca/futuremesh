@@ -527,6 +527,7 @@ Map = function () {
         this.getProjectiles().forEach(function (projectile, index) {
             this.removeProjectile(index);
         }, this);
+        createIndexes(); // reset the units, buildings and navigation indexes
         buildingsData = savePoint[1];
         for (i = 0; i < buildingsData.length; i++) {
             this.updateBuilding(Building.fromPackedJson(buildingsData[i]));
@@ -535,7 +536,6 @@ Map = function () {
         for (i = 0; i < unitsData.length; i++) {
             this.updateUnit(Unit.fromPackedJson(unitsData[i], this));
         }
-        units = this.getUnits();
         for (i = unitsData.length; i--;) {
             if (unitsData[i][13] > 1) {
                 offset = 14;
