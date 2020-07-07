@@ -14,8 +14,12 @@ for HTML5-compatible browsers.
 By adding unit definitions, custom graphics, music, sound and levels, one may
 easily create their own in-browser real-time strategy game.
 
-Gameplay demo (somewhat buggy): gameplay.html
+Gameplay demo (somewhat buggy):
+[gameplay.html](http://jurca.github.io/futuremesh/gameplay.html)
+(Try refreshing the page is you see an error)
 
-The map editor: mapeditor.html
+The map editor:
+[mapeditor.html](http://jurca.github.io/futuremesh/mapeditor.html)
 
-Beta version of map generator: mapgenerator.html
+Beta version of map generator:
+[mapgenerator.html](http://jurca.github.io/futuremesh/mapgenerator.html)
